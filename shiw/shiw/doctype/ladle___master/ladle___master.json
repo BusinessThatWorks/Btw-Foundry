@@ -2,7 +2,7 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
- "creation": "2025-07-19 15:33:48.231511",
+ "creation": "2025-03-17 13:17:10.333844",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -52,7 +52,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-19 15:50:19.532282",
+ "modified": "2025-07-19 17:20:59.373942",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Ladle - Master",

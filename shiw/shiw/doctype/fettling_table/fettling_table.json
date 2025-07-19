@@ -1,0 +1,95 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-06-09 12:38:47.380852",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_name",
+  "contractor_name",
+  "fettling_process",
+  "column_break_lfqz",
+  "available_qty",
+  "fettling_quantity",
+  "cast_weight_in_kg",
+  "section_break_cbvv",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Name",
+   "link_filters": "[[\"Item\",\"item_group\",\"=\",\"Finished Goods\"]]",
+   "options": "Item"
+  },
+  {
+   "fieldname": "contractor_name",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Contractor Name",
+   "options": "\nBhowmick Labour Contractor\nKrishna Enterprise\nYea Ali Enterprise\nMaa Kali Enterprise\nSubrata Roy Barman\nMS Giridhari\nSatyam Deepika Enterprise\nSwastika Enterprise"
+  },
+  {
+   "fieldname": "fettling_process",
+   "fieldtype": "Select",
+   "label": "Fettling Method  ",
+   "options": "\nGas Cutting\nRiser Cutting\nOther"
+  },
+  {
+   "fieldname": "column_break_lfqz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "available_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Available Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "fettling_quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Fettling Quantity"
+  },
+  {
+   "fetch_from": "item_name.custom_cast_weight_per_pc",
+   "fieldname": "cast_weight_in_kg",
+   "fieldtype": "Float",
+   "label": "Cast Weight (in Kg)"
+  },
+  {
+   "fieldname": "section_break_cbvv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Fettling Table",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-07-19 17:18:18.798744",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Fettling Table",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -243,11 +243,11 @@ app_license = "mit"
 # }
 
 
-doctype_js = {"No-Bake Mould Batch": "public/js/no_bake_mould_batch.js"}
-fixtures = [
-	{"dt": "Custom Field"},
-	{"dt": "Report"},
-	{"dt": "Property Setter"},
-	{"dt": "Print Format"},
-	{"dt": "DocType", "filters": [["module", "=", "Foundry-SHIW"]]},  # <-- Keep this as "Foundry-SHIW"
-]
+# doctype_js = {"No-Bake Mould Batch": "public/js/no_bake_mould_batch.js"}
+# fixtures = [
+# 	{"dt": "Custom Field"},
+# 	{"dt": "Report"},
+# 	{"dt": "Property Setter"},
+# 	{"dt": "Print Format"},
+# 	{"dt": "DocType", "filters": [["module", "=", "Foundry-SHIW"]]},  # <-- Keep this as "Foundry-SHIW"
+# ]

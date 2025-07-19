@@ -1,0 +1,99 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-14 11:38:40.228795",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "column_break_pbgq",
+  "rejection",
+  "item_name",
+  "column_break_qunv",
+  "quantity_rejected",
+  "rejection_stage",
+  "section_break_rnwg",
+  "shot_blast_date",
+  "pouring_id",
+  "column_break_wfku",
+  "shift_type",
+  "quantity"
+ ],
+ "fields": [
+  {
+   "fieldname": "column_break_pbgq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rejection",
+   "fieldtype": "Select",
+   "label": "Rejection Reason",
+   "options": "\nCold Metal\nSand Drop\nMisrun/Cold Shut\nSand Wash\nSoft Ramming\nMismatch\nShrinkage\nBlowhole\nPinhole\nShort Pouring\nMetal Penetration\nCrack\nSlag Inclusion\nCore Defect\nGas Void\nBad Surface\nImproper Cast Mark"
+  },
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Select",
+   "label": "Item Name"
+  },
+  {
+   "fieldname": "column_break_qunv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quantity_rejected",
+   "fieldtype": "Int",
+   "label": "Rejected Qty"
+  },
+  {
+   "fieldname": "rejection_stage",
+   "fieldtype": "Select",
+   "label": "Rejection Stage",
+   "options": "\nPouring\nShake Out\nShot Blast"
+  },
+  {
+   "fieldname": "section_break_rnwg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "shot_blast_date",
+   "fieldtype": "Date",
+   "label": "Shot Blast Date"
+  },
+  {
+   "fieldname": "pouring_id",
+   "fieldtype": "Link",
+   "label": "Pouring ID",
+   "options": "Pouring"
+  },
+  {
+   "fieldname": "column_break_wfku",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "label": "Shot Blast Shift Type",
+   "options": "\nDay Shift\nNight Shift"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Int",
+   "label": "Quantity"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-07-19 17:19:23.252213",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "First Line Inspection Report",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

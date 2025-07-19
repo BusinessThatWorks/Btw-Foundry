@@ -1,0 +1,117 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:{date} - {shift_type}",
+ "creation": "2025-04-04 20:51:24.709358",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "details_section",
+  "date",
+  "shift_type",
+  "supervisor_name",
+  "column_break_xckv",
+  "traceability_code",
+  "is_sample",
+  "tooling_details_section",
+  "mould_table",
+  "tab_2_tab",
+  "table_rhxb",
+  "total_consumption_valuation"
+ ],
+ "fields": [
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "label": "Shift Type",
+   "options": "\nDay Shift\nNIght Shift"
+  },
+  {
+   "fieldname": "supervisor_name",
+   "fieldtype": "Select",
+   "label": "Supervisor Name",
+   "options": "\nDeepak Mondal\nSamiran Saha"
+  },
+  {
+   "fieldname": "column_break_xckv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "traceability_code",
+   "fieldtype": "Data",
+   "label": "Traceability Code"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_sample",
+   "fieldtype": "Check",
+   "label": "Is Sample"
+  },
+  {
+   "fieldname": "tooling_details_section",
+   "fieldtype": "Section Break",
+   "label": "Tooling Details"
+  },
+  {
+   "fieldname": "mould_table",
+   "fieldtype": "Table",
+   "options": "New Mould Table",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tab_2_tab",
+   "fieldtype": "Tab Break",
+   "label": "Consumption"
+  },
+  {
+   "fieldname": "table_rhxb",
+   "fieldtype": "Table",
+   "options": "Consumption-Mould",
+   "reqd": 1
+  },
+  {
+   "fieldname": "total_consumption_valuation",
+   "fieldtype": "Float",
+   "label": "Total Consumption Valuation"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-19 17:16:54.529871",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Co2 Mould Batch",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

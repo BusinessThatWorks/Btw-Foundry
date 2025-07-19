@@ -1,0 +1,114 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:{date} - {shift_type} - {core_process}",
+ "creation": "2025-05-27 14:22:05.093579",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "core_process",
+  "column_break_lltu",
+  "shift_type",
+  "core_details_section",
+  "table_hbsf",
+  "section_break_tvvo",
+  "amended_from",
+  "consumption_tab",
+  "table_silm",
+  "total_consumption_valuation"
+ ],
+ "fields": [
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "core_process",
+   "fieldtype": "Select",
+   "label": "Core Process",
+   "options": "\nHPML Core\nNo-Bake Core\nJolt Squeeze (Green Sand) Core"
+  },
+  {
+   "fieldname": "column_break_lltu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "label": "Shift Type",
+   "options": "\nDay Shift\nNight Shift"
+  },
+  {
+   "fieldname": "core_details_section",
+   "fieldtype": "Section Break",
+   "label": "Core Details"
+  },
+  {
+   "fieldname": "table_hbsf",
+   "fieldtype": "Table",
+   "options": "Core Production Table"
+  },
+  {
+   "fieldname": "section_break_tvvo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Core Production",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "consumption_tab",
+   "fieldtype": "Tab Break",
+   "label": "Consumption"
+  },
+  {
+   "fieldname": "table_silm",
+   "fieldtype": "Table",
+   "options": "Core Consumption Table"
+  },
+  {
+   "fieldname": "total_consumption_valuation",
+   "fieldtype": "Float",
+   "label": "Total Consumption Valuation "
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-07-19 17:17:19.138282",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Core Production",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

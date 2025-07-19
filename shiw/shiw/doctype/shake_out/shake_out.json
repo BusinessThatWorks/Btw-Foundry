@@ -1,0 +1,121 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:SO - {date} - {shift_type}",
+ "creation": "2025-04-14 10:25:47.632275",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "rejection_analysis_report_tab",
+  "section_break_5hci",
+  "date",
+  "type",
+  "column_break_ysng",
+  "shift_type",
+  "column_break_rhie",
+  "amended_from",
+  "linked_stock_entry",
+  "treatment_details_section",
+  "table_abc",
+  "connections_tab"
+ ],
+ "fields": [
+  {
+   "fieldname": "rejection_analysis_report_tab",
+   "fieldtype": "Tab Break",
+   "label": "Shake Out"
+  },
+  {
+   "fieldname": "section_break_5hci",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Shake Out Date"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Type",
+   "options": "Shake Out"
+  },
+  {
+   "fieldname": "column_break_ysng",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "label": "Shake Out Shift Type",
+   "options": "\nDay Shift\nNight Shift"
+  },
+  {
+   "fieldname": "column_break_rhie",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Shake Out",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "linked_stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry ID",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "treatment_details_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_abc",
+   "fieldtype": "Table",
+   "options": "Treatment Table"
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-07-19 17:16:39.135007",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Shake Out",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

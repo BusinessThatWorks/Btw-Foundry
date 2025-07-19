@@ -1,0 +1,158 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:FTLNG - {date} - {shift_type}",
+ "creation": "2025-06-06 11:13:51.083065",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "column_break_ffls",
+  "shift_type",
+  "column_break_xmdj",
+  "linked_stock_entry",
+  "section_break_xnsm",
+  "table_tjba",
+  "section_break_xjht",
+  "total_fettling_quantity",
+  "column_break_hxlt",
+  "total_fettling_weight",
+  "section_break_asiz",
+  "amended_from",
+  "consumption_tab",
+  "table_pnnt",
+  "total_consumption_valuation",
+  "labour_consumption_tab",
+  "total_head",
+  "column_break_xuhb"
+ ],
+ "fields": [
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "column_break_ffls",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "label": "Shift Type",
+   "options": "\nDay Shift\nNight Shift"
+  },
+  {
+   "fieldname": "column_break_xmdj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "linked_stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry ID",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_xnsm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_tjba",
+   "fieldtype": "Table",
+   "options": "Fettling Table"
+  },
+  {
+   "fieldname": "section_break_xjht",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_fettling_quantity",
+   "fieldtype": "Int",
+   "label": "Total Fettling Quantity "
+  },
+  {
+   "fieldname": "column_break_hxlt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_fettling_weight",
+   "fieldtype": "Float",
+   "label": "Total Fettling Weight"
+  },
+  {
+   "fieldname": "section_break_asiz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Fettling",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "consumption_tab",
+   "fieldtype": "Tab Break",
+   "label": "Consumption"
+  },
+  {
+   "fieldname": "table_pnnt",
+   "fieldtype": "Table",
+   "options": "Consumption-Mould"
+  },
+  {
+   "fieldname": "total_consumption_valuation",
+   "fieldtype": "Float",
+   "label": "Total Consumption Valuation ",
+   "precision": "2"
+  },
+  {
+   "fieldname": "labour_consumption_tab",
+   "fieldtype": "Tab Break",
+   "label": "Labour Consumption"
+  },
+  {
+   "fieldname": "total_head",
+   "fieldtype": "Int",
+   "label": "Total Head "
+  },
+  {
+   "fieldname": "column_break_xuhb",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-07-19 17:18:08.427936",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Fettling",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

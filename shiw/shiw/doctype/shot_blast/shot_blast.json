@@ -1,0 +1,122 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:SB - {date} - {shift_type}",
+ "creation": "2025-05-09 17:41:45.906121",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "type",
+  "column_break_ujlh",
+  "shift_type",
+  "column_break_vwkc",
+  "linked_stock_entry",
+  "section_break_yuzy",
+  "table_short",
+  "amended_from",
+  "consumption_tab",
+  "table_ffte",
+  "total_consumption_valuation"
+ ],
+ "fields": [
+  {
+   "default": "Today",
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Shot Blast Date"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Type",
+   "options": "Shot Blast"
+  },
+  {
+   "fieldname": "column_break_ujlh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "label": "Shot Blast Shift Type",
+   "options": "\nDay Shift\nNight Shift"
+  },
+  {
+   "fieldname": "column_break_vwkc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "linked_stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry ",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_yuzy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_short",
+   "fieldtype": "Table",
+   "options": "Shakeout Table"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Shot Blast",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "consumption_tab",
+   "fieldtype": "Tab Break",
+   "label": "Consumption"
+  },
+  {
+   "fieldname": "table_ffte",
+   "fieldtype": "Table",
+   "options": "Consumption-Mould"
+  },
+  {
+   "fieldname": "total_consumption_valuation",
+   "fieldtype": "Float",
+   "label": "Total Consumption Valuation "
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-07-19 17:16:29.339351",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Shot Blast",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

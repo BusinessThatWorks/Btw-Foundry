@@ -1,0 +1,69 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-05 16:44:40.067441",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "tooling_id",
+  "column_break_ggbf",
+  "reason_for_mould_loss",
+  "column_break_nlmn",
+  "mould_loss_quantity",
+  "section_break_uxev",
+  "moulding_system"
+ ],
+ "fields": [
+  {
+   "fieldname": "tooling_id",
+   "fieldtype": "Link",
+   "label": "Tooling ID",
+   "options": "New Tooling"
+  },
+  {
+   "fieldname": "column_break_ggbf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reason_for_mould_loss",
+   "fieldtype": "Select",
+   "label": "Reason For Mould Loss",
+   "options": "\nMetal delay\nCore not available\nLadle not ready\nStopper Jam\nMould broken\nHPML both side sand spillage cleaning\nLack of manpower/Shift change\nInsufficient manpower"
+  },
+  {
+   "fieldname": "column_break_nlmn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mould_loss_quantity",
+   "fieldtype": "Int",
+   "label": "Mould Loss Quantity"
+  },
+  {
+   "fieldname": "section_break_uxev",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "moulding_system",
+   "fieldtype": "Select",
+   "label": "Moulding System",
+   "options": "\nCo2 Mould\nJolt Squeeze Mould\nNo Bake Mould\nHPML Mould\nGreen Sand Hand Mould"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-07-19 17:19:59.989803",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Reason For Mould Loss Table",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
