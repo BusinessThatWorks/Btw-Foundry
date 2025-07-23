@@ -14,7 +14,15 @@
   "column_break_haum",
   "start_no",
   "column_break_hjyr",
-  "remaining_mould"
+  "remaining_mould",
+  "section_break_aybg",
+  "cast_weight",
+  "column_break_dzis",
+  "bunch_weight",
+  "section_break_lkkm",
+  "total_cast_weight",
+  "column_break_qppl",
+  "total_bunch_weight"
  ],
  "fields": [
   {
@@ -66,13 +74,55 @@
    "in_list_view": 1,
    "label": "Actual Mould Quantity",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_aybg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "tooling.total_casting_weight",
+   "fieldname": "cast_weight",
+   "fieldtype": "Float",
+   "label": "Cast Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_dzis",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "tooling.bunch_weight",
+   "fieldname": "bunch_weight",
+   "fieldtype": "Float",
+   "label": "Bunch Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "section_break_lkkm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_cast_weight",
+   "fieldtype": "Float",
+   "label": "Total Cast Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_qppl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_bunch_weight",
+   "fieldtype": "Float",
+   "label": "Total Bunch Weight",
+   "precision": "2"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-19 17:21:06.036509",
+ "modified": "2025-07-22 16:22:00.169219",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "New Mould Table",
