@@ -1,53 +1,51 @@
 {
  "actions": [],
- "allow_import": 1,
  "allow_rename": 1,
  "autoname": "format:{date} - {shift_type}",
- "creation": "2025-04-04 20:51:24.709358",
+ "creation": "2025-04-04 20:48:01.435023",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "details_section",
   "date",
   "shift_type",
   "supervisor_name",
-  "column_break_xckv",
+  "column_break_oeho",
   "traceability_code",
   "is_sample",
   "tooling_details_section",
   "mould_table",
-  "section_break_icwh",
+  "section_break_nmdc",
   "total_bunch_weight",
+  "column_break_iaqt",
   "total_cast_weight",
   "tab_2_tab",
-  "table_rhxb",
+  "table_pzkg",
   "total_consumption_valuation"
  ],
  "fields": [
   {
-   "fieldname": "details_section",
-   "fieldtype": "Section Break",
-   "label": "Details"
-  },
-  {
    "fieldname": "date",
    "fieldtype": "Date",
-   "label": "Date"
+   "in_list_view": 1,
+   "label": "Date",
+   "reqd": 1
   },
   {
    "fieldname": "shift_type",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Shift Type",
-   "options": "\nDay Shift\nNIght Shift"
+   "options": "\nDay Shift\nNight Shift",
+   "reqd": 1
   },
   {
    "fieldname": "supervisor_name",
    "fieldtype": "Select",
    "label": "Supervisor Name",
-   "options": "\nDeepak Mondal\nSamiran Saha"
+   "options": "\nDeepak Mondal\nSamiran Saha\nAbhishek Manik\nSourav Maity"
   },
   {
-   "fieldname": "column_break_xckv",
+   "fieldname": "column_break_oeho",
    "fieldtype": "Column Break"
   },
   {
@@ -73,23 +71,7 @@
    "reqd": 1
   },
   {
-   "fieldname": "tab_2_tab",
-   "fieldtype": "Tab Break",
-   "label": "Consumption"
-  },
-  {
-   "fieldname": "table_rhxb",
-   "fieldtype": "Table",
-   "options": "Consumption-Mould",
-   "reqd": 1
-  },
-  {
-   "fieldname": "total_consumption_valuation",
-   "fieldtype": "Float",
-   "label": "Total Consumption Valuation"
-  },
-  {
-   "fieldname": "section_break_icwh",
+   "fieldname": "section_break_nmdc",
    "fieldtype": "Section Break"
   },
   {
@@ -99,19 +81,39 @@
    "precision": "2"
   },
   {
+   "fieldname": "column_break_iaqt",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "total_cast_weight",
    "fieldtype": "Float",
    "label": "Total Cast Weight",
    "precision": "2"
+  },
+  {
+   "fieldname": "tab_2_tab",
+   "fieldtype": "Tab Break",
+   "label": "Consumption"
+  },
+  {
+   "fieldname": "table_pzkg",
+   "fieldtype": "Table",
+   "options": "Consumption-Mould",
+   "reqd": 1
+  },
+  {
+   "fieldname": "total_consumption_valuation",
+   "fieldtype": "Float",
+   "label": "Total Consumption Valuation"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-23 17:21:53.047675",
+ "modified": "2025-07-23 17:16:43.383307",
  "modified_by": "Administrator",
  "module": "shiw",
- "name": "Co2 Mould Batch",
+ "name": "No-Bake Mould Batch",
  "naming_rule": "Expression",
  "owner": "subhangee@clapgrow.com",
  "permissions": [

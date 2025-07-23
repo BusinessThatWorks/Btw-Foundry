@@ -1,34 +1,28 @@
 {
  "actions": [],
- "allow_import": 1,
  "allow_rename": 1,
  "autoname": "format:{date} - {shift_type}",
- "creation": "2025-04-04 20:51:24.709358",
+ "creation": "2025-04-04 17:03:16.654143",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "details_section",
   "date",
   "shift_type",
   "supervisor_name",
-  "column_break_xckv",
+  "column_break_rcwx",
   "traceability_code",
   "is_sample",
-  "tooling_details_section",
+  "section_break_ftyt",
   "mould_table",
-  "section_break_icwh",
+  "section_break_svge",
   "total_bunch_weight",
+  "column_break_bmno",
   "total_cast_weight",
   "tab_2_tab",
-  "table_rhxb",
+  "table_qgds",
   "total_consumption_valuation"
  ],
  "fields": [
-  {
-   "fieldname": "details_section",
-   "fieldtype": "Section Break",
-   "label": "Details"
-  },
   {
    "fieldname": "date",
    "fieldtype": "Date",
@@ -38,7 +32,7 @@
    "fieldname": "shift_type",
    "fieldtype": "Select",
    "label": "Shift Type",
-   "options": "\nDay Shift\nNIght Shift"
+   "options": "\nDay Shift\nNight Shift"
   },
   {
    "fieldname": "supervisor_name",
@@ -47,7 +41,7 @@
    "options": "\nDeepak Mondal\nSamiran Saha"
   },
   {
-   "fieldname": "column_break_xckv",
+   "fieldname": "column_break_rcwx",
    "fieldtype": "Column Break"
   },
   {
@@ -62,7 +56,7 @@
    "label": "Is Sample"
   },
   {
-   "fieldname": "tooling_details_section",
+   "fieldname": "section_break_ftyt",
    "fieldtype": "Section Break",
    "label": "Tooling Details"
   },
@@ -73,23 +67,7 @@
    "reqd": 1
   },
   {
-   "fieldname": "tab_2_tab",
-   "fieldtype": "Tab Break",
-   "label": "Consumption"
-  },
-  {
-   "fieldname": "table_rhxb",
-   "fieldtype": "Table",
-   "options": "Consumption-Mould",
-   "reqd": 1
-  },
-  {
-   "fieldname": "total_consumption_valuation",
-   "fieldtype": "Float",
-   "label": "Total Consumption Valuation"
-  },
-  {
-   "fieldname": "section_break_icwh",
+   "fieldname": "section_break_svge",
    "fieldtype": "Section Break"
   },
   {
@@ -99,19 +77,39 @@
    "precision": "2"
   },
   {
+   "fieldname": "column_break_bmno",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "total_cast_weight",
    "fieldtype": "Float",
    "label": "Total Cast Weight",
    "precision": "2"
+  },
+  {
+   "fieldname": "tab_2_tab",
+   "fieldtype": "Tab Break",
+   "label": "Consumption"
+  },
+  {
+   "fieldname": "table_qgds",
+   "fieldtype": "Table",
+   "options": "Consumption-Mould",
+   "reqd": 1
+  },
+  {
+   "fieldname": "total_consumption_valuation",
+   "fieldtype": "Float",
+   "label": "Total Consumption Valuation"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-23 17:21:53.047675",
+ "modified": "2025-07-23 17:16:27.989286",
  "modified_by": "Administrator",
  "module": "shiw",
- "name": "Co2 Mould Batch",
+ "name": "Jolt Squeeze Mould Batch",
  "naming_rule": "Expression",
  "owner": "subhangee@clapgrow.com",
  "permissions": [
