@@ -251,3 +251,6 @@ app_license = "mit"
 # 	{"dt": "Print Format"},
 # 	{"dt": "DocType", "filters": [["module", "=", "Foundry-SHIW"]]},  # <-- Keep this as "Foundry-SHIW"
 # ]
+
+# fixtures = ["Custom Field"]
+fixtures = [{"doctype": "Custom Field", "filters": {"module": "shiw"}}]
