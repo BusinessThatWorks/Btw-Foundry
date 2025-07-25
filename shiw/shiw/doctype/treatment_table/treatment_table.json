@@ -11,8 +11,10 @@
   "grade",
   "column_break_yerd",
   "casting_weight_in_kg",
+  "total_casting_weight",
   "column_break_rfdz",
   "bunch_weight_in_kg",
+  "total_bunch_weight",
   "column_break_knvl",
   "heat_no",
   "column_break_resc",
@@ -141,13 +143,25 @@
    "fieldtype": "Link",
    "label": "Pouring ID",
    "options": "Pouring"
+  },
+  {
+   "fieldname": "total_casting_weight",
+   "fieldtype": "Float",
+   "label": "Total Casting Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "total_bunch_weight",
+   "fieldtype": "Float",
+   "label": "Total Bunch Weight",
+   "precision": "2"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-19 17:21:11.125934",
+ "modified": "2025-07-25 15:06:21.642745",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Treatment Table",
