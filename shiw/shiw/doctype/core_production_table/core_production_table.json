@@ -7,7 +7,11 @@
  "engine": "InnoDB",
  "field_order": [
   "core_name",
-  "core_quantity"
+  "core_quantity",
+  "bunch_weight",
+  "cast_weight",
+  "total_cast_weight",
+  "total_bunch_weight"
  ],
  "fields": [
   {
@@ -20,13 +24,38 @@
    "fieldname": "core_quantity",
    "fieldtype": "Int",
    "label": "Core Quantity"
+  },
+  {
+   "fetch_from": "core_name.custom_bunch_weight_per_mould",
+   "fieldname": "bunch_weight",
+   "fieldtype": "Float",
+   "label": "Bunch Weight",
+   "precision": "2"
+  },
+  {
+   "fetch_from": "core_name.custom_cast_weight_per_pc",
+   "fieldname": "cast_weight",
+   "fieldtype": "Float",
+   "label": "Cast Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "total_cast_weight",
+   "fieldtype": "Float",
+   "label": "Total Cast Weight ",
+   "precision": "2"
+  },
+  {
+   "fieldname": "total_bunch_weight",
+   "fieldtype": "Float",
+   "label": "Total Bunch Weight"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-19 17:19:09.579499",
+ "modified": "2025-07-25 14:28:59.574940",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Core Production Table",

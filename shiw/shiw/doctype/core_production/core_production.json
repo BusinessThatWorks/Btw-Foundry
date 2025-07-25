@@ -13,6 +13,10 @@
   "shift_type",
   "core_details_section",
   "table_hbsf",
+  "section_break_upom",
+  "total_cast_weight",
+  "column_break_iykh",
+  "total_bunch_weight",
   "section_break_tvvo",
   "amended_from",
   "consumption_tab",
@@ -79,13 +83,33 @@
    "fieldname": "total_consumption_valuation",
    "fieldtype": "Float",
    "label": "Total Consumption Valuation "
+  },
+  {
+   "fieldname": "section_break_upom",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_cast_weight",
+   "fieldtype": "Float",
+   "label": "Total Cast Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_iykh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_bunch_weight",
+   "fieldtype": "Float",
+   "label": "Total Bunch Weight",
+   "precision": "2"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-19 17:17:19.138282",
+ "modified": "2025-07-25 14:27:57.394019",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Core Production",
