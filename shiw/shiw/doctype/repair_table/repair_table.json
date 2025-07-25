@@ -10,7 +10,8 @@
   "repairing_qty",
   "repairing_reason",
   "contractor_name",
-  "cast_weight_in_kg"
+  "cast_weight_in_kg",
+  "total_cast_weight"
  ],
  "fields": [
   {
@@ -41,13 +42,18 @@
    "fieldname": "cast_weight_in_kg",
    "fieldtype": "Float",
    "label": "Cast Weight (In Kg)"
+  },
+  {
+   "fieldname": "total_cast_weight",
+   "fieldtype": "Float",
+   "label": "Total Cast Weight"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-19 17:21:27.521271",
+ "modified": "2025-07-25 15:56:23.106739",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Repair Table",
