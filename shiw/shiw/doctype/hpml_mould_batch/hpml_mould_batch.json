@@ -20,7 +20,7 @@
   "column_break_hzom",
   "total_cast_weight",
   "consumption_tab",
-  "table_rwpz",
+  "consumption_mould",
   "total_consumption_valuation"
  ],
  "fields": [
@@ -93,22 +93,22 @@
    "label": "Consumption"
   },
   {
-   "fieldname": "table_rwpz",
-   "fieldtype": "Table",
-   "options": "Consumption-Mould",
-   "reqd": 1
-  },
-  {
    "fieldname": "total_consumption_valuation",
    "fieldtype": "Float",
    "label": "Total Consumption Valuation",
    "precision": "2"
+  },
+  {
+   "fieldname": "consumption_mould",
+   "fieldtype": "Table",
+   "options": "Consumption-Mould",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-23 17:16:52.074071",
+ "modified": "2025-07-27 20:19:09.979333",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "HPML Mould Batch",

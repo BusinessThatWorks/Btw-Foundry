@@ -1,58 +1,43 @@
 {
  "actions": [],
- "allow_import": 1,
  "allow_rename": 1,
- "autoname": "format:{PRNG} - {date} - {shift_type} - {##}",
- "creation": "2025-04-04 22:17:59.609455",
+ "autoname": "format:SLR - {date} - {shift_type}",
+ "creation": "2025-05-31 11:08:18.257756",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "date",
-  "type",
-  "column_break_zvvm",
+  "column_break_venf",
   "shift_type",
-  "column_break_odaj",
-  "column_break_agrf",
+  "column_break_moje",
   "linked_stock_entry",
-  "section_break_fshp",
-  "mould_batch",
-  "amended_from",
-  "section_break_gyie",
-  "total_pouring_weight"
+  "section_break_wxoa",
+  "table_scpn",
+  "section_break_ypni",
+  "total_rejected_quantity",
+  "column_break_nbmx",
+  "rejected_wt",
+  "section_break_zmpo",
+  "amended_from"
  ],
  "fields": [
   {
    "fieldname": "date",
    "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "Date",
-   "reqd": 1
+   "label": "Date"
   },
   {
-   "fieldname": "type",
-   "fieldtype": "Select",
-   "hidden": 1,
-   "label": "Type",
-   "options": "Pouring"
-  },
-  {
-   "fieldname": "column_break_zvvm",
+   "fieldname": "column_break_venf",
    "fieldtype": "Column Break"
   },
   {
    "fieldname": "shift_type",
    "fieldtype": "Select",
-   "in_list_view": 1,
    "label": "Shift Type",
-   "options": "\nDay Shift\nNight Shift",
-   "reqd": 1
+   "options": "\nDay Shift\nNight Shift"
   },
   {
-   "fieldname": "column_break_odaj",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "column_break_agrf",
+   "fieldname": "column_break_moje",
    "fieldtype": "Column Break"
   },
   {
@@ -63,43 +48,56 @@
    "read_only": 1
   },
   {
-   "fieldname": "section_break_fshp",
+   "fieldname": "section_break_wxoa",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "mould_batch",
+   "fieldname": "table_scpn",
    "fieldtype": "Table",
-   "options": "Mould Batch",
+   "options": "Second Line Rejection Table",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_ypni",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_rejected_quantity",
+   "fieldtype": "Int",
+   "label": "Total Rejected Quantity"
+  },
+  {
+   "fieldname": "column_break_nbmx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rejected_wt",
+   "fieldtype": "Float",
+   "label": "Rejected Weight (in Kg)"
+  },
+  {
+   "fieldname": "section_break_zmpo",
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Pouring",
+   "options": "Second Line Rejection",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "section_break_gyie",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "total_pouring_weight",
-   "fieldtype": "Float",
-   "label": "Total Pouring Weight"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-28 15:48:36.931400",
+ "modified": "2025-07-30 15:53:48.036092",
  "modified_by": "Administrator",
  "module": "shiw",
- "name": "Pouring",
+ "name": "Second Line Rejection",
  "naming_rule": "Expression",
  "owner": "subhangee@clapgrow.com",
  "permissions": [
@@ -113,6 +111,7 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

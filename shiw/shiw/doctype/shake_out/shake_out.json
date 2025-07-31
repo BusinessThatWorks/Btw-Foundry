@@ -18,6 +18,9 @@
   "linked_stock_entry",
   "treatment_details_section",
   "table_abc",
+  "section_break_pnmg",
+  "total_shakeout_cast_weight",
+  "total_shakeout_bunch_weight",
   "connections_tab"
  ],
  "fields": [
@@ -86,13 +89,29 @@
    "fieldname": "connections_tab",
    "fieldtype": "Tab Break",
    "label": "Connections"
+  },
+  {
+   "fieldname": "section_break_pnmg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_shakeout_cast_weight",
+   "fieldtype": "Float",
+   "label": "Total Shakeout Cast Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "total_shakeout_bunch_weight",
+   "fieldtype": "Float",
+   "label": "Total Shakeout Bunch Weight",
+   "precision": "2"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-19 17:16:39.135007",
+ "modified": "2025-07-28 15:52:53.061326",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Shake Out",
