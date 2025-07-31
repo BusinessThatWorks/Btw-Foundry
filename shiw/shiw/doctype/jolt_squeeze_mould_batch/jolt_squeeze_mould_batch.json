@@ -19,7 +19,7 @@
   "column_break_bmno",
   "total_cast_weight",
   "tab_2_tab",
-  "consumption_mould",
+  "table_qgds",
   "total_consumption_valuation"
  ],
  "fields": [
@@ -97,7 +97,7 @@
    "label": "Total Consumption Valuation"
   },
   {
-   "fieldname": "consumption_mould",
+   "fieldname": "table_qgds",
    "fieldtype": "Table",
    "options": "Consumption-Mould",
    "reqd": 1
@@ -106,7 +106,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-27 20:31:27.274588",
+ "modified": "2025-07-31 15:03:20.614668",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Jolt Squeeze Mould Batch",
