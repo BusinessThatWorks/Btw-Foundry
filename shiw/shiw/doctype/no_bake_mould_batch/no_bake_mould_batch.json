@@ -19,7 +19,7 @@
   "column_break_iaqt",
   "total_cast_weight",
   "tab_2_tab",
-  "table_pzkg",
+  "consumption_mould",
   "total_consumption_valuation"
  ],
  "fields": [
@@ -101,7 +101,7 @@
    "label": "Total Consumption Valuation"
   },
   {
-   "fieldname": "table_pzkg",
+   "fieldname": "consumption_mould",
    "fieldtype": "Table",
    "options": "Consumption-Mould",
    "reqd": 1
@@ -110,7 +110,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-31 15:03:59.708623",
+ "modified": "2025-07-31 15:19:06.663138",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "No-Bake Mould Batch",

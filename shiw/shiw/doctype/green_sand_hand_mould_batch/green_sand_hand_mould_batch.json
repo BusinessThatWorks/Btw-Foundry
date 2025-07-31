@@ -19,7 +19,7 @@
   "column_break_lpdq",
   "total_bunch_weight",
   "consumption_tab",
-  "table_mcjm",
+  "consumption_mould",
   "total_consumption_valuation"
  ],
  "fields": [
@@ -97,7 +97,7 @@
    "label": "Total Consumption Valuation"
   },
   {
-   "fieldname": "table_mcjm",
+   "fieldname": "consumption_mould",
    "fieldtype": "Table",
    "options": "Consumption-Mould",
    "reqd": 1
@@ -106,7 +106,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-31 15:04:35.099654",
+ "modified": "2025-07-31 15:18:46.409003",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Green Sand Hand Mould Batch",

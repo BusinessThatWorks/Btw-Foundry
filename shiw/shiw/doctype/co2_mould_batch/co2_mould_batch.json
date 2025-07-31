@@ -20,7 +20,7 @@
   "total_bunch_weight",
   "total_cast_weight",
   "tab_2_tab",
-  "table_rhxb",
+  "consumption_mould",
   "total_consumption_valuation"
  ],
  "fields": [
@@ -99,7 +99,7 @@
    "precision": "2"
   },
   {
-   "fieldname": "table_rhxb",
+   "fieldname": "consumption_mould",
    "fieldtype": "Table",
    "options": "Consumption-Mould",
    "reqd": 1
@@ -108,7 +108,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-31 15:02:36.972765",
+ "modified": "2025-07-31 15:19:24.010767",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Co2 Mould Batch",
