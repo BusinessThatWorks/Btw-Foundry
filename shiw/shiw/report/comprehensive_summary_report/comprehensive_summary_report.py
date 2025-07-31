@@ -1016,24 +1016,38 @@ def execute(filters=None):
         row_liquid_metal_pig.append(pig_qty)
     data.append(row_liquid_metal_pig)
 
-    # Row 7: Burning Loss %
+    # # Row 7: Burning Loss %
+    # row_burning_loss = ["Burning Loss %"]
+    # for day in range(1, days_in_month + 1):
+    #     date_str = get_date(day)
+    #     loss_pct = (
+    #         frappe.db.sql(
+    #             """
+    #             SELECT AVG(burning_loss)
+    #             FROM `tabHeat`
+    #             WHERE `date` = %s AND docstatus = 1
+    #             """,
+    #             (date_str,),
+    #             as_list=True,
+    #         )[0][0]
+    #         or 0
+    #     )
+    #     row_burning_loss.append(round(loss_pct, 2))
+    # data.append(row_burning_loss)
     row_burning_loss = ["Burning Loss %"]
-    for day in range(1, days_in_month + 1):
-        date_str = get_date(day)
-        loss_pct = (
-            frappe.db.sql(
-                """
-                SELECT AVG(burning_loss)
-                FROM `tabHeat`
-                WHERE `date` = %s AND docstatus = 1
-                """,
-                (date_str,),
-                as_list=True,
-            )[0][0]
-            or 0
-        )
-        row_burning_loss.append(round(loss_pct, 2))
+    for i in range(1, days_in_month + 1):
+        melted = row_rm_melted[i] or 0
+        liquid = row_liquid_metal[i] or 0
+
+        if melted > 0:
+            loss_pct = round(((melted - liquid) / melted) * 100, 2)
+        else:
+            loss_pct = 0
+
+        row_burning_loss.append(loss_pct)
+
     data.append(row_burning_loss)
+
 
     # Row 8: Co2 Mould Bunch Weight
     row_bunch_weight = ["Co2 Mould Bunch Weight"]
@@ -1111,81 +1125,81 @@ def execute(filters=None):
         row_hpml_bunch_weight.append(hpml_bunch_weight)
     data.append(row_hpml_bunch_weight)
 
-    # # Row 12: No-Bake Mould Bunch Weight
-    # row_nb_bunch_weight = ["No-Bake Mould Bunch Weight"]
-    # for day in range(1, days_in_month + 1):
-    #     date_str = get_date(day)
-    #     nb_bunch_weight = (
-    #         frappe.db.sql(
-    #             """
-    #             SELECT SUM(total_bunch_weight)
-    #             FROM `tabNo-Bake Mould Batch`
-    #             WHERE `date` = %s
-    #             """,
-    #             (date_str,),
-    #             as_list=True,
-    #         )[0][0]
-    #         or 0
-    #     )
-    #     row_nb_bunch_weight.append(nb_bunch_weight)
-    # data.append(row_nb_bunch_weight)
+    # Row 12: No-Bake Mould Bunch Weight
+    row_nb_bunch_weight = ["No-Bake Mould Bunch Weight"]
+    for day in range(1, days_in_month + 1):
+        date_str = get_date(day)
+        nb_bunch_weight = (
+            frappe.db.sql(
+                """
+                SELECT SUM(total_bunch_weight)
+                FROM `tabNo-Bake Mould Batch`
+                WHERE `date` = %s
+                """,
+                (date_str,),
+                as_list=True,
+            )[0][0]
+            or 0
+        )
+        row_nb_bunch_weight.append(nb_bunch_weight)
+    data.append(row_nb_bunch_weight)
 
-    # # Row 13: No-Bake Mould Cast Weight
-    # row_nb_cast_weight = ["No-Bake Mould Cast Weight"]
-    # for day in range(1, days_in_month + 1):
-    #     date_str = get_date(day)
-    #     nb_cast_weight = (
-    #         frappe.db.sql(
-    #             """
-    #             SELECT SUM(total_cast_weight)
-    #             FROM `tabNo-Bake Mould Batch`
-    #             WHERE `date` = %s
-    #             """,
-    #             (date_str,),
-    #             as_list=True,
-    #         )[0][0]
-    #         or 0
-    #     )
-    #     row_nb_cast_weight.append(nb_cast_weight)
-    # data.append(row_nb_cast_weight)
+    # Row 13: No-Bake Mould Cast Weight
+    row_nb_cast_weight = ["No-Bake Mould Cast Weight"]
+    for day in range(1, days_in_month + 1):
+        date_str = get_date(day)
+        nb_cast_weight = (
+            frappe.db.sql(
+                """
+                SELECT SUM(total_cast_weight)
+                FROM `tabNo-Bake Mould Batch`
+                WHERE `date` = %s
+                """,
+                (date_str,),
+                as_list=True,
+            )[0][0]
+            or 0
+        )
+        row_nb_cast_weight.append(nb_cast_weight)
+    data.append(row_nb_cast_weight)
 
-    # # Row 14: Jolt Squeeze Mould Bunch Weight
-    # row_js_bunch_weight = ["Jolt Squeeze Mould Bunch Weight"]
-    # for day in range(1, days_in_month + 1):
-    #     date_str = get_date(day)
-    #     js_bunch_weight = (
-    #         frappe.db.sql(
-    #             """
-    #             SELECT SUM(total_bunch_weight)
-    #             FROM `tabJolt Squeeze Mould Batch`
-    #             WHERE `date` = %s
-    #             """,
-    #             (date_str,),
-    #             as_list=True,
-    #         )[0][0]
-    #         or 0
-    #     )
-    #     row_js_bunch_weight.append(js_bunch_weight)
-    # data.append(row_js_bunch_weight)
+    # Row 14: Jolt Squeeze Mould Bunch Weight
+    row_js_bunch_weight = ["Jolt Squeeze Mould Bunch Weight"]
+    for day in range(1, days_in_month + 1):
+        date_str = get_date(day)
+        js_bunch_weight = (
+            frappe.db.sql(
+                """
+                SELECT SUM(total_bunch_weight)
+                FROM `tabJolt Squeeze Mould Batch`
+                WHERE `date` = %s
+                """,
+                (date_str,),
+                as_list=True,
+            )[0][0]
+            or 0
+        )
+        row_js_bunch_weight.append(js_bunch_weight)
+    data.append(row_js_bunch_weight)
 
-    # # Row 15: Jolt Squeeze Mould Cast Weight
-    # row_js_cast_weight = ["Jolt Squeeze Mould Cast Weight"]
-    # for day in range(1, days_in_month + 1):
-    #     date_str = get_date(day)
-    #     js_cast_weight = (
-    #         frappe.db.sql(
-    #             """
-    #             SELECT SUM(total_cast_weight)
-    #             FROM `tabJolt Squeeze Mould Batch`
-    #             WHERE `date` = %s
-    #             """,
-    #             (date_str,),
-    #             as_list=True,
-    #         )[0][0]
-    #         or 0
-    #     )
-    #     row_js_cast_weight.append(js_cast_weight)
-    # data.append(row_js_cast_weight)
+    # Row 15: Jolt Squeeze Mould Cast Weight
+    row_js_cast_weight = ["Jolt Squeeze Mould Cast Weight"]
+    for day in range(1, days_in_month + 1):
+        date_str = get_date(day)
+        js_cast_weight = (
+            frappe.db.sql(
+                """
+                SELECT SUM(total_cast_weight)
+                FROM `tabJolt Squeeze Mould Batch`
+                WHERE `date` = %s
+                """,
+                (date_str,),
+                as_list=True,
+            )[0][0]
+            or 0
+        )
+        row_js_cast_weight.append(js_cast_weight)
+    data.append(row_js_cast_weight)
 
     # # Row 16: Green Sand Hand Mould Bunch Weight
     # row_gs_bunch_weight = ["Green Sand Hand Mould Bunch Weight"]
@@ -1447,6 +1461,79 @@ def execute(filters=None):
     #     row_deviation_wt.append(deviation_wt)
 
     # data.append(row_deviation_wt)
+
+
+    # # Row 28: Repair WT
+    # row_repair_wt = ["Repair WT"]
+
+    # for day in range(1, days_in_month + 1):
+    #     date_str = get_date(day)
+
+    #     repair_wt = (
+    #         frappe.db.sql(
+    #             """
+    #             SELECT SUM(total_repair_weight)
+    #             FROM `tabRepair`
+    #             WHERE `date` = %s
+    #             """,
+    #             (date_str,),
+    #             as_list=True,
+    #         )[0][0]
+    #         or 0
+    #     )
+
+    #     row_repair_wt.append(repair_wt)
+
+    # data.append(row_repair_wt)
+
+    # # Row 29: Rejection Weight (Second Line)
+    # row_second_rejection_weight = ["Rejection Weight (Second Line)"]
+
+    # for day in range(1, days_in_month + 1):
+    #     date_str = get_date(day)
+
+    #     second_rejection_weight = (
+    #         frappe.db.sql(
+    #             """
+    #             SELECT SUM(rejected_wt)
+    #             FROM `tabSecond Line Rejection`
+    #             WHERE `date` = %s
+    #             """,
+    #             (date_str,),
+    #             as_list=True,
+    #         )[0][0]
+    #         or 0
+    #     )
+
+    #     row_second_rejection_weight.append(second_rejection_weight)
+
+    # data.append(row_second_rejection_weight)
+
+    # # Row 30: Heat Treatment Weight
+    # row_heat_treatment_wt = ["Heat Treatment Weight"]
+
+    # for day in range(1, days_in_month + 1):
+    #     date_str = get_date(day)
+
+    #     heat_treatment_wt = (
+    #         frappe.db.sql(
+    #             """
+    #             SELECT SUM(total_heat_treatment)
+    #             FROM `tabHeat Treatment`
+    #             WHERE `date` = %s
+    #             """,
+    #             (date_str,),
+    #             as_list=True,
+    #         )[0][0]
+    #         or 0
+    #     )
+
+    #     row_heat_treatment_wt.append(heat_treatment_wt)
+
+    # data.append(row_heat_treatment_wt)
+
+
+
 
 
     return columns, data
