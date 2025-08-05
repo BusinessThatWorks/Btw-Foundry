@@ -91,18 +91,17 @@
    "fieldtype": "Column Break"
   },
   {
-   "allow_on_submit": 1,
    "fieldname": "total_casting_weight",
    "fieldtype": "Float",
    "label": "Total Casting Weight (In Kg)",
-   "precision": "2"
+   "precision": "2",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_eooi",
    "fieldtype": "Column Break"
   },
   {
-   "allow_on_submit": 1,
    "fieldname": "bunch_weight",
    "fieldtype": "Float",
    "label": "Bunch Weight (In Kg)",
@@ -113,22 +112,22 @@
    "fieldtype": "Column Break"
   },
   {
-   "allow_on_submit": 1,
    "fieldname": "runner_riser_weight",
    "fieldtype": "Float",
    "label": "Runner Riser Weight (in Kg)",
-   "precision": "2"
+   "precision": "2",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_zymb",
    "fieldtype": "Column Break"
   },
   {
-   "allow_on_submit": 1,
    "fieldname": "yield",
    "fieldtype": "Float",
    "label": "Yield %",
-   "precision": "2"
+   "precision": "2",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_asoi",
@@ -305,7 +304,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-08-05 12:00:18.431321",
+ "modified": "2025-08-05 12:32:59.956631",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "New Tooling",
