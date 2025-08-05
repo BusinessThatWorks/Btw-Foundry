@@ -254,3 +254,18 @@ app_license = "mit"
 
 # fixtures = ["Custom Field"]
 fixtures = [{"doctype": "Custom Field", "filters": {"module": "shiw"}}]
+
+doctype_js = {
+  "BOM": "public/js/bom.js"
+}
+
+
+doc_events = {
+    "BOM": {
+      "before_save": "shiw.override.bom.apply_custom_rates_on_save",
+        # "before_save": "shiw.override.bom.custom_bom_rates",
+        # "on_submit": "shiw.override.bom.custom_bom_rates"
+        # "on_update_after_submit": "shiw.override.bom.fix_rates_after_submit"
+        "on_submit": "shiw.override.bom.enqueue_post_submit_rate_fix"
+    }
+}
