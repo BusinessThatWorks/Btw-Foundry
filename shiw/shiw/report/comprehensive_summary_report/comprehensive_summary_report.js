@@ -46,7 +46,7 @@ frappe.query_reports["Comprehensive Summary Report"] = {
 			"fieldname": "year",
 			"label": "Year",
 			"fieldtype": "Int",
-			"default": "{{ frappe.utils.nowdate()[:4] | int }}"
+			// "default": "{{ frappe.utils.nowdate()[:4] | int }}"
 		},
 		{
 			"fieldname": "start_day",
