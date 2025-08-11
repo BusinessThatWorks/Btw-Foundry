@@ -1,0 +1,134 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:DVTN - {date} - {shift_type}",
+ "creation": "2025-05-28 10:26:34.236247",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "column_break_qlch",
+  "shift_type",
+  "section_break_ugrs",
+  "table_uprh",
+  "section_break_zsmr",
+  "total_deviation_qty",
+  "total_deviation_weight",
+  "column_break_yjnr",
+  "deviation_qty_",
+  "section_break_dh9z",
+  "amended_from",
+  "consumption_tab",
+  "table_lqmp",
+  "total_consumption_valuation"
+ ],
+ "fields": [
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "column_break_qlch",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "label": "Shift Type",
+   "options": "\nDay Shift\nNight Shift"
+  },
+  {
+   "fieldname": "section_break_ugrs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_uprh",
+   "fieldtype": "Table",
+   "options": "Deviation Table"
+  },
+  {
+   "fieldname": "section_break_zsmr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_deviation_qty",
+   "fieldtype": "Int",
+   "label": "Total Deviation Qty"
+  },
+  {
+   "fieldname": "total_deviation_weight",
+   "fieldtype": "Float",
+   "label": "Total Deviation Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_yjnr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "deviation_qty_",
+   "fieldtype": "Percent",
+   "label": "Deviation Qty %"
+  },
+  {
+   "fieldname": "section_break_dh9z",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "First Line Deviation",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "consumption_tab",
+   "fieldtype": "Tab Break",
+   "label": "Consumption"
+  },
+  {
+   "fieldname": "table_lqmp",
+   "fieldtype": "Table",
+   "options": "Consumption-Mould"
+  },
+  {
+   "fieldname": "total_consumption_valuation",
+   "fieldtype": "Float",
+   "label": "Total Consumption Valuation "
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-08-11 14:33:03.342051",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "First Line Deviation",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
