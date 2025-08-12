@@ -885,6 +885,188 @@ class FactoryDailyReport(Document):
 #actuall code
 
 
+# import frappe
+
+# @frappe.whitelist()
+# def get_activity_totals(date):
+#     activities = {
+#         "HPML Mould Batch": {
+#             "doctype": "HPML Mould Batch",
+#             "consumption_field": "total_consumption_valuation"
+#         },
+#         "Jolt Squeeze Mould Batch": {
+#             "doctype": "Jolt Squeeze Mould Batch",
+#             "consumption_field": "total_consumption_valuation"
+#         },
+#         "Heat-ladle": { 
+#             "doctype": "Heat",
+#             "consumption_field": "total_ladle_consumption_valuation"
+#         },
+#         "Heat-charge": {  # new activity
+#             "doctype": "Heat",
+#             "consumption_field": "total_charge_mix_valuation"
+#         },
+#         "Co2 Mould Batch": {
+#             "doctype": "Co2 Mould Batch",
+#             "consumption_field": "total_consumption_valuation"
+#         },
+#         "Green Sand Hand Mould Batch": {
+#             "doctype": "Green Sand Hand Mould Batch",
+#             "consumption_field": "total_consumption_valuation"
+#         },
+#         "No-Bake Mould Batch": {
+#             "doctype": "No-Bake Mould Batch",
+#             "consumption_field": "total_consumption_valuation"
+#         },
+#         "Pouring": {
+#             "doctype": "Pouring",
+#             "consumption_field": "total_consumption_valuation"
+#         },
+#         "Shake Out": {
+#             "doctype": "Shake Out",
+#             "consumption_field": "total_consumption_valuation"
+#         },
+#         "Shot Blast": {
+#             "doctype": "Shot Blast",
+#             "consumption_field": "total_consumption_valuation"
+#         },
+#         "Fettling": {
+#             "doctype": "Fettling",
+#             "consumption_field": "total_consumption_valuation"
+#         },
+#         "Finishing": {
+#             "doctype": "Finishing",
+#             "consumption_field": "total_consumption_valuation"
+#         },
+#         "Paint": {
+#             "doctype": "Paint",
+#             "consumption_field": "total_consumption_valuation"
+#         },
+#         "Repair": {
+#             "doctype": "Repair",
+#             "consumption_field": "total_consumption_valuation"
+#         },
+#         "Heat Treatment": {
+#             "doctype": "Heat Treatment",
+#             "consumption_field": "total_consumption_valuation"
+#         }
+#     }
+
+#     result = []
+
+#     for activity_label, config in activities.items():
+#         print(f"\n=== Processing activity: {activity_label} for date {date} ===")
+
+#         total_man_power = total_labour_cost = total_consumption_cost = 0
+#         day_shift_man_power = night_shift_man_power = 0
+#         day_shift_labour_cost = night_shift_labour_cost = 0
+#         day_shift_consumption_cost = night_shift_consumption_cost = 0
+
+#         if activity_label in ["Heat", "Heat-charge"]:
+#             heat_docs = frappe.get_all(
+#                 config["doctype"],
+#                 filters={"date": date},
+#                 fields=[
+#                     "name",
+#                     "total_man_power",
+#                     "total_labour_cost",
+#                     config["consumption_field"],
+#                     "shift_type",
+#                     "creation"
+#                 ],
+#                 order_by="creation asc"
+#             )
+
+#             print(f"Fetched {activity_label} docs: {heat_docs}")
+
+#             if heat_docs:
+#                 # Separate into Day and Night shifts
+#                 day_shift_docs = [d for d in heat_docs if (d.get("shift_type") or "").strip() == "Day Shift"]
+#                 night_shift_docs = [d for d in heat_docs if (d.get("shift_type") or "").strip() == "Night Shift"]
+
+#                 print(f"Day shift docs: {day_shift_docs}")
+#                 print(f"Night shift docs: {night_shift_docs}")
+
+#                 # Day shift calculations
+#                 if day_shift_docs:
+#                     day_shift_man_power = day_shift_docs[0].get("total_man_power") or 0
+#                     day_shift_labour_cost = sum(d.get("total_labour_cost") or 0 for d in day_shift_docs)
+#                     day_shift_consumption_cost = sum(d.get(config["consumption_field"]) or 0 for d in day_shift_docs)
+
+#                 # Night shift calculations
+#                 if night_shift_docs:
+#                     night_shift_man_power = night_shift_docs[0].get("total_man_power") or 0
+#                     night_shift_labour_cost = sum(d.get("total_labour_cost") or 0 for d in night_shift_docs)
+#                     night_shift_consumption_cost = sum(d.get(config["consumption_field"]) or 0 for d in night_shift_docs)
+
+#                 # Totals
+#                 total_man_power = day_shift_man_power + night_shift_man_power
+#                 total_labour_cost = day_shift_labour_cost + night_shift_labour_cost
+#                 total_consumption_cost = day_shift_consumption_cost + night_shift_consumption_cost
+
+#         else:
+#             # Non-Heat activities
+#             totals = frappe.db.get_all(
+#                 config["doctype"],
+#                 filters={"date": date},
+#                 fields=[
+#                     "sum(total_man_power) as total_man_power",
+#                     "sum(total_labour_cost) as total_labour_cost",
+#                     f"sum({config['consumption_field']}) as total_consumption_cost"
+#                 ]
+#             )[0] or {}
+#             total_man_power = totals.get("total_man_power") or 0
+#             total_labour_cost = totals.get("total_labour_cost") or 0
+#             total_consumption_cost = totals.get("total_consumption_cost") or 0
+
+#             # Day shift
+#             day_totals = frappe.db.get_all(
+#                 config["doctype"],
+#                 filters={"date": date, "shift_type": "Day Shift"},
+#                 fields=[
+#                     "sum(total_man_power) as day_shift_man_power",
+#                     "sum(total_labour_cost) as day_shift_labour_cost",
+#                     f"sum({config['consumption_field']}) as day_shift_consumption_cost"
+#                 ]
+#             )[0] or {}
+#             day_shift_man_power = day_totals.get("day_shift_man_power") or 0
+#             day_shift_labour_cost = day_totals.get("day_shift_labour_cost") or 0
+#             day_shift_consumption_cost = day_totals.get("day_shift_consumption_cost") or 0
+
+#             # Night shift
+#             night_totals = frappe.db.get_all(
+#                 config["doctype"],
+#                 filters={"date": date, "shift_type": "Night Shift"},
+#                 fields=[
+#                     "sum(total_man_power) as night_shift_man_power",
+#                     "sum(total_labour_cost) as night_shift_labour_cost",
+#                     f"sum({config['consumption_field']}) as night_shift_consumption_cost"
+#                 ]
+#             )[0] or {}
+#             night_shift_man_power = night_totals.get("night_shift_man_power") or 0
+#             night_shift_labour_cost = night_totals.get("night_shift_labour_cost") or 0
+#             night_shift_consumption_cost = night_totals.get("night_shift_consumption_cost") or 0
+
+#         result.append({
+#             "activity": activity_label,
+#             "total_man_power": total_man_power,
+#             "total_labour_cost": total_labour_cost,
+#             "total_consumption_cost": total_consumption_cost,
+#             "day_shift_man_power": day_shift_man_power,
+#             "night_shift_man_power": night_shift_man_power,
+#             "day_shift_labour_cost": day_shift_labour_cost,
+#             "night_shift_labour_cost": night_shift_labour_cost,
+#             "day_shift_consumption_cost": day_shift_consumption_cost,
+#             "night_shift_consumption_cost": night_shift_consumption_cost
+#         })
+
+#     print("\n=== FINAL RESULT ===")
+#     print(result)
+#     return result
+
+
+
+
 import frappe
 
 @frappe.whitelist()
@@ -898,7 +1080,7 @@ def get_activity_totals(date):
             "doctype": "Jolt Squeeze Mould Batch",
             "consumption_field": "total_consumption_valuation"
         },
-        "Heat-ladle": { 
+        "Heat": {
             "doctype": "Heat",
             "consumption_field": "total_ladle_consumption_valuation"
         },
@@ -945,14 +1127,14 @@ def get_activity_totals(date):
         "Repair": {
             "doctype": "Repair",
             "consumption_field": "total_consumption_valuation"
-        },
-        "Heat Treatment": {
-            "doctype": "Heat Treatment",
-            "consumption_field": "total_consumption_valuation"
         }
     }
 
     result = []
+
+    def build_sum_field(field, alias=None):
+        alias = alias or field
+        return f"sum({field}) as `{alias}`"
 
     for activity_label, config in activities.items():
         print(f"\n=== Processing activity: {activity_label} for date {date} ===")
@@ -962,87 +1144,117 @@ def get_activity_totals(date):
         day_shift_labour_cost = night_shift_labour_cost = 0
         day_shift_consumption_cost = night_shift_consumption_cost = 0
 
+        # Get fieldnames of the doctype
+        doctype_fields = frappe.get_meta(config["doctype"]).fields
+        fieldnames = [f.fieldname for f in doctype_fields]
+
         if activity_label in ["Heat", "Heat-charge"]:
+            fields = ["name"]
+            if "total_man_power" in fieldnames:
+                fields.append("total_man_power")
+            if "total_labour_cost" in fieldnames:
+                fields.append("total_labour_cost")
+            if config["consumption_field"] in fieldnames:
+                fields.append(config["consumption_field"])
+            if "shift_type" in fieldnames:
+                fields.append("shift_type")
+            if "creation" in fieldnames:
+                fields.append("creation")
+
             heat_docs = frappe.get_all(
                 config["doctype"],
                 filters={"date": date},
-                fields=[
-                    "name",
-                    "total_man_power",
-                    "total_labour_cost",
-                    config["consumption_field"],
-                    "shift_type",
-                    "creation"
-                ],
+                fields=fields,
                 order_by="creation asc"
             )
 
             print(f"Fetched {activity_label} docs: {heat_docs}")
 
             if heat_docs:
-                # Separate into Day and Night shifts
                 day_shift_docs = [d for d in heat_docs if (d.get("shift_type") or "").strip() == "Day Shift"]
                 night_shift_docs = [d for d in heat_docs if (d.get("shift_type") or "").strip() == "Night Shift"]
 
                 print(f"Day shift docs: {day_shift_docs}")
                 print(f"Night shift docs: {night_shift_docs}")
 
-                # Day shift calculations
                 if day_shift_docs:
                     day_shift_man_power = day_shift_docs[0].get("total_man_power") or 0
                     day_shift_labour_cost = sum(d.get("total_labour_cost") or 0 for d in day_shift_docs)
                     day_shift_consumption_cost = sum(d.get(config["consumption_field"]) or 0 for d in day_shift_docs)
 
-                # Night shift calculations
                 if night_shift_docs:
                     night_shift_man_power = night_shift_docs[0].get("total_man_power") or 0
                     night_shift_labour_cost = sum(d.get("total_labour_cost") or 0 for d in night_shift_docs)
                     night_shift_consumption_cost = sum(d.get(config["consumption_field"]) or 0 for d in night_shift_docs)
 
-                # Totals
                 total_man_power = day_shift_man_power + night_shift_man_power
                 total_labour_cost = day_shift_labour_cost + night_shift_labour_cost
                 total_consumption_cost = day_shift_consumption_cost + night_shift_consumption_cost
 
         else:
             # Non-Heat activities
-            totals = frappe.db.get_all(
-                config["doctype"],
-                filters={"date": date},
-                fields=[
-                    "sum(total_man_power) as total_man_power",
-                    "sum(total_labour_cost) as total_labour_cost",
-                    f"sum({config['consumption_field']}) as total_consumption_cost"
-                ]
-            )[0] or {}
+            fields = []
+            if "total_man_power" in fieldnames:
+                fields.append(build_sum_field("total_man_power"))
+            if "total_labour_cost" in fieldnames:
+                fields.append(build_sum_field("total_labour_cost"))
+            if config["consumption_field"] in fieldnames:
+                fields.append(build_sum_field(config["consumption_field"], "total_consumption_cost"))
+
+            if fields:
+                totals = frappe.db.get_all(
+                    config["doctype"],
+                    filters={"date": date},
+                    fields=fields
+                )
+                totals = totals[0] if totals else {}
+            else:
+                totals = {}
+
             total_man_power = totals.get("total_man_power") or 0
             total_labour_cost = totals.get("total_labour_cost") or 0
             total_consumption_cost = totals.get("total_consumption_cost") or 0
 
-            # Day shift
-            day_totals = frappe.db.get_all(
-                config["doctype"],
-                filters={"date": date, "shift_type": "Day Shift"},
-                fields=[
-                    "sum(total_man_power) as day_shift_man_power",
-                    "sum(total_labour_cost) as day_shift_labour_cost",
-                    f"sum({config['consumption_field']}) as day_shift_consumption_cost"
-                ]
-            )[0] or {}
+            day_fields = []
+            if "total_man_power" in fieldnames:
+                day_fields.append(build_sum_field("total_man_power", "day_shift_man_power"))
+            if "total_labour_cost" in fieldnames:
+                day_fields.append(build_sum_field("total_labour_cost", "day_shift_labour_cost"))
+            if config["consumption_field"] in fieldnames:
+                day_fields.append(build_sum_field(config["consumption_field"], "day_shift_consumption_cost"))
+
+            if day_fields:
+                day_totals = frappe.db.get_all(
+                    config["doctype"],
+                    filters={"date": date, "shift_type": "Day Shift"},
+                    fields=day_fields
+                )
+                day_totals = day_totals[0] if day_totals else {}
+            else:
+                day_totals = {}
+
             day_shift_man_power = day_totals.get("day_shift_man_power") or 0
             day_shift_labour_cost = day_totals.get("day_shift_labour_cost") or 0
             day_shift_consumption_cost = day_totals.get("day_shift_consumption_cost") or 0
 
-            # Night shift
-            night_totals = frappe.db.get_all(
-                config["doctype"],
-                filters={"date": date, "shift_type": "Night Shift"},
-                fields=[
-                    "sum(total_man_power) as night_shift_man_power",
-                    "sum(total_labour_cost) as night_shift_labour_cost",
-                    f"sum({config['consumption_field']}) as night_shift_consumption_cost"
-                ]
-            )[0] or {}
+            night_fields = []
+            if "total_man_power" in fieldnames:
+                night_fields.append(build_sum_field("total_man_power", "night_shift_man_power"))
+            if "total_labour_cost" in fieldnames:
+                night_fields.append(build_sum_field("total_labour_cost", "night_shift_labour_cost"))
+            if config["consumption_field"] in fieldnames:
+                night_fields.append(build_sum_field(config["consumption_field"], "night_shift_consumption_cost"))
+
+            if night_fields:
+                night_totals = frappe.db.get_all(
+                    config["doctype"],
+                    filters={"date": date, "shift_type": "Night Shift"},
+                    fields=night_fields
+                )
+                night_totals = night_totals[0] if night_totals else {}
+            else:
+                night_totals = {}
+
             night_shift_man_power = night_totals.get("night_shift_man_power") or 0
             night_shift_labour_cost = night_totals.get("night_shift_labour_cost") or 0
             night_shift_consumption_cost = night_totals.get("night_shift_consumption_cost") or 0
