@@ -1,0 +1,153 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-08-11 17:33:20.412046",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "activity_section",
+  "activity",
+  "column_break_iwyc",
+  "column_break_blkf",
+  "column_break_mgqo",
+  "section_break_zxur",
+  "day_shift_consumption_cost",
+  "column_break_rmhk",
+  "night_shift_consumption_cost",
+  "column_break_anmt",
+  "total_consumption_cost",
+  "labour_consumption_section",
+  "day_shift_man_power",
+  "column_break_brhh",
+  "night_shift_man_power",
+  "column_break_frou",
+  "total_man_power",
+  "section_break_wsdu",
+  "day_shift_labour_cost",
+  "column_break_nhfj",
+  "night_shift_labour_cost",
+  "column_break_tjcy",
+  "total_labour_cost"
+ ],
+ "fields": [
+  {
+   "fieldname": "activity",
+   "fieldtype": "Data",
+   "label": "Activity"
+  },
+  {
+   "fieldname": "column_break_iwyc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_man_power",
+   "fieldtype": "Float",
+   "label": "Total Man Power"
+  },
+  {
+   "fieldname": "column_break_blkf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_mgqo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "labour_consumption_section",
+   "fieldtype": "Section Break",
+   "label": "Labour Consumption"
+  },
+  {
+   "fieldname": "day_shift_man_power",
+   "fieldtype": "Int",
+   "label": "Day Shift Man Power"
+  },
+  {
+   "fieldname": "column_break_brhh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "night_shift_man_power",
+   "fieldtype": "Int",
+   "label": "Night Shift Man Power"
+  },
+  {
+   "fieldname": "column_break_frou",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "activity_section",
+   "fieldtype": "Section Break",
+   "label": "Activity"
+  },
+  {
+   "fieldname": "section_break_zxur",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "day_shift_consumption_cost",
+   "fieldtype": "Float",
+   "label": "Day Shift Consumption Cost"
+  },
+  {
+   "fieldname": "column_break_rmhk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "night_shift_consumption_cost",
+   "fieldtype": "Float",
+   "label": "Night Shift Consumption Cost"
+  },
+  {
+   "fieldname": "column_break_anmt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_wsdu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "day_shift_labour_cost",
+   "fieldtype": "Float",
+   "label": "Day shift Labour cost"
+  },
+  {
+   "fieldname": "night_shift_labour_cost",
+   "fieldtype": "Float",
+   "label": "Night shift Labour cost"
+  },
+  {
+   "fieldname": "total_labour_cost",
+   "fieldtype": "Float",
+   "label": "Total Labour cost"
+  },
+  {
+   "fieldname": "total_consumption_cost",
+   "fieldtype": "Float",
+   "label": "Total Consumption Cost"
+  },
+  {
+   "fieldname": "column_break_nhfj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_tjcy",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-08-12 14:56:53.164523",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Factory Daily Report Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

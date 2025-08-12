@@ -22,7 +22,11 @@
   "total_shot_blast_bunch_weight",
   "consumption_tab",
   "table_ffte",
-  "total_consumption_valuation"
+  "total_consumption_valuation",
+  "labour_consumption_tab",
+  "total_man_power",
+  "column_break_jqhu",
+  "total_labour_cost"
  ],
  "fields": [
   {
@@ -110,13 +114,33 @@
    "fieldname": "total_shot_blast_bunch_weight",
    "fieldtype": "Float",
    "label": "Total Shot Blast Bunch Weight"
+  },
+  {
+   "fieldname": "labour_consumption_tab",
+   "fieldtype": "Tab Break",
+   "label": "Labour Consumption"
+  },
+  {
+   "fieldname": "total_man_power",
+   "fieldtype": "Int",
+   "label": "Total Man Power"
+  },
+  {
+   "fieldname": "column_break_jqhu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_labour_cost",
+   "fieldtype": "Currency",
+   "label": "Total Labour Cost",
+   "precision": "2"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-28 15:54:20.698679",
+ "modified": "2025-08-12 10:35:31.073946",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Shot Blast",

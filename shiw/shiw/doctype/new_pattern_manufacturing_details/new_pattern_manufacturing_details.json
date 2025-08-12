@@ -10,6 +10,8 @@
   "pattern_details_tab",
   "item_name",
   "drawing_no",
+  "cast_weight",
+  "bunch_weight",
   "column_break_ggdp",
   "consignee_name",
   "customer",
@@ -97,6 +99,20 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fetch_from": "item_name.custom_cast_weight_per_pc",
+   "fieldname": "cast_weight",
+   "fieldtype": "Float",
+   "label": "Cast Weight",
+   "precision": "2"
+  },
+  {
+   "fetch_from": "item_name.custom_bunch_weight_per_mould",
+   "fieldname": "bunch_weight",
+   "fieldtype": "Float",
+   "label": "Bunch Weight",
+   "precision": "2"
   }
  ],
  "grid_page_length": 50,
@@ -105,7 +121,7 @@
  "is_submittable": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2025-07-19 17:17:10.896403",
+ "modified": "2025-08-07 15:44:47.190645",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "New Pattern Manufacturing Details",

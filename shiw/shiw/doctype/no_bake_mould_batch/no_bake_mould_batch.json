@@ -20,7 +20,11 @@
   "total_cast_weight",
   "tab_2_tab",
   "consumption_mould",
-  "total_consumption_valuation"
+  "total_consumption_valuation",
+  "labour_consumption_tab",
+  "total_man_power",
+  "column_break_uelg",
+  "total_labour_cost"
  ],
  "fields": [
   {
@@ -105,12 +109,32 @@
    "fieldtype": "Table",
    "options": "Consumption-Mould",
    "reqd": 1
+  },
+  {
+   "fieldname": "labour_consumption_tab",
+   "fieldtype": "Tab Break",
+   "label": "Labour Consumption"
+  },
+  {
+   "fieldname": "total_man_power",
+   "fieldtype": "Int",
+   "label": "Total Man Power"
+  },
+  {
+   "fieldname": "column_break_uelg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_labour_cost",
+   "fieldtype": "Currency",
+   "label": "Total Labour Cost",
+   "precision": "2"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-31 15:19:06.663138",
+ "modified": "2025-08-12 10:25:35.870443",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "No-Bake Mould Batch",

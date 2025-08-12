@@ -5958,7 +5958,8 @@ def execute(filters=None):
     row_dispatch_weight.append(flt(total_qty))
     data.append(row_dispatch_weight)
 
-    return columns, data # # Row 27: Deviation WT
+    return columns, data 
+    # # Row 27: Deviation WT
     row_deviation_wt = ["Deviation WT"]
     total_qty = 0
     for day in range(1, days_in_month + 1):

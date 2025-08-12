@@ -1,12 +1,13 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:HT - {date}",
+ "autoname": "format:HT - {date}-{shift_type}",
  "creation": "2025-06-02 12:59:49.816771",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "date",
+  "shift_type",
   "heat_start_time",
   "furnace_start_time",
   "supervisor_name",
@@ -21,7 +22,14 @@
   "section_break_ronr",
   "table_nayn",
   "section_break_jylu",
-  "amended_from"
+  "amended_from",
+  "consumption_tab",
+  "consumption_mould",
+  "total_consumption_valuation",
+  "labour_consumption_tab",
+  "total_man_power",
+  "column_break_egri",
+  "total_labour_cost"
  ],
  "fields": [
   {
@@ -105,13 +113,55 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "consumption_tab",
+   "fieldtype": "Tab Break",
+   "label": "Consumption"
+  },
+  {
+   "fieldname": "labour_consumption_tab",
+   "fieldtype": "Tab Break",
+   "label": "Labour Consumption"
+  },
+  {
+   "fieldname": "total_man_power",
+   "fieldtype": "Int",
+   "label": "Total Man Power"
+  },
+  {
+   "fieldname": "column_break_egri",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_labour_cost",
+   "fieldtype": "Currency",
+   "label": "Total Labour Cost",
+   "precision": "2"
+  },
+  {
+   "fieldname": "consumption_mould",
+   "fieldtype": "Table",
+   "options": "Consumption-Mould"
+  },
+  {
+   "fieldname": "total_consumption_valuation",
+   "fieldtype": "Float",
+   "label": "Total Consumption Valuation",
+   "precision": "2"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "label": "Shift Type",
+   "options": "\nDay Shift\nNight Shift"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-08-11 15:02:26.806305",
+ "modified": "2025-08-12 12:26:49.760624",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Heat Treatment",

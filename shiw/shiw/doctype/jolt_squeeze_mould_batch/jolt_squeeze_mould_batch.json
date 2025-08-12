@@ -20,7 +20,10 @@
   "total_cast_weight",
   "tab_2_tab",
   "consumption_mould",
-  "total_consumption_valuation"
+  "total_consumption_valuation",
+  "labour_expense_tab",
+  "total_man_power",
+  "total_labour_cost"
  ],
  "fields": [
   {
@@ -101,12 +104,27 @@
    "fieldtype": "Table",
    "options": "Consumption-Mould",
    "reqd": 1
+  },
+  {
+   "fieldname": "labour_expense_tab",
+   "fieldtype": "Tab Break",
+   "label": "Labour Expense"
+  },
+  {
+   "fieldname": "total_man_power",
+   "fieldtype": "Int",
+   "label": "Total Man Power"
+  },
+  {
+   "fieldname": "total_labour_cost",
+   "fieldtype": "Float",
+   "label": "Total Labour Cost"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-31 15:19:15.557445",
+ "modified": "2025-08-11 21:43:48.544917",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Jolt Squeeze Mould Batch",
