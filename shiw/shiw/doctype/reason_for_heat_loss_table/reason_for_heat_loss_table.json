@@ -28,7 +28,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Reason For Heat Loss",
-   "options": "\nOver Achieved\nManpower Issue\nPower Problem\nLadle Not Available\nNo Mould in HPML\nStopper Jam\nChemistry Out\nGrade Change\nRusted Scrap Boiling Heat Slow Running\nSintering Heat\nLadle Breakdown\nCold Furnace\nSampling\nPatching Heat\nLack Of Raw Material\nHigh Water Temp\nFurnace Repairing\nBariman issue\nPower cut\nNo mould in JS\nCrane man unavailable\nScrap problem\nPattern change\nHeat change\nNozzle Leakage\nDue to both 1 ton furnaces running at the same time\nFurnace starts late\nFurnace hold\nNozzle Break\nSS Heat take time\nFurnace Breakdown\nDI Heat Change\nChemistry High\nMixed scrap\nLadle heating issue\nFurnace stop\nGrade change",
+   "options": "\nOver Achieved\nManpower Issue\nPower Problem\nLadle Not Available\nNo Mould in HPML\nStopper Jam\nChemistry Out\nGrade Change\nRusted Scrap Boiling Heat Slow Running\nSintering Heat\nLadle Breakdown\nCold Furnace\nSampling\nPatching Heat\nLack Of Raw Material\nHigh Water Temp\nFurnace Repairing\nBariman issue\nPower cut\nNo mould in JS\nCrane man unavailable\nScrap problem\nPattern change\nHeat change\nNozzle Leakage\nDue to both 1 ton furnaces running at the same time\nFurnace starts late\nFurnace hold\nNozzle Break\nSS Heat take time\nFurnace Breakdown\nDI Heat Change\nChemistry High\nMixed scrap\nLadle heating issue\nFurnace stop\nGrade change\nProduction Stopped due to new development",
    "reqd": 1
   },
   {
@@ -62,7 +62,7 @@
  "is_submittable": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-19 17:22:16.543011",
+ "modified": "2025-08-21 10:42:45.798507",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Reason For Heat Loss Table",
