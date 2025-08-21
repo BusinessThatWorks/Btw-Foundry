@@ -114,7 +114,7 @@ def execute(filters=None):
 			"material_grade",
 			"power_consumptionkwh as power_consumption",
 			"burning_loss",
-			"total_charge_mix_in_kg",
+			"total_charge_mix_valuation",
 			"liquid_balence",
 		],
 		filters=filters_dict,
@@ -123,7 +123,7 @@ def execute(filters=None):
 
 	# compute rate per kg
 	for row in data:
-		total = row.get("total_charge_mix_in_kg") or 0
+		total = row.get("total_charge_mix_valuation") or 0
 		liquid = row.get("liquid_balence") or 0
 		row["rate_per_kg"] = round((total / liquid), 2) if liquid else 0
 
