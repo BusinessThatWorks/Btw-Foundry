@@ -30,7 +30,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Contractor Name",
-   "options": "\nBhowmick Labour Contractor\nKrishna Enterprise\nYea Ali Enterprise\nMaa Kali Enterprise\nSubrata Roy Barman\nMS Giridhari\nSatyam Deepika Enterprise\nSwastika Enterprise"
+   "options": "\nBhowmick Labour Contractor\nKrishna Enterprise\nYea Ali Enterprise\nMaa Kali Enterprise\nSubrata Roy Barman\nMS Giridhari\nSatyam Deepika Enterprise\nSwastika Enterprise\nEjaj Mallick"
   },
   {
    "fieldname": "fettling_process",
@@ -81,7 +81,7 @@
  "is_submittable": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-19 17:18:18.798744",
+ "modified": "2025-08-25 09:48:53.199149",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Fettling Table",

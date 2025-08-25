@@ -39,7 +39,7 @@
    "fieldname": "contractor_name",
    "fieldtype": "Select",
    "label": "Contractor Name",
-   "options": "\nBhowmick Labour Contractor\nKrishna Enterprise\nYea Ali Enterprise\nMaa Kali Enterprise\nSubrata Roy Barman\nMS Giridhari\nSatyam Deepika Enterprise\nSwastika Enterprise"
+   "options": "\nBhowmick Labour Contractor\nKrishna Enterprise\nYea Ali Enterprise\nMaa Kali Enterprise\nSubrata Roy Barman\nMS Giridhari\nSatyam Deepika Enterprise\nSwastika Enterprise\nEjaj Mallick"
   },
   {
    "fieldname": "finishing_quantity",
@@ -65,7 +65,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-19 17:21:49.914500",
+ "modified": "2025-08-25 09:48:21.232268",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "FInishing Table",
