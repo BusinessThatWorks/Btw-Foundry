@@ -22,7 +22,8 @@
   "column_break_nvsg",
   "pattern_id",
   "column_break_htjm",
-  "casting_weight"
+  "casting_weight",
+  "bunch_weight_in_kg"
  ],
  "fields": [
   {
@@ -74,7 +75,8 @@
    "fetch_from": "item.cast_weight",
    "fieldname": "casting_weight",
    "fieldtype": "Float",
-   "label": "Casting Weight (in Kg)"
+   "label": "Casting Weight (in Kg)",
+   "precision": "2"
   },
   {
    "fieldname": "column_break_uqlt",
@@ -113,13 +115,20 @@
   {
    "fieldname": "column_break_htjm",
    "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "item.bunch_weight",
+   "fieldname": "bunch_weight_in_kg",
+   "fieldtype": "Float",
+   "label": "Bunch Weight (in Kg)",
+   "precision": "2"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-08-07 15:50:20.075946",
+ "modified": "2025-08-26 14:56:50.218390",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Tooling Item Details table",
