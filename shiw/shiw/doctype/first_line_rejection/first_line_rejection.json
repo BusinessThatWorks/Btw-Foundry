@@ -21,7 +21,9 @@
   "column_break_mbzp",
   "rejected_qty_",
   "amended_from",
-  "total_flr_bunch_weight"
+  "total_flr_bunch_weight",
+  "section_break_whpp",
+  "rejection_table"
  ],
  "fields": [
   {
@@ -103,13 +105,23 @@
    "fieldtype": "Float",
    "label": "Total FLR Bunch Weight",
    "precision": "2"
+  },
+  {
+   "fieldname": "section_break_whpp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "rejection_table",
+   "fieldtype": "Table",
+   "label": "Rejection Table",
+   "options": "Rejection Table"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-28 15:56:06.935596",
+ "modified": "2025-08-26 17:16:29.273028",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "First Line Rejection",
