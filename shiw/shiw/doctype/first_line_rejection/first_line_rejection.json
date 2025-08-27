@@ -19,7 +19,7 @@
   "total_qty_rejected",
   "total_flr_cast_weight",
   "column_break_mbzp",
-  "rejected_qty_",
+  "rejected_qty",
   "amended_from",
   "total_flr_bunch_weight",
   "section_break_whpp",
@@ -80,12 +80,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "rejected_qty_",
-   "fieldtype": "Percent",
-   "hidden": 1,
-   "label": "Rejected Qty %"
-  },
-  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -116,13 +110,19 @@
    "fieldtype": "Table",
    "label": "Rejection Table",
    "options": "Rejection Table"
+  },
+  {
+   "fieldname": "rejected_qty",
+   "fieldtype": "Percent",
+   "label": "Rejected Qty %",
+   "precision": "2"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-08-27 11:53:55.398259",
+ "modified": "2025-08-27 14:43:30.883109",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "First Line Rejection",
