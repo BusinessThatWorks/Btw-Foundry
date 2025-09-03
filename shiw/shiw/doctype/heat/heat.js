@@ -1,5 +1,5 @@
 // Copyright (c) 2025, beetashoke chakraborty and contributors
-// For license information, please see license.txt
+// For license information, please  license.txt
 
 // frappe.ui.form.on("Heat", {
 //     refresh(frm) {
