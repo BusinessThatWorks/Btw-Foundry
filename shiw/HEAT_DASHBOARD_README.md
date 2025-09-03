@@ -68,3 +68,5 @@ Navigate to: `/heat-dashboard`
 ## Permissions
 
 The dashboard inherits permissions from the underlying Heat doctype and report.
+
+

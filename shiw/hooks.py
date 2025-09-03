@@ -45,7 +45,10 @@ app_license = "mit"
 # Pages
 # ------
 # Add custom pages
-page_js = {"heat-dashboard": "shiw/page/heat_dashboard/heat_dashboard.js"}
+page_js = {
+	"heat-dashboard": "shiw/page/heat_dashboard/heat_dashboard.js",
+	"mould-dashboard": "shiw/page/mould_dashboard/mould_dashboard.js",
+}
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}

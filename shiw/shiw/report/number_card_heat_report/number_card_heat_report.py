@@ -41,7 +41,12 @@ def get_columns():
 			"width": 180,
 		},
 		{"label": "Liquid Balance", "fieldname": "liquid_balence", "fieldtype": "Float", "width": 160},
-		{"label": "Burning Loss", "fieldname": "burning_loss", "fieldtype": "Float", "width": 160},
+		{
+			"label": "Burning Loss (%)",
+			"fieldname": "burning_loss_percentage",
+			"fieldtype": "Float",
+			"width": 160,
+		},
 	]
 
 
@@ -100,9 +105,13 @@ def get_report_summary(result):
 	print(result)
 	# Calculate totals from the result data
 	total_heats = sum(flt(row["total_heats"], 0) for row in result)
-	total_charge_mix_in_kg = sum(flt(row["total_charge_mix_in_kg"], 3) for row in result)
-	liquid_balence = sum(flt(row["liquid_balence"], 3) for row in result)
-	burning_loss = sum(flt(row["burning_loss"], 3) for row in result)
+	total_charge_mix_in_kg = sum(flt(row["total_charge_mix_in_kg"], 2) for row in result)
+	liquid_balence = sum(flt(row["liquid_balence"], 2) for row in result)
+
+	# Calculate burning loss as percentage: (Total Charge Mix - Liquid Balance) / Total Charge Mix * 100
+	burning_loss_percentage = 0
+	if total_charge_mix_in_kg > 0:
+		burning_loss_percentage = ((total_charge_mix_in_kg - liquid_balence) / total_charge_mix_in_kg) * 100
 
 	# Return number card definitions with different colors for visual distinction
 	return [
@@ -116,21 +125,21 @@ def get_report_summary(result):
 			"value": total_charge_mix_in_kg,
 			"label": _("Total Charge Mix (Kg)"),
 			"datatype": "Float",
-			"precision": 3,
+			"precision": 2,
 			"indicator": "Blue",
 		},
 		{
 			"value": liquid_balence,
 			"label": _("Liquid Balance"),
 			"datatype": "Float",
-			"precision": 3,
+			"precision": 2,
 			"indicator": "Black",
 		},
 		{
-			"value": burning_loss,
-			"label": _("Burning Loss"),
+			"value": burning_loss_percentage,
+			"label": _("Burning Loss (%)"),
 			"datatype": "Float",
-			"precision": 3,
+			"precision": 2,
 			"indicator": "Green",
 		},
 	]

@@ -11,7 +11,8 @@
   "finished_qty",
   "gn_qty",
   "contractor_name",
-  "cast_weight_in_kg"
+  "cast_weight_in_kg",
+  "is_sample"
  ],
  "fields": [
   {
@@ -45,13 +46,19 @@
    "fieldname": "cast_weight_in_kg",
    "fieldtype": "Data",
    "label": "Cast Weight (In Kg)"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_sample",
+   "fieldtype": "Check",
+   "label": "Is Sample"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-19 17:21:22.478688",
+ "modified": "2025-09-03 15:04:09.592701",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Inspection Table",
