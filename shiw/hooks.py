@@ -42,6 +42,11 @@ app_license = "mit"
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
 
+# Pages
+# ------
+# Add custom pages
+page_js = {"heat-dashboard": "shiw/page/heat_dashboard/heat_dashboard.js"}
+
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
@@ -253,7 +258,10 @@ app_license = "mit"
 # ]
 
 # fixtures = ["Custom Field"]
-fixtures = [{"doctype": "Custom Field", "filters": {"module": "shiw"}}]
+fixtures = [
+	{"doctype": "Custom Field", "filters": {"module": "shiw"}},
+	{"doctype": "Page", "filters": {"module": "shiw"}},
+]
 
 # doctype_js = {
 #   "BOM": "public/js/bom.js"
