@@ -424,7 +424,7 @@ function createOverviewData(heatData, mouldData) {
                 datatype: 'Float',
                 precision: 2,
                 indicator: 'Purple',
-                description: __('Bunch weight minus cast weight')
+                description: __('')
             },
             {
                 value: avgYield,

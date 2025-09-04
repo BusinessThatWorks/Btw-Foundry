@@ -150,7 +150,7 @@ def get_overview_data(filters, heat_data, mould_data):
 				"datatype": "Float",
 				"precision": 2,
 				"indicator": "Purple",
-				"description": _("Bunch weight minus cast weight"),
+				"description": _(""),
 			},
 			{
 				"value": avg_yield,
