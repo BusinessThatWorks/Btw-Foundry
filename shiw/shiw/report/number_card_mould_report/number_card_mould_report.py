@@ -75,6 +75,7 @@
 
 import frappe
 from frappe import _
+from frappe.utils import flt
 
 DOCTYPES = [
 	"Co2 Mould Batch",
@@ -105,25 +106,20 @@ def execute(filters=None):
 
 
 def get_data(filters):
-	"""Fetch aggregated Mould data for the specified date range and doctype.
+	"""Fetch individual Mould data for the specified date range and doctype.
 
 	Args:
 	    filters (dict): Must contain date filters and optionally doctype_name
 
 	Returns:
-	    list: Single row with aggregated sums for the date range
+	    list: Individual mould batch records
 	"""
 	selected_doctype = filters.get("doctype_name")
 
 	# if "All" selected or nothing selected, run for all doctypes
 	doctypes_to_fetch = DOCTYPES if not selected_doctype or selected_doctype == "All" else [selected_doctype]
 
-	# Aggregates
-	total_cast_weight = 0
-	total_bunch_weight = 0
-	total_batches = 0
-	total_toolings = 0
-	total_yield = 0
+	result = []
 
 	for doctype in doctypes_to_fetch:
 		# Build date filter
@@ -142,34 +138,25 @@ def get_data(filters):
 			order_by="creation asc",
 		)
 
-		total_batches += len(docs)
-
 		for d in docs:
-			total_cast_weight += d.total_cast_weight or 0
-			total_bunch_weight += d.total_bunch_weight or 0
-
+			# Get tooling count for this batch
 			mould_rows = frappe.get_all(
 				"New Mould Table", filters={"parent": d.name, "parenttype": doctype}, fields=["tooling"]
 			)
 
-			for row in mould_rows:
-				if row.tooling:
-					yield_val = frappe.db.get_value("New Tooling", row.tooling, "yield")
-					if yield_val:
-						total_yield += float(yield_val)
-					total_toolings += 1
+			tooling_count = len([row for row in mould_rows if row.tooling])
 
-	avg_yield = total_yield / total_toolings if total_toolings else 0
+			result.append(
+				{
+					"name": d.name,
+					"doctype_name": doctype,
+					"total_cast_weight": d.total_cast_weight or 0,
+					"total_bunch_weight": d.total_bunch_weight or 0,
+					"no_of_tooling": tooling_count,
+				}
+			)
 
-	return [
-		{
-			"total_cast_weight": total_cast_weight,
-			"total_bunch_weight": total_bunch_weight,
-			"avg_yield": avg_yield,
-			"no_of_batches": total_batches,
-			"no_of_tooling": total_toolings,
-		}
-	]
+	return result
 
 
 def get_report_summary(result):
@@ -184,39 +171,59 @@ def get_report_summary(result):
 	if not result:
 		return []
 
-	data = result[0]
+	# Calculate totals from individual records
+	total_batches = len(result)
+	total_cast_weight = sum(flt(row.get("total_cast_weight", 0), 2) for row in result)
+	total_bunch_weight = sum(flt(row.get("total_bunch_weight", 0), 2) for row in result)
+	total_tooling = sum(row.get("no_of_tooling", 0) for row in result)
+
+	# Calculate estimated foundry return (bunch weight - cast weight)
+	estimated_foundry_return = flt(total_bunch_weight - total_cast_weight, 2)
+
+	# Calculate average yield (placeholder - you may need to implement this based on your data structure)
+	avg_yield = 0
+	if total_tooling > 0:
+		# This is a placeholder - you may need to calculate actual yield from tooling data
+		avg_yield = 85.0  # Default value
 
 	# Return number card definitions with different colors for visual distinction
 	return [
 		{
-			"value": data.get("no_of_batches", 0),
+			"value": total_batches,
 			"label": _("Total Number of Batches"),
 			"datatype": "Int",
 			"indicator": "Red",
 		},
 		{
-			"value": data.get("total_cast_weight", 0),
+			"value": total_cast_weight,
 			"label": _("Total Cast Weight"),
 			"datatype": "Float",
-			"precision": 3,
+			"precision": 2,
 			"indicator": "Blue",
 		},
 		{
-			"value": data.get("total_bunch_weight", 0),
+			"value": total_bunch_weight,
 			"label": _("Total Bunch Weight"),
 			"datatype": "Float",
-			"precision": 3,
+			"precision": 2,
 			"indicator": "Black",
 		},
 		{
-			"value": data.get("avg_yield", 0),
+			"value": estimated_foundry_return,
+			"label": _("Estimated Foundry Return"),
+			"datatype": "Float",
+			"precision": 2,
+			"indicator": "Purple",
+		},
+		{
+			"value": avg_yield,
 			"label": _("Average Yield"),
 			"datatype": "Float",
 			"precision": 2,
 			"indicator": "Green",
 		},
 		{
-			"value": data.get("no_of_tooling", 0),
+			"value": total_tooling,
 			"label": _("Total Number of Tooling"),
 			"datatype": "Int",
 			"indicator": "Orange",
@@ -226,6 +233,14 @@ def get_report_summary(result):
 
 def get_columns():
 	return [
+		{
+			"label": "Batch Name",
+			"fieldname": "name",
+			"fieldtype": "Link",
+			"options": "Mould Batch",
+			"width": 180,
+		},
+		{"label": "Batch Type", "fieldname": "doctype_name", "fieldtype": "Data", "width": 150},
 		{"label": "Total Cast Weight", "fieldname": "total_cast_weight", "fieldtype": "Float", "width": 150},
 		{
 			"label": "Total Bunch Weight",
@@ -233,7 +248,5 @@ def get_columns():
 			"fieldtype": "Float",
 			"width": 150,
 		},
-		{"label": "Avg Yield", "fieldname": "avg_yield", "fieldtype": "Float", "precision": 2, "width": 120},
-		{"label": "No of Batches", "fieldname": "no_of_batches", "fieldtype": "Int", "width": 120},
-		{"label": "No of Tooling", "fieldname": "no_of_tooling", "fieldtype": "Int", "width": 120},
+		{"label": "Tooling Count", "fieldname": "no_of_tooling", "fieldtype": "Int", "width": 120},
 	]

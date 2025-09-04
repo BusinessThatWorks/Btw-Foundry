@@ -207,6 +207,18 @@ function createContentContainers(state) {
 
         if (!state.$cards) state.$cards = {};
         state.$cards[tabId] = $cardsContainer;
+
+        // Also create table containers if they don't exist
+        const $existingTablesContainer = state.$tabs[tabId].$content.find(`#${tabId}-tables`);
+        if ($existingTablesContainer.length === 0) {
+            const $tablesContainer = $(`
+                <div class="detailed-data-section">
+                    <h3>${tabId === 'heat' ? __('Heat Details') : tabId === 'mould' ? __('Mould Details') : __('Overview Details')}</h3>
+                    <div class="data-tables-container" id="${tabId}-tables"></div>
+                </div>
+            `);
+            state.$tabs[tabId].$content.append($tablesContainer);
+        }
     });
 }
 
@@ -291,7 +303,13 @@ function refreshDashboard(state) {
 
         // Render all sections
         renderDashboardData(state, {
-            overview: overviewData,
+            overview: {
+                ...overviewData,
+                raw_data: {
+                    heat: heatData.raw_data || [],
+                    mould: mouldData.raw_data || []
+                }
+            },
             heat: heatData,
             mould: mouldData
         });
@@ -376,6 +394,7 @@ function createOverviewData(heatData, mouldData) {
     const totalBunchWeight = findCardValue(mouldSummary, 'Total Bunch Weight') || 0;
     const avgYield = findCardValue(mouldSummary, 'Average Yield') || 0;
     const totalTooling = findCardValue(mouldSummary, 'Total Number of Tooling') || 0;
+    const estimatedFoundryReturn = findCardValue(mouldSummary, 'Estimated Foundry Return') || 0;
 
     // Calculate combined metrics
     const totalProductionWeight = totalCastWeight + totalBunchWeight;
@@ -383,21 +402,6 @@ function createOverviewData(heatData, mouldData) {
 
     return {
         summary: [
-            {
-                value: totalHeats + totalBatches,
-                label: __('Total Production Units'),
-                datatype: 'Int',
-                indicator: 'Purple',
-                description: __('Combined Heat and Mould batches')
-            },
-            {
-                value: totalProductionWeight,
-                label: __('Total Production Weight (Kg)'),
-                datatype: 'Float',
-                precision: 2,
-                indicator: 'Blue',
-                description: __('Combined cast and bunch weight')
-            },
             {
                 value: overallEfficiency,
                 label: __('Overall Efficiency (%)'),
@@ -413,6 +417,14 @@ function createOverviewData(heatData, mouldData) {
                 precision: 2,
                 indicator: 'Orange',
                 description: __('Heat process burning loss')
+            },
+            {
+                value: estimatedFoundryReturn,
+                label: __('Estimated Foundry Return'),
+                datatype: 'Float',
+                precision: 2,
+                indicator: 'Purple',
+                description: __('Bunch weight minus cast weight')
             },
             {
                 value: avgYield,
@@ -464,7 +476,11 @@ function renderDashboardData(state, data) {
 
 function renderTabData(state, tabId, tabData) {
     const $cardsContainer = state.$cards[tabId];
+    const $tablesContainer = $(`#${tabId}-tables`);
+
+    // Clear containers
     $cardsContainer.empty();
+    $tablesContainer.empty();
 
     if (!tabData || !tabData.summary || !tabData.summary.length) {
         $cardsContainer.append(`
@@ -481,6 +497,207 @@ function renderTabData(state, tabId, tabData) {
         const $card = createCard(card);
         $cardsContainer.append($card);
     });
+
+    // Render detailed tables
+    if (tabData.raw_data && tabData.raw_data.length > 0) {
+        renderDetailedTables($tablesContainer, tabId, tabData.raw_data);
+    }
+}
+
+function renderDetailedTables($container, tabId, rawData) {
+    if (tabId === 'heat') {
+        renderHeatTable($container, rawData);
+    } else if (tabId === 'mould') {
+        renderMouldTable($container, rawData);
+    } else if (tabId === 'overview') {
+        renderOverviewTables($container, rawData);
+    }
+}
+
+function renderHeatTable($container, heatData) {
+    if (!heatData || heatData.length === 0) {
+        $container.append(`
+            <div class="no-data-message">
+                <div>${__('No heat data available for selected criteria')}</div>
+            </div>
+        `);
+        return;
+    }
+
+    const $table = $(`
+        <div class="data-table" style="width: 100%; margin-bottom: 30px;">
+            <h4>${__('Heat Entries')}</h4>
+            <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                <thead>
+                    <tr>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Heat Entry')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Total Charge Mix (Kg)')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Liquid Balance')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Burning Loss (%)')}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    `);
+
+    const $tbody = $table.find('tbody');
+
+    heatData.forEach((row) => {
+        const burningLossPct = row.total_charge_mix_in_kg > 0 ?
+            ((row.total_charge_mix_in_kg - row.liquid_balence) / row.total_charge_mix_in_kg * 100) : 0;
+
+        const $tr = $(`
+            <tr style="border-bottom: 1px solid #e9ecef;">
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/heat/${row.name}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.name}</a></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.total_charge_mix_in_kg || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.liquid_balence || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right; white-space: nowrap;">${burningLossPct.toFixed(2)}%</td>
+            </tr>
+        `);
+        $tbody.append($tr);
+    });
+
+    $container.append($table);
+}
+
+function renderMouldTable($container, mouldData) {
+    if (!mouldData || mouldData.length === 0) {
+        $container.append(`
+            <div class="no-data-message">
+                <div>${__('No mould data available for selected criteria')}</div>
+            </div>
+        `);
+        return;
+    }
+
+    // Group data by doctype
+    const groupedData = {};
+    mouldData.forEach((row) => {
+        const doctype = row.doctype_name || 'Unknown';
+        if (!groupedData[doctype]) {
+            groupedData[doctype] = [];
+        }
+        groupedData[doctype].push(row);
+    });
+
+    Object.keys(groupedData).forEach((doctype) => {
+        const data = groupedData[doctype];
+        const $table = $(`
+            <div class="data-table" style="width: 100%; margin-bottom: 30px;">
+                <h4>${__(doctype)}</h4>
+                <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                    <thead>
+                        <tr>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Batch Name')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Total Cast Weight')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Total Bunch Weight')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Tooling Count')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        `);
+
+        const $tbody = $table.find('tbody');
+
+        data.forEach((row) => {
+            const $tr = $(`
+                <tr style="border-bottom: 1px solid #e9ecef;">
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/${doctype.toLowerCase().replace(/\s+/g, '-')}/${row.name}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.name}</a></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.total_cast_weight || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.total_bunch_weight || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${row.no_of_tooling || 0}</td>
+                </tr>
+            `);
+            $tbody.append($tr);
+        });
+
+        $container.append($table);
+    });
+}
+
+function renderOverviewTables($container, overviewData) {
+    // For overview, we'll show a summary of both heat and mould data
+    if (overviewData.heat && overviewData.heat.length > 0) {
+        const $heatTable = $(`
+            <div class="data-table" style="width: 100%; margin-bottom: 30px;">
+                <h4>${__('Recent Heat Entries')}</h4>
+                <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                    <thead>
+                        <tr>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Heat Entry')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Total Charge Mix (Kg)')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Liquid Balance')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Burning Loss (%)')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        `);
+
+        const $heatTbody = $heatTable.find('tbody');
+
+        // Show only first 5 heat entries
+        overviewData.heat.slice(0, 5).forEach((row) => {
+            const burningLossPct = row.total_charge_mix_in_kg > 0 ?
+                ((row.total_charge_mix_in_kg - row.liquid_balence) / row.total_charge_mix_in_kg * 100) : 0;
+
+            const $tr = $(`
+                <tr style="border-bottom: 1px solid #e9ecef;">
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/heat/${row.name}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.name}</a></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.total_charge_mix_in_kg || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.liquid_balence || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right; white-space: nowrap;">${burningLossPct.toFixed(2)}%</td>
+                </tr>
+            `);
+            $heatTbody.append($tr);
+        });
+
+        $container.append($heatTable);
+    }
+
+    if (overviewData.mould && overviewData.mould.length > 0) {
+        const $mouldTable = $(`
+            <div class="data-table">
+                <h4>${__('Recent Mould Batches')}</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>${__('Batch Name')}</th>
+                            <th>${__('Batch Type')}</th>
+                            <th>${__('Total Cast Weight')}</th>
+                            <th>${__('Total Bunch Weight')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        `);
+
+        const $mouldTbody = $mouldTable.find('tbody');
+
+        // Show only first 5 mould entries
+        overviewData.mould.slice(0, 5).forEach((row) => {
+            const $tr = $(`
+                <tr>
+                    <td><a href="/app/${(row.doctype_name || 'mould-batch').toLowerCase().replace(/\s+/g, '-')}/${row.name}" class="link-cell">${row.name}</a></td>
+                    <td>${__(row.doctype_name || 'Unknown')}</td>
+                    <td>${format_number(row.total_cast_weight || 0, null, 3)}</td>
+                    <td>${format_number(row.total_bunch_weight || 0, null, 3)}</td>
+                </tr>
+            `);
+            $mouldTbody.append($tr);
+        });
+
+        $container.append($mouldTable);
+    }
 }
 
 function createCard(card) {

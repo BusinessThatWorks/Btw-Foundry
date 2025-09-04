@@ -29,41 +29,55 @@ def get_unified_dashboard_data(filters=None):
 		# Get data for each section
 		heat_data = get_heat_dashboard_data(filters)
 		mould_data = get_mould_dashboard_data(filters)
-		overview_data = get_overview_data(filters, heat_data, mould_data)
 
-		return {"success": True, "data": {"overview": overview_data, "heat": heat_data, "mould": mould_data}}
+		# Extract the actual data from the response
+		heat_data_actual = heat_data.get("data", {"summary": [], "raw_data": []})
+		mould_data_actual = mould_data.get("data", {"summary": [], "raw_data": []})
+
+		overview_data = get_overview_data(filters, heat_data_actual, mould_data_actual)
+
+		return {
+			"success": True,
+			"data": {"overview": overview_data, "heat": heat_data_actual, "mould": mould_data_actual},
+		}
 
 	except Exception as e:
 		frappe.log_error(f"Unified Dashboard Error: {str(e)}", "Unified Dashboard")
 		return {"success": False, "message": _("An error occurred while fetching dashboard data"), "data": {}}
 
 
-def get_heat_dashboard_data(filters):
+@frappe.whitelist()
+def get_heat_dashboard_data(filters=None):
 	"""Get Heat dashboard data using existing report logic."""
 	try:
+		filters = frappe.parse_json(filters) if isinstance(filters, str) else filters or {}
+
 		from shiw.report.number_card_heat_report.number_card_heat_report import get_data, get_report_summary
 
 		heat_data = get_data(filters)
 		heat_summary = get_report_summary(heat_data)
 
-		return {"summary": heat_summary, "raw_data": heat_data}
+		return {"success": True, "data": {"summary": heat_summary, "raw_data": heat_data}}
 	except Exception as e:
 		frappe.log_error(f"Heat Dashboard Data Error: {str(e)}", "Unified Dashboard")
-		return {"summary": [], "raw_data": []}
+		return {"success": False, "message": str(e), "data": {"summary": [], "raw_data": []}}
 
 
-def get_mould_dashboard_data(filters):
+@frappe.whitelist()
+def get_mould_dashboard_data(filters=None):
 	"""Get Mould dashboard data using existing report logic."""
 	try:
+		filters = frappe.parse_json(filters) if isinstance(filters, str) else filters or {}
+
 		from shiw.report.number_card_mould_report.number_card_mould_report import get_data, get_report_summary
 
 		mould_data = get_data(filters)
 		mould_summary = get_report_summary(mould_data)
 
-		return {"summary": mould_summary, "raw_data": mould_data}
+		return {"success": True, "data": {"summary": mould_summary, "raw_data": mould_data}}
 	except Exception as e:
 		frappe.log_error(f"Mould Dashboard Data Error: {str(e)}", "Unified Dashboard")
-		return {"summary": [], "raw_data": []}
+		return {"success": False, "message": str(e), "data": {"summary": [], "raw_data": []}}
 
 
 def get_overview_data(filters, heat_data, mould_data):
@@ -102,6 +116,9 @@ def get_overview_data(filters, heat_data, mould_data):
 		total_tooling = next(
 			(card["value"] for card in mould_summary if "Total Number of Tooling" in card["label"]), 0
 		)
+		estimated_foundry_return = next(
+			(card["value"] for card in mould_summary if "Estimated Foundry Return" in card["label"]), 0
+		)
 
 		# Calculate combined metrics
 		total_production_weight = flt(total_cast_weight + total_bunch_weight, 2)
@@ -111,21 +128,6 @@ def get_overview_data(filters, heat_data, mould_data):
 
 		# Create overview cards
 		overview_summary = [
-			{
-				"value": total_heats + total_batches,
-				"label": _("Total Production Units"),
-				"datatype": "Int",
-				"indicator": "Purple",
-				"description": _("Combined Heat and Mould batches"),
-			},
-			{
-				"value": total_production_weight,
-				"label": _("Total Production Weight (Kg)"),
-				"datatype": "Float",
-				"precision": 2,
-				"indicator": "Blue",
-				"description": _("Combined cast and bunch weight"),
-			},
 			{
 				"value": overall_efficiency,
 				"label": _("Overall Efficiency (%)"),
@@ -141,6 +143,14 @@ def get_overview_data(filters, heat_data, mould_data):
 				"precision": 2,
 				"indicator": "Orange",
 				"description": _("Heat process burning loss"),
+			},
+			{
+				"value": estimated_foundry_return,
+				"label": _("Estimated Foundry Return"),
+				"datatype": "Float",
+				"precision": 2,
+				"indicator": "Purple",
+				"description": _("Bunch weight minus cast weight"),
 			},
 			{
 				"value": avg_yield,
