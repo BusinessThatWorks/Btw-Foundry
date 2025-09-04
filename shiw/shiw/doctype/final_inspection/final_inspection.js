@@ -53,7 +53,7 @@ frappe.ui.form.on("Final Inspection", {
                 frappe.call({
                     method: "shiw.api.get_qty_for_fettling.get_qty_for_fettling",
                     args: {
-                        item_name: item_name, // Changed from item_code to item_name
+                        item_name: item_name,
                         warehouse: "Finishing - SHIW"
                     },
                     callback(r) {
