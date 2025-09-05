@@ -1101,14 +1101,6 @@ function createProcurementOverviewData(procurementData, mrData, poData, prData, 
     const totalPr = prData.summary.reduce((sum, card) => sum + (card.value || 0), 0);
     const totalPi = piData.summary.reduce((sum, card) => sum + (card.value || 0), 0);
 
-    // Calculate total procurement value
-    let totalProcurementValue = 0;
-    [poData, prData, piData].forEach(data => {
-        data.raw_data.forEach(row => {
-            totalProcurementValue += parseFloat(row.grand_total || 0);
-        });
-    });
-
     return {
         summary: [
             {
@@ -1138,13 +1130,6 @@ function createProcurementOverviewData(procurementData, mrData, poData, prData, 
                 datatype: 'Int',
                 indicator: 'Purple',
                 description: __('Total purchase invoices processed')
-            },
-            {
-                value: totalProcurementValue,
-                label: __('Total Procurement Value'),
-                datatype: 'Currency',
-                indicator: 'Teal',
-                description: __('Total value of procurement transactions')
             }
         ],
         raw_data: procurementData
