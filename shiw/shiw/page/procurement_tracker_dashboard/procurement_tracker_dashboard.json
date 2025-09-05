@@ -1,0 +1,27 @@
+{
+    "allow_guest": 0,
+    "creation": "2025-01-27 10:00:00.000000",
+    "docstatus": 0,
+    "doctype": "Page",
+    "idx": 0,
+    "modified": "2025-01-27 10:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "SHIW",
+    "name": "procurement-tracker-dashboard",
+    "owner": "Administrator",
+    "page_name": "procurement-tracker-dashboard",
+    "roles": [
+        {
+            "role": "System Manager"
+        },
+        {
+            "role": "Purchase Manager"
+        },
+        {
+            "role": "Purchase User"
+        }
+    ],
+    "script": null,
+    "standard": "No",
+    "title": "Procurement Tracker Dashboard"
+}

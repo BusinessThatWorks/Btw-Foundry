@@ -1,0 +1,45 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-28 17:00:56.513451",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "core_type",
+  "column_break_wtxv",
+  "quantity"
+ ],
+ "fields": [
+  {
+   "fieldname": "core_type",
+   "fieldtype": "Link",
+   "label": "Core Type",
+   "options": "Mould Core Type"
+  },
+  {
+   "fieldname": "column_break_wtxv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Int",
+   "label": "Quantity"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-07-19 17:20:23.329389",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Core Type Table",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -1,0 +1,28 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<div class="mould-dashboard-container">
+    <!-- Header -->
+    <div class="dashboard-header" style="margin-bottom: 24px;">
+        <h1 style="color: #2c3e50; margin: 0; font-size: 2rem; font-weight: 600;">{{ _("Mould Dashboard") }}</h1>
+        <p style="color: #7f8c8d; margin: 8px 0 0; font-size: 1rem;">{{ _("Monitor mould production metrics and
+            performance") }}</p>
+    </div>
+
+    <!-- Error Display -->
+    {% if error %}
+    <div class="alert alert-danger"
+        style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Number Cards Container -->
+    <div class="number-cards-container"
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 16px;">
+        <!-- Cards will be populated by JavaScript -->
+    </div>
+</div>
+{% endblock %}
+
+

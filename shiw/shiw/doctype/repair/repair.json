@@ -1,0 +1,136 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:RPR - {date} - {shift_type}",
+ "creation": "2025-06-12 10:51:59.276946",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "column_break_rzni",
+  "shift_type",
+  "section_break_qiey",
+  "table_neky",
+  "total_repair_weight",
+  "section_break_c0sb",
+  "amended_from",
+  "consumption_tab",
+  "table_rlyc",
+  "total_consumption_valuation",
+  "labour_consumption_tab",
+  "total_man_power",
+  "column_break_odpw",
+  "total_labour_cost"
+ ],
+ "fields": [
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "column_break_rzni",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "label": "Shift Type",
+   "options": "\nDay Shift\nNight Shift"
+  },
+  {
+   "fieldname": "section_break_qiey",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_neky",
+   "fieldtype": "Table",
+   "options": "Repair Table"
+  },
+  {
+   "fieldname": "total_repair_weight",
+   "fieldtype": "Float",
+   "label": "Total Repair Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "section_break_c0sb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Repair",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "consumption_tab",
+   "fieldtype": "Tab Break",
+   "label": "Consumption"
+  },
+  {
+   "fieldname": "table_rlyc",
+   "fieldtype": "Table",
+   "options": "Consumption-Mould"
+  },
+  {
+   "fieldname": "total_consumption_valuation",
+   "fieldtype": "Float",
+   "label": "Total Consumption Valuation"
+  },
+  {
+   "fieldname": "labour_consumption_tab",
+   "fieldtype": "Tab Break",
+   "label": "Labour Consumption"
+  },
+  {
+   "fieldname": "total_man_power",
+   "fieldtype": "Int",
+   "label": "Total Man Power"
+  },
+  {
+   "fieldname": "column_break_odpw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_labour_cost",
+   "fieldtype": "Currency",
+   "label": "Total Labour Cost",
+   "precision": "2"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-08-12 11:17:29.250830",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Repair",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

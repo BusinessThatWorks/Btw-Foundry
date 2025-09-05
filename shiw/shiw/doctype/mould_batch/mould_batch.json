@@ -1,0 +1,158 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-04 22:23:43.768213",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "moulding_system",
+  "cast_weight",
+  "column_break_ecvl",
+  "mould_no",
+  "total_cast_weight",
+  "column_break_dqon",
+  "tooling_id",
+  "column_break_jzyi",
+  "quantity_available",
+  "column_break_vjzq",
+  "pouring_quantity",
+  "column_break_uztl",
+  "heat_no",
+  "column_break_zndh",
+  "filling_timein_seconds",
+  "column_break_gvnk",
+  "prng_tmp",
+  "column_break_xshz",
+  "tapping_time",
+  "column_break_dvgl",
+  "short_pouring"
+ ],
+ "fields": [
+  {
+   "fieldname": "moulding_system",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Moulding System",
+   "options": "\nJolt Squeeze Mould Batch\nCo2 Mould Batch\nNo-Bake Mould Batch\nHPML Mould Batch\nGreen Sand Hand Mould Batch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_ecvl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mould_no",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Mould Batch No",
+   "link_filters": "[[\"DocType\",\"name\",\"like\",\"%Mould Batch%\"]]",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_dqon",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tooling_id",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Tooling ID",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_jzyi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quantity_available",
+   "fieldtype": "Int",
+   "label": "Quantity Available"
+  },
+  {
+   "fieldname": "column_break_vjzq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pouring_quantity",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Pouring Quantity",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_uztl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "heat_no",
+   "fieldtype": "Link",
+   "label": "Heat No",
+   "options": "Heat"
+  },
+  {
+   "fieldname": "column_break_zndh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "filling_timein_seconds",
+   "fieldtype": "Time",
+   "label": "Filling Time(In Seconds)"
+  },
+  {
+   "fieldname": "column_break_gvnk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "prng_tmp",
+   "fieldtype": "Float",
+   "label": "Pouring Temp (\u00b0C)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_xshz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tapping_time",
+   "fieldtype": "Time",
+   "label": "Tapping Time"
+  },
+  {
+   "fieldname": "column_break_dvgl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "short_pouring",
+   "fieldtype": "Float",
+   "label": "Short Pouring "
+  },
+  {
+   "fieldname": "cast_weight",
+   "fieldtype": "Float",
+   "label": "Cast Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "total_cast_weight",
+   "fieldtype": "Float",
+   "label": "Total Cast Weight",
+   "precision": "2"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-07-25 15:01:45.457366",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Mould Batch",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

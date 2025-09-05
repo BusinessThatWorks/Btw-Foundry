@@ -1,0 +1,151 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:{FLR} - {date} - {shift_type}",
+ "creation": "2025-05-03 10:26:32.583485",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_um9v",
+  "date",
+  "column_break_cblp",
+  "shift_type",
+  "column_break_okcb",
+  "linked_stock_entry",
+  "section_break_brle",
+  "table_yncx",
+  "section_break_dchv",
+  "total_qty_rejected",
+  "total_flr_cast_weight",
+  "column_break_mbzp",
+  "rejected_qty",
+  "amended_from",
+  "total_flr_bunch_weight",
+  "section_break_whpp",
+  "rejection_table"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_um9v",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "column_break_cblp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "label": "Shift Type",
+   "options": "\nDay Shift\nNight Shift"
+  },
+  {
+   "fieldname": "column_break_okcb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "linked_stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry ID",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_brle",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_yncx",
+   "fieldtype": "Table",
+   "options": "First Line Inspection Report"
+  },
+  {
+   "fieldname": "section_break_dchv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_qty_rejected",
+   "fieldtype": "Int",
+   "label": "Total Qty Rejected"
+  },
+  {
+   "fieldname": "column_break_mbzp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "First Line Rejection",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "total_flr_cast_weight",
+   "fieldtype": "Float",
+   "label": "Total FLR Cast Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "total_flr_bunch_weight",
+   "fieldtype": "Float",
+   "label": "Total FLR Bunch Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "section_break_whpp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "rejection_table",
+   "fieldtype": "Table",
+   "label": "Rejection Table",
+   "options": "Rejection Table"
+  },
+  {
+   "fieldname": "rejected_qty",
+   "fieldtype": "Percent",
+   "label": "Rejected Qty %",
+   "precision": "2"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-08-27 14:43:30.883109",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "First Line Rejection",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -1,0 +1,175 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-14 11:18:37.093256",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_name",
+  "column_break_zigc",
+  "grade",
+  "column_break_yerd",
+  "casting_weight_in_kg",
+  "total_casting_weight",
+  "column_break_rfdz",
+  "bunch_weight_in_kg",
+  "total_bunch_weight",
+  "column_break_knvl",
+  "heat_no",
+  "column_break_resc",
+  "prod_cast",
+  "column_break_yafd",
+  "shake_out_qty",
+  "shake_out",
+  "column_break_tyto",
+  "short_blasting",
+  "short_blasting_quantity",
+  "section_break_spcl",
+  "date",
+  "column_break_cagq",
+  "shift_type",
+  "column_break_qyvp",
+  "pouring_id"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Select",
+   "label": "Item Name",
+   "link_filters": "[[\"Item\",\"item_group\",\"=\",\"Finished Goods\"]]"
+  },
+  {
+   "fieldname": "column_break_zigc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "heat_no.material_grade",
+   "fieldname": "grade",
+   "fieldtype": "Link",
+   "label": "Grade",
+   "options": "Grade Master"
+  },
+  {
+   "fieldname": "column_break_yerd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "casting_weight_in_kg",
+   "fieldtype": "Data",
+   "label": "Casting Weight (in Kg)"
+  },
+  {
+   "fieldname": "column_break_rfdz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bunch_weight_in_kg",
+   "fieldtype": "Data",
+   "label": "Bunch Weight (in Kg)"
+  },
+  {
+   "fieldname": "column_break_knvl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "heat_no",
+   "fieldtype": "Link",
+   "label": "Heat No",
+   "options": "Heat"
+  },
+  {
+   "fieldname": "column_break_resc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "prod_cast",
+   "fieldtype": "Data",
+   "label": "Prod Cast Qty"
+  },
+  {
+   "fieldname": "column_break_yafd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shake_out_qty",
+   "fieldtype": "Int",
+   "label": "Shake Out Qty"
+  },
+  {
+   "fieldname": "shake_out",
+   "fieldtype": "Int",
+   "label": "Shake Out"
+  },
+  {
+   "fieldname": "column_break_tyto",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "short_blasting",
+   "fieldtype": "Int",
+   "label": "Shot Blast"
+  },
+  {
+   "fieldname": "short_blasting_quantity",
+   "fieldtype": "Int",
+   "label": "Shot Blast Quantity"
+  },
+  {
+   "fieldname": "section_break_spcl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Pouring Date"
+  },
+  {
+   "fieldname": "column_break_cagq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "label": "Pouring Shift Type",
+   "options": "\nDay Shift\nNight Shift"
+  },
+  {
+   "fieldname": "column_break_qyvp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pouring_id",
+   "fieldtype": "Link",
+   "label": "Pouring ID",
+   "options": "Pouring"
+  },
+  {
+   "fieldname": "total_casting_weight",
+   "fieldtype": "Float",
+   "label": "Total Casting Weight",
+   "precision": "2"
+  },
+  {
+   "fieldname": "total_bunch_weight",
+   "fieldtype": "Float",
+   "label": "Total Bunch Weight",
+   "precision": "2"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-07-25 15:06:21.642745",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Treatment Table",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

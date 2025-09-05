@@ -1,0 +1,72 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-06-17 12:23:49.604219",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "qty",
+  "item_name",
+  "finished_qty",
+  "gn_qty",
+  "contractor_name",
+  "cast_weight_in_kg",
+  "is_sample"
+ ],
+ "fields": [
+  {
+   "fieldname": "qty",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Link",
+   "label": "Item Name",
+   "link_filters": "[[\"Item\",\"item_group\",\"=\",\"Finished Goods\"]]",
+   "options": "Item"
+  },
+  {
+   "fieldname": "finished_qty",
+   "fieldtype": "Int",
+   "label": "Finished Qty"
+  },
+  {
+   "fieldname": "gn_qty",
+   "fieldtype": "Int",
+   "label": "Gauging/Inspection Qty"
+  },
+  {
+   "fieldname": "contractor_name",
+   "fieldtype": "Select",
+   "label": "Contractor Name"
+  },
+  {
+   "fetch_from": "item_name.custom_cast_weight_per_pc",
+   "fieldname": "cast_weight_in_kg",
+   "fieldtype": "Data",
+   "label": "Cast Weight (In Kg)"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_sample",
+   "fieldtype": "Check",
+   "label": "Is Sample"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-09-03 15:04:09.592701",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Inspection Table",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

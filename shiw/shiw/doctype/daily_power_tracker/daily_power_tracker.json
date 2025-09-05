@@ -1,0 +1,215 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:DPT - {present_reading_date} - {meter}",
+ "creation": "2025-06-18 18:11:42.914157",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "meter",
+  "column_break_gwwr",
+  "section_break_pkip",
+  "previous_reading_date",
+  "column_break_ytoa",
+  "previous_reading_recorded",
+  "section_break_qfde",
+  "present_reading_date",
+  "column_break_mwyl",
+  "present_reading_recorded",
+  "section_break_zsrz",
+  "consumption",
+  "column_break_xpfj",
+  "mf",
+  "column_break_rswr",
+  "consumption_kwh",
+  "section_break_qehs",
+  "03_furnace_kwh",
+  "column_break_ldhm",
+  "plant_kwh",
+  "column_break_efhj",
+  "fur_aux_vcb",
+  "column_break_wsdx",
+  "incomer_vcb",
+  "electric_bill_reading_section",
+  "kwh",
+  "column_break_xjfg",
+  "pf",
+  "section_break_crec",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "meter",
+   "fieldtype": "Select",
+   "label": "Meter",
+   "options": "\n1-Ton furnace\n500-kg furnace\n200-kg furnace\nFurnace VCB\nAuxiliary VCB\nIncomer VCB\nBill Reading"
+  },
+  {
+   "fieldname": "column_break_gwwr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_pkip",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "previous_reading_date",
+   "fieldtype": "Date",
+   "label": "Previous Reading Date"
+  },
+  {
+   "fieldname": "column_break_ytoa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "previous_reading_recorded",
+   "fieldtype": "Float",
+   "label": "Previous Reading Recorded"
+  },
+  {
+   "fieldname": "section_break_qfde",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "present_reading_date",
+   "fieldtype": "Date",
+   "label": "Present Reading Date"
+  },
+  {
+   "fieldname": "column_break_mwyl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "present_reading_recorded",
+   "fieldtype": "Float",
+   "label": "Present Reading Recorded"
+  },
+  {
+   "fieldname": "section_break_zsrz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "consumption",
+   "fieldtype": "Float",
+   "label": "Consumption"
+  },
+  {
+   "fieldname": "column_break_xpfj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mf",
+   "fieldtype": "Int",
+   "label": "MF"
+  },
+  {
+   "fieldname": "column_break_rswr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "consumption_kwh",
+   "fieldtype": "Float",
+   "label": "Consumption (KWH)"
+  },
+  {
+   "fieldname": "section_break_qehs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "03_furnace_kwh",
+   "fieldtype": "Float",
+   "label": "03 Furnace (KWH)"
+  },
+  {
+   "fieldname": "column_break_ldhm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "plant_kwh",
+   "fieldtype": "Float",
+   "label": "Plant (KWH)"
+  },
+  {
+   "fieldname": "column_break_efhj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fur_aux_vcb",
+   "fieldtype": "Float",
+   "label": "FUR. & AUX. VCB"
+  },
+  {
+   "fieldname": "column_break_wsdx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "incomer_vcb",
+   "fieldtype": "Float",
+   "label": "Incomer VCB"
+  },
+  {
+   "fieldname": "electric_bill_reading_section",
+   "fieldtype": "Section Break",
+   "label": "ELECTRIC BILL READING"
+  },
+  {
+   "fieldname": "kwh",
+   "fieldtype": "Float",
+   "label": "KWH"
+  },
+  {
+   "fieldname": "column_break_xjfg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pf",
+   "fieldtype": "Float",
+   "label": "PF"
+  },
+  {
+   "fieldname": "section_break_crec",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Daily Power Tracker",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-07-19 17:18:35.574291",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Daily Power Tracker",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
