@@ -73,3 +73,4 @@ def get_heat_report_data(from_date, to_date):
 		}
 
 
+

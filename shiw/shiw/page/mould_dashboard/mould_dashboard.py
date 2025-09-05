@@ -46,3 +46,4 @@ def get_mould_report_data(filters):
 		return {"columns": [], "data": [], "report_summary": []}
 
 
+
