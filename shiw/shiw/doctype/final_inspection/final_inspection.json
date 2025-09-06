@@ -2,7 +2,7 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "format:GI - {date} - {shift_type}",
- "creation": "2025-06-17 12:22:33.221422",
+ "creation": "2025-09-06 14:31:34.563992",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -60,18 +60,28 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Final Inspection",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-09-04 17:39:22.024627",
+ "modified": "2025-09-06 14:37:31.520654",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Final Inspection",
  "naming_rule": "Expression",
- "owner": "subhangee@clapgrow.com",
+ "owner": "Administrator",
  "permissions": [
   {
    "create": 1,
