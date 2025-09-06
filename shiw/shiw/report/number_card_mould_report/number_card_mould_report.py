@@ -139,12 +139,20 @@ def get_data(filters):
 		)
 
 		for d in docs:
-			# Get tooling count for this batch
+			# Get tooling count and yield data for this batch
 			mould_rows = frappe.get_all(
 				"New Mould Table", filters={"parent": d.name, "parenttype": doctype}, fields=["tooling"]
 			)
 
 			tooling_count = len([row for row in mould_rows if row.tooling])
+
+			# Calculate total yield for this batch
+			total_yield = 0
+			for row in mould_rows:
+				if row.tooling:
+					# Get yield from the tooling
+					tooling_yield = frappe.db.get_value("New Tooling", row.tooling, "yield") or 0
+					total_yield += flt(tooling_yield, 2)
 
 			result.append(
 				{
@@ -153,6 +161,7 @@ def get_data(filters):
 					"total_cast_weight": d.total_cast_weight or 0,
 					"total_bunch_weight": d.total_bunch_weight or 0,
 					"no_of_tooling": tooling_count,
+					"total_yield": total_yield,
 				}
 			)
 
@@ -180,11 +189,13 @@ def get_report_summary(result):
 	# Calculate estimated foundry return (bunch weight - cast weight)
 	estimated_foundry_return = flt(total_bunch_weight - total_cast_weight, 2)
 
-	# Calculate average yield (placeholder - you may need to implement this based on your data structure)
+	# Calculate average yield from actual tooling data
 	avg_yield = 0
 	if total_tooling > 0:
-		# This is a placeholder - you may need to calculate actual yield from tooling data
-		avg_yield = 85.0  # Default value
+		# Sum all yield values from all tooling in the date range
+		total_yield_sum = sum(flt(row.get("total_yield", 0), 2) for row in result)
+		# Calculate average: total yield sum / total tooling count
+		avg_yield = flt(total_yield_sum / total_tooling, 2)
 
 	# Return number card definitions with different colors for visual distinction
 	return [
