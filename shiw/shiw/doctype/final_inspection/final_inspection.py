@@ -4,7 +4,7 @@
 
 
 # from frappe.model.document import Document
-# import frappe
+import frappe
 # from frappe import _
 # from frappe.utils import flt
 
