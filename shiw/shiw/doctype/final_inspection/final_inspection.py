@@ -8,7 +8,7 @@ import frappe
 # from frappe import _
 # from frappe.utils import flt
 
-# class FinalInspection(Document):
+# class Finalinspection(Document):
 #     def on_submit(self):
 #         items = []
 

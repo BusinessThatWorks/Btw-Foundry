@@ -1,7 +1,7 @@
 // Copyright (c) 2025, beetashoke chakraborty and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("Final Inspection", {
+// frappe.ui.form.on("Final inspection", {
 // 	refresh(frm) {
 
 // 	},
@@ -10,7 +10,7 @@
 
 
 
-// frappe.ui.form.on("Final Inspection", {
+// frappe.ui.form.on("Final inspection", {
 //     refresh(frm) {
 //         function clear_row_fields(cdt, cdn, frm) {
 //             const row = locals[cdt][cdn];

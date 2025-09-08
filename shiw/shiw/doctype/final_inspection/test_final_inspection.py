@@ -5,5 +5,5 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestFinalInspection(FrappeTestCase):
+class TestFinalinspection(FrappeTestCase):
 	pass
