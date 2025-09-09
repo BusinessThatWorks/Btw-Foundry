@@ -29,7 +29,8 @@
   {
    "fieldname": "repairing_reason",
    "fieldtype": "Select",
-   "label": "Repairing Reason "
+   "label": "Repairing Reason ",
+   "options": "\nCold Metal\nSlag\nGas Void\nShrinkage"
   },
   {
    "fieldname": "contractor_name",
@@ -53,7 +54,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-25 15:56:23.106739",
+ "modified": "2025-09-09 11:20:05.319314",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Repair Table",
