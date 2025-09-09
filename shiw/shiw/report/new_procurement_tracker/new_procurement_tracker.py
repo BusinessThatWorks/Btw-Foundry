@@ -9,66 +9,97 @@
 # 	return columns, data
 
 
-
-
 import frappe
 
+
 def execute(filters=None):
-    filters = filters or {}
+	filters = filters or {}
 
-    columns = get_columns()
-    data = get_data(filters)
+	columns = get_columns()
+	data = get_data(filters)
 
-    return columns, data
+	return columns, data
 
 
 def get_columns():
-    return [
-        {"label": "Material Request", "fieldname": "material_request", "fieldtype": "Link", "options": "Material Request", "width": 150},
-        {"label": "Indent Date", "fieldname": "indent_date", "fieldtype": "Date", "width": 100},
-        {"label": "MR Status", "fieldname": "mr_status", "fieldtype": "Data", "width": 100},
-
-        {"label": "Item Code", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
-        {"label": "Item Name", "fieldname": "item_name", "fieldtype": "Data", "width": 180},
-        {"label": "Requested Qty", "fieldname": "requested_qty", "fieldtype": "Float", "width": 120},
-        {"label": "UOM", "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 80},
-
-        {"label": "Purchase Order", "fieldname": "purchase_order", "fieldtype": "Link", "options": "Purchase Order", "width": 150},
-        {"label": "PO Status", "fieldname": "po_status", "fieldtype": "Data", "width": 100},
-        {"label": "Ordered Qty", "fieldname": "ordered_qty", "fieldtype": "Float", "width": 120},
-        {"label": "PO UOM", "fieldname": "po_uom", "fieldtype": "Link", "options": "UOM", "width": 80},
-        {"label": "PO Rate", "fieldname": "po_rate", "fieldtype": "Currency", "width": 120},
-        {"label": "Discount", "fieldname": "discount", "fieldtype": "Currency", "width": 120},
-        {"label": "Item Amount", "fieldname": "item_amount", "fieldtype": "Currency", "width": 120},
-        {"label": "Supplier", "fieldname": "supplier", "fieldtype": "Link", "options": "Supplier", "width": 150},
-        {"label": "PO Date", "fieldname": "po_date", "fieldtype": "Date", "width": 100},
-        {"label": "Required By", "fieldname": "required_by", "fieldtype": "Date", "width": 100},
-        {"label": "PO Grand Total", "fieldname": "po_grand_total", "fieldtype": "Currency", "width": 150},
-
-        {"label": "Purchase Receipt", "fieldname": "purchase_receipt", "fieldtype": "Link", "options": "Purchase Receipt", "width": 150},
-        {"label": "Received Qty", "fieldname": "received_qty", "fieldtype": "Float", "width": 120},
-        {"label": "Receipt Date", "fieldname": "receipt_date", "fieldtype": "Date", "width": 100},
-
-        {"label": "Purchase Invoice", "fieldname": "purchase_invoice", "fieldtype": "Link", "options": "Purchase Invoice", "width": 150},
-        {"label": "Invoiced Qty", "fieldname": "invoiced_qty", "fieldtype": "Float", "width": 120},
-        {"label": "Invoice Date", "fieldname": "invoice_date", "fieldtype": "Date", "width": 100},
-    ]
+	return [
+		{
+			"label": "Material Request",
+			"fieldname": "material_request",
+			"fieldtype": "Link",
+			"options": "Material Request",
+			"width": 150,
+		},
+		{"label": "Indent Date", "fieldname": "indent_date", "fieldtype": "Date", "width": 100},
+		{"label": "MR Status", "fieldname": "mr_status", "fieldtype": "Data", "width": 100},
+		{
+			"label": "Item Code",
+			"fieldname": "item_code",
+			"fieldtype": "Link",
+			"options": "Item",
+			"width": 150,
+		},
+		{"label": "Item Name", "fieldname": "item_name", "fieldtype": "Data", "width": 180},
+		{"label": "Requested Qty", "fieldname": "requested_qty", "fieldtype": "Float", "width": 120},
+		{"label": "UOM", "fieldname": "uom", "fieldtype": "Link", "options": "UOM", "width": 80},
+		{
+			"label": "Purchase Order",
+			"fieldname": "purchase_order",
+			"fieldtype": "Link",
+			"options": "Purchase Order",
+			"width": 150,
+		},
+		{"label": "PO Status", "fieldname": "po_status", "fieldtype": "Data", "width": 100},
+		{"label": "Ordered Qty", "fieldname": "ordered_qty", "fieldtype": "Float", "width": 120},
+		{"label": "PO UOM", "fieldname": "po_uom", "fieldtype": "Link", "options": "UOM", "width": 80},
+		{"label": "PO Rate", "fieldname": "po_rate", "fieldtype": "Currency", "width": 120},
+		{"label": "Discount", "fieldname": "discount", "fieldtype": "Currency", "width": 120},
+		{"label": "Item Amount", "fieldname": "item_amount", "fieldtype": "Currency", "width": 120},
+		{
+			"label": "Supplier",
+			"fieldname": "supplier",
+			"fieldtype": "Link",
+			"options": "Supplier",
+			"width": 150,
+		},
+		{"label": "PO Date", "fieldname": "po_date", "fieldtype": "Date", "width": 100},
+		{"label": "Required By", "fieldname": "required_by", "fieldtype": "Date", "width": 100},
+		{"label": "PO Grand Total", "fieldname": "po_grand_total", "fieldtype": "Currency", "width": 150},
+		{
+			"label": "Purchase Receipt",
+			"fieldname": "purchase_receipt",
+			"fieldtype": "Link",
+			"options": "Purchase Receipt",
+			"width": 150,
+		},
+		{"label": "Received Qty", "fieldname": "received_qty", "fieldtype": "Float", "width": 120},
+		{"label": "Receipt Date", "fieldname": "receipt_date", "fieldtype": "Date", "width": 100},
+		{
+			"label": "Purchase Invoice",
+			"fieldname": "purchase_invoice",
+			"fieldtype": "Link",
+			"options": "Purchase Invoice",
+			"width": 150,
+		},
+		{"label": "Invoiced Qty", "fieldname": "invoiced_qty", "fieldtype": "Float", "width": 120},
+		{"label": "Invoice Date", "fieldname": "invoice_date", "fieldtype": "Date", "width": 100},
+	]
 
 
 def get_data(filters):
-    conditions = """
+	conditions = """
         mr.docstatus = 1
         AND mr.transaction_date BETWEEN %(from_date)s AND %(to_date)s
     """
 
-    if filters.get("item_code"):
-        conditions += " AND mri.item_code = %(item_code)s"
+	if filters.get("item_code"):
+		conditions += " AND mri.item_code = %(item_code)s"
 
-    query = f"""
+	query = f"""
         SELECT
             mr.name AS material_request,
             mr.transaction_date AS indent_date,
-            mr.status AS mr_status,
+            mr.workflow_state AS mr_status,
 
             mri.item_code,
             mri.item_name,
@@ -130,4 +161,4 @@ def get_data(filters):
         ORDER BY mr.name, mri.item_code
     """
 
-    return frappe.db.sql(query, filters, as_dict=True)
+	return frappe.db.sql(query, filters, as_dict=True)

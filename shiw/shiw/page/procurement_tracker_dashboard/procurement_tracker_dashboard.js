@@ -69,18 +69,19 @@ function createFilterBar(state) {
     const $fromWrap = $('<div style="min-width:200px;"></div>');
     const $toWrap = $('<div style="min-width:200px;"></div>');
     const $supplierWrap = $('<div style="min-width:220px;"></div>');
+    const $wfStatusWrap = $('<div style="min-width:220px;"></div>');
     const $btnWrap = $('<div style="display:flex;align-items:end;gap:8px;"></div>');
 
     // Assemble filter controls
-    $filterControls.append($fromWrap).append($toWrap).append($supplierWrap);
+    $filterControls.append($fromWrap).append($toWrap).append($supplierWrap).append($wfStatusWrap);
     $filterBar.append($filterControls).append($btnWrap);
     $(state.page.main).append($filterBar);
 
     // Create filter controls
-    createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $btnWrap);
+    createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $wfStatusWrap, $btnWrap);
 }
 
-function createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $btnWrap) {
+function createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $wfStatusWrap, $btnWrap) {
     // Date controls
     state.controls.from_date = frappe.ui.form.make_control({
         parent: $fromWrap.get(0),
@@ -112,6 +113,19 @@ function createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $btnWrap
             label: __('Supplier'),
             fieldname: 'supplier',
             options: 'Supplier',
+            reqd: 0,
+        },
+        render_input: true,
+    });
+
+    // Global Workflow Status filter
+    state.controls.workflow_status = frappe.ui.form.make_control({
+        parent: $wfStatusWrap.get(0),
+        df: {
+            fieldtype: 'Select',
+            label: __('Workflow Status'),
+            fieldname: 'workflow_status',
+            options: ['', 'Draft', 'Waiting For Review', 'Waiting For Approval', 'Approved', 'Rejected', 'Completed', 'Cancelled'],
             reqd: 0,
         },
         render_input: true,
@@ -229,7 +243,7 @@ function createSectionFilterControls(state, tabId) {
         parent: $(`#${tabId}-status-filter`).get(0),
         df: {
             fieldtype: 'Select',
-            label: __('Status'),
+            label: __('Workflow Status'),
             fieldname: `${tabId}_status`,
             options: statusOptions,
             reqd: 0,
@@ -333,6 +347,7 @@ function bindEventHandlers(state) {
     $(state.controls.from_date.$input).on('change', () => refreshDashboard(state));
     $(state.controls.to_date.$input).on('change', () => refreshDashboard(state));
     $(state.controls.supplier.$input).on('change', () => refreshDashboard(state));
+    $(state.controls.workflow_status.$input).on('change', () => refreshDashboard(state));
 
     // Section filter change events
     Object.keys(state.$tabs).forEach(tabId => {
@@ -487,12 +502,17 @@ function fetchMaterialRequestData(filters, state) {
                     // Apply additional filters
                     let filteredData = materialRequests;
 
-                    // Apply status filter if specified
+                    // Apply status filter
                     if (filters.mr_status) {
                         filteredData = filteredData.filter(mr => mr.workflow_state === filters.mr_status);
                     }
 
-                    // Apply ID filter if specified
+                    // Apply global workflow status filter if provided
+                    if (filters.workflow_status) {
+                        filteredData = filteredData.filter(mr => mr.workflow_state === filters.workflow_status);
+                    }
+
+                    // Apply ID filter
                     if (filters.mr_id) {
                         filteredData = filteredData.filter(mr => mr.name.toLowerCase().includes(filters.mr_id.toLowerCase()));
                     }
@@ -523,16 +543,6 @@ function fetchMaterialRequestData(filters, state) {
                         filteredData = itemFilteredMRs;
                     }
 
-                    // Apply status filter
-                    if (filters.mr_status) {
-                        filteredData = filteredData.filter(mr => mr.workflow_state === filters.mr_status);
-                    }
-
-                    // Apply ID filter
-                    if (filters.mr_id) {
-                        filteredData = filteredData.filter(mr => mr.name.toLowerCase().includes(filters.mr_id.toLowerCase()));
-                    }
-
                     // Create status summary based on workflow_state
                     const statusCounts = {};
                     filteredData.forEach(item => {
@@ -549,7 +559,7 @@ function fetchMaterialRequestData(filters, state) {
                     }));
 
                     // Update status options based on actual data
-                    updateStatusOptions('material_request', procurementData, state);
+                    updateStatusOptions('material_request', filteredData, state);
 
                     resolve({
                         summary: summary,
@@ -773,12 +783,17 @@ function fetchPurchaseOrderData(filters, state) {
                     // Apply additional filters
                     let filteredData = purchaseOrders;
 
-                    // Apply status filter if specified
+                    // Apply status filter
                     if (filters.po_status) {
                         filteredData = filteredData.filter(po => po.workflow_state === filters.po_status);
                     }
 
-                    // Apply ID filter if specified
+                    // Apply global workflow status filter if provided
+                    if (filters.workflow_status) {
+                        filteredData = filteredData.filter(po => po.workflow_state === filters.workflow_status);
+                    }
+
+                    // Apply ID filter
                     if (filters.po_id) {
                         filteredData = filteredData.filter(po => po.name.toLowerCase().includes(filters.po_id.toLowerCase()));
                     }
@@ -901,12 +916,17 @@ function fetchPurchaseReceiptData(filters, state) {
                     // Apply additional filters
                     let filteredData = purchaseReceipts;
 
-                    // Apply status filter if specified
+                    // Apply status filter
                     if (filters.pr_status) {
                         filteredData = filteredData.filter(pr => pr.workflow_state === filters.pr_status);
                     }
 
-                    // Apply ID filter if specified
+                    // Apply global workflow status filter if provided
+                    if (filters.workflow_status) {
+                        filteredData = filteredData.filter(pr => pr.workflow_state === filters.workflow_status);
+                    }
+
+                    // Apply ID filter
                     if (filters.pr_id) {
                         filteredData = filteredData.filter(pr => pr.name.toLowerCase().includes(filters.pr_id.toLowerCase()));
                     }
@@ -1029,12 +1049,17 @@ function fetchPurchaseInvoiceData(filters, state) {
                     // Apply additional filters
                     let filteredData = purchaseInvoices;
 
-                    // Apply status filter if specified
+                    // Apply status filter
                     if (filters.pi_status) {
                         filteredData = filteredData.filter(pi => pi.workflow_state === filters.pi_status);
                     }
 
-                    // Apply ID filter if specified
+                    // Apply global workflow status filter if provided
+                    if (filters.workflow_status) {
+                        filteredData = filteredData.filter(pi => pi.workflow_state === filters.workflow_status);
+                    }
+
+                    // Apply ID filter
                     if (filters.pi_id) {
                         filteredData = filteredData.filter(pi => pi.name.toLowerCase().includes(filters.pi_id.toLowerCase()));
                     }
@@ -1161,16 +1186,8 @@ function createProcurementOverviewData(procurementData, mrData, poData, prData, 
 }
 
 function getStatusOptions(tabId) {
-    // Return the workflow states from the images
-    const workflowStates = [
-        'Draft',
-        'Waiting For Review',
-        'Waiting For Approval',
-        'Approved',
-        'Rejected'
-    ];
-
-    return ['', ...workflowStates];
+    // Start empty; options will be updated dynamically from data for all tabs
+    return [''];
 }
 
 function updateStatusOptions(tabId, data, state) {
@@ -1178,8 +1195,8 @@ function updateStatusOptions(tabId, data, state) {
 
     if (tabId === 'material_request') {
         data.forEach(row => {
-            if (row.mr_status) {
-                statusSet.add(row.mr_status);
+            if (row.workflow_state) {
+                statusSet.add(row.workflow_state);
             }
         });
     } else if (tabId === 'purchase_order') {
@@ -1248,7 +1265,8 @@ function getFilters(state) {
     const filters = {
         from_date: state.controls.from_date.get_value(),
         to_date: state.controls.to_date.get_value(),
-        supplier: state.controls.supplier.get_value()
+        supplier: state.controls.supplier.get_value(),
+        workflow_status: state.controls.workflow_status.get_value()
     };
 
     // Add section-specific filters
@@ -1341,7 +1359,7 @@ function renderMaterialRequestTable($container, data) {
                     <tr>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Material Request')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Date')}</th>
-                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Status')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Workflow Status')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1384,7 +1402,7 @@ function renderPurchaseOrderTable($container, data) {
                     <tr>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Purchase Order')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Date')}</th>
-                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Status')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Workflow Status')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Supplier')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Grand Total')}</th>
                     </tr>
@@ -1431,7 +1449,7 @@ function renderPurchaseReceiptTable($container, data) {
                     <tr>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Purchase Receipt')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Date')}</th>
-                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Status')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Workflow Status')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Supplier')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Grand Total')}</th>
                     </tr>
@@ -1478,7 +1496,7 @@ function renderPurchaseInvoiceTable($container, data) {
                     <tr>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Purchase Invoice')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Date')}</th>
-                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Status')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Workflow Status')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Supplier')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Grand Total')}</th>
                     </tr>
