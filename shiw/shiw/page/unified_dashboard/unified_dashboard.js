@@ -140,13 +140,11 @@ function createFilterControls(state, $fromWrap, $toWrap, $furnaceWrap, $batchTyp
 
     // Buttons
     const $refreshBtn = $('<button class="btn btn-primary">' + __('Refresh') + '</button>');
-    const $exportBtn = $('<button class="btn btn-secondary">' + __('Export') + '</button>');
 
-    $btnWrap.append($refreshBtn).append($exportBtn);
+    $btnWrap.append($refreshBtn);
 
     // Store button references
     state.controls.refreshBtn = $refreshBtn;
-    state.controls.exportBtn = $exportBtn;
 }
 
 function createTabbedInterface(state) {
@@ -238,7 +236,6 @@ function bindEventHandlers(state) {
 
     // Button events
     state.controls.refreshBtn.on('click', () => refreshDashboard(state));
-    state.controls.exportBtn.on('click', () => exportDashboardData(state));
 
     // Tab change events
     Object.keys(state.$tabs).forEach(tabId => {
@@ -531,8 +528,11 @@ function renderHeatTable($container, heatData) {
                 <thead>
                     <tr>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Heat Entry')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Grade')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Furnace No')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Total Charge Mix (Kg)')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Liquid Balance')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Per Kg Cost (₹)')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Burning Loss (%)')}</th>
                     </tr>
                 </thead>
@@ -545,14 +545,31 @@ function renderHeatTable($container, heatData) {
     const $tbody = $table.find('tbody');
 
     heatData.forEach((row) => {
-        const burningLossPct = row.total_charge_mix_in_kg > 0 ?
-            ((row.total_charge_mix_in_kg - row.liquid_balence) / row.total_charge_mix_in_kg * 100) : 0;
+        // Calculate burning loss: if liquid balance is 0, burning loss should be 0% (not 100%)
+        let burningLossPct = 0;
+        if (row.total_charge_mix_in_kg > 0 && row.liquid_balence > 0) {
+            burningLossPct = ((row.total_charge_mix_in_kg - row.liquid_balence) / row.total_charge_mix_in_kg * 100);
+        } else if (row.total_charge_mix_in_kg > 0 && row.liquid_balence == 0) {
+            burningLossPct = 0;
+        }
+
+        // Calculate per kg cost: total_charge_mix_valuation / liquid_balance
+        // If liquid balance is 0, use total_charge_mix_valuation value
+        let perKgCost = 0;
+        if (row.liquid_balence > 0) {
+            perKgCost = (row.total_charge_mix_valuation || 0) / row.liquid_balence;
+        } else {
+            perKgCost = row.total_charge_mix_valuation || 0;
+        }
 
         const $tr = $(`
             <tr style="border-bottom: 1px solid #e9ecef;">
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/heat/${row.name}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.name}</a></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.material_grade || ''}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.furnace_no || ''}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.total_charge_mix_in_kg || 0, { fieldtype: 'Float', precision: 2 })}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.liquid_balence || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">₹${frappe.format(perKgCost, { fieldtype: 'Float', precision: 2 })}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right; white-space: nowrap;">${burningLossPct.toFixed(2)}%</td>
             </tr>
         `);
@@ -630,8 +647,11 @@ function renderOverviewTables($container, overviewData) {
                     <thead>
                         <tr>
                             <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Heat Entry')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Grade')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Furnace No')}</th>
                             <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Total Charge Mix (Kg)')}</th>
                             <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Liquid Balance')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Per Kg Cost (₹)')}</th>
                             <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Burning Loss (%)')}</th>
                         </tr>
                     </thead>
@@ -645,14 +665,31 @@ function renderOverviewTables($container, overviewData) {
 
         // Show only first 5 heat entries
         overviewData.heat.slice(0, 5).forEach((row) => {
-            const burningLossPct = row.total_charge_mix_in_kg > 0 ?
-                ((row.total_charge_mix_in_kg - row.liquid_balence) / row.total_charge_mix_in_kg * 100) : 0;
+            // Calculate burning loss: if liquid balance is 0, burning loss should be 0% (not 100%)
+            let burningLossPct = 0;
+            if (row.total_charge_mix_in_kg > 0 && row.liquid_balence > 0) {
+                burningLossPct = ((row.total_charge_mix_in_kg - row.liquid_balence) / row.total_charge_mix_in_kg * 100);
+            } else if (row.total_charge_mix_in_kg > 0 && row.liquid_balence == 0) {
+                burningLossPct = 0;
+            }
+
+            // Calculate per kg cost: total_charge_mix_valuation / liquid_balance
+            // If liquid balance is 0, use total_charge_mix_valuation value
+            let perKgCost = 0;
+            if (row.liquid_balence > 0) {
+                perKgCost = (row.total_charge_mix_valuation || 0) / row.liquid_balence;
+            } else {
+                perKgCost = row.total_charge_mix_valuation || 0;
+            }
 
             const $tr = $(`
                 <tr style="border-bottom: 1px solid #e9ecef;">
                     <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/heat/${row.name}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.name}</a></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.material_grade || ''}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.furnace_no || ''}</td>
                     <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.total_charge_mix_in_kg || 0, { fieldtype: 'Float', precision: 2 })}</td>
                     <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.liquid_balence || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">₹${frappe.format(perKgCost, { fieldtype: 'Float', precision: 2 })}</td>
                     <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right; white-space: nowrap;">${burningLossPct.toFixed(2)}%</td>
                 </tr>
             `);
@@ -754,24 +791,3 @@ function showError(state, message) {
     `);
 }
 
-function exportDashboardData(state) {
-    const filters = getFilters(state);
-
-    // Create a simple export by opening both reports in new tabs
-    const heatParams = new URLSearchParams({
-        report_name: 'Number card Heat report',
-        filters: JSON.stringify(filters)
-    });
-
-    const mouldParams = new URLSearchParams({
-        report_name: 'Number Card Mould report',
-        filters: JSON.stringify(filters)
-    });
-
-    // Open reports in new tabs
-    window.open(`/app/query-report/Number%20card%20Heat%20report?${heatParams.toString()}`, '_blank');
-    window.open(`/app/query-report/Number%20Card%20Mould%20report?${mouldParams.toString()}`, '_blank');
-
-    // Show success message
-    frappe.show_alert(__('Reports opened in new tabs for export'), 'success');
-}

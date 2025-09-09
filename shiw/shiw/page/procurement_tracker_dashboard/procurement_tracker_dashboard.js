@@ -119,13 +119,11 @@ function createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $btnWrap
 
     // Buttons
     const $refreshBtn = $('<button class="btn btn-primary">' + __('Refresh') + '</button>');
-    const $exportBtn = $('<button class="btn btn-secondary">' + __('Export') + '</button>');
 
-    $btnWrap.append($refreshBtn).append($exportBtn);
+    $btnWrap.append($refreshBtn);
 
     // Store button references
     state.controls.refreshBtn = $refreshBtn;
-    state.controls.exportBtn = $exportBtn;
 }
 
 function createTabbedInterface(state) {
@@ -239,6 +237,15 @@ function createSectionFilterControls(state, tabId) {
         render_input: true,
     });
 
+    // Add border styling to status filter input
+    setTimeout(() => {
+        $(`#${tabId}-status-filter .form-control`).css({
+            'border': '1px solid #ced4da',
+            'border-radius': '4px',
+            'padding': '6px 12px'
+        });
+    }, 100);
+
     // ID filter
     const idField = getIdFieldName(tabId);
     state.controls[`${tabId}_id`] = frappe.ui.form.make_control({
@@ -252,6 +259,15 @@ function createSectionFilterControls(state, tabId) {
         render_input: true,
     });
 
+    // Add border styling to ID filter input
+    setTimeout(() => {
+        $(`#${tabId}-id-filter .form-control`).css({
+            'border': '1px solid #ced4da',
+            'border-radius': '4px',
+            'padding': '6px 12px'
+        });
+    }, 100);
+
     // Item name filter
     state.controls[`${tabId}_item_name`] = frappe.ui.form.make_control({
         parent: $(`#${tabId}-item-filter`).get(0),
@@ -264,6 +280,15 @@ function createSectionFilterControls(state, tabId) {
         },
         render_input: true,
     });
+
+    // Add border styling to item filter input
+    setTimeout(() => {
+        $(`#${tabId}-item-filter .form-control`).css({
+            'border': '1px solid #ced4da',
+            'border-radius': '4px',
+            'padding': '6px 12px'
+        });
+    }, 100);
 }
 
 function getStatusFieldName(tabId) {
@@ -320,7 +345,6 @@ function bindEventHandlers(state) {
 
     // Button events
     state.controls.refreshBtn.on('click', () => refreshDashboard(state));
-    state.controls.exportBtn.on('click', () => exportDashboardData(state));
 
     // Tab change events
     Object.keys(state.$tabs).forEach(tabId => {
@@ -1566,22 +1590,3 @@ function showError(state, message) {
     `);
 }
 
-function exportDashboardData(state) {
-    const filters = getFilters(state);
-
-    // Create a simple export by opening the procurement tracker report in a new tab
-    const params = new URLSearchParams({
-        report_name: 'New Procurement Tracker',
-        filters: JSON.stringify({
-            from_date: filters.from_date,
-            to_date: filters.to_date,
-            item_code: filters.item_name || ''
-        })
-    });
-
-    // Open report in new tab
-    window.open(`/app/query-report/New%20Procurement%20Tracker?${params.toString()}`, '_blank');
-
-    // Show success message
-    frappe.show_alert(__('Procurement report opened in new tab for export'), 'success');
-}

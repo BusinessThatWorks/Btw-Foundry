@@ -40,7 +40,21 @@ def get_columns():
 			"fieldtype": "Link",
 			"options": "Heat",
 			"width": 180,
-		},		
+		},
+		{
+			"label": "Grade",
+			"fieldname": "material_grade",
+			"fieldtype": "Link",
+			"options": "Grade Master",
+			"width": 120,
+		},
+		{
+			"label": "Furnace No",
+			"fieldname": "furnace_no",
+			"fieldtype": "Link",
+			"options": "Furnace - Master",
+			"width": 120,
+		},
 		{
 			"label": "Total Charge Mix (Kg)",
 			"fieldname": "total_charge_mix_in_kg",
@@ -49,12 +63,19 @@ def get_columns():
 		},
 		{"label": "Liquid Balance", "fieldname": "liquid_balence", "fieldtype": "Float", "width": 160},
 		{
+			"label": "Per Kg Cost (₹)",
+			"fieldname": "per_kg_cost",
+			"fieldtype": "Float",
+			"width": 140,
+		},
+		{
 			"label": "Burning Loss (%)",
 			"fieldname": "burning_loss_percentage",
 			"fieldtype": "Float",
 			"width": 160,
 		},
 	]
+
 
 def get_data(filters):
 	"""Fetch aggregated Heat data for the specified date range.
@@ -87,17 +108,45 @@ def get_data(filters):
 	result = frappe.db.sql(
 		f"""
         SELECT
-			name, 
+			name,
+			material_grade,
+			furnace_no,
             ifnull(total_charge_mix_in_kg,0) as total_charge_mix_in_kg,
             ifnull(liquid_balence,0) as liquid_balence,
-            ifnull(burning_loss,0) as burning_loss
+            ifnull(burning_loss,0) as burning_loss,
+            ifnull(total_charge_mix_valuation,0) as total_charge_mix_valuation
         FROM `tabHeat`
         WHERE {where_clause}
         """,
 		params,
 		as_dict=True,
 	)
+
+	# Calculate per kg cost for each row
+	for row in result:
+		row["per_kg_cost"] = calculate_per_kg_cost(row["total_charge_mix_valuation"], row["liquid_balence"])
+
 	return result
+
+
+def calculate_per_kg_cost(total_charge_mix_valuation, liquid_balance):
+	"""
+	Calculate per kg cost based on liquid balance.
+
+	Args:
+	    total_charge_mix_valuation (float): Total charge mix valuation in rupees
+	    liquid_balance (float): Liquid balance in kg
+
+	Returns:
+	    float: Per kg cost in rupees
+	"""
+	if liquid_balance > 0:
+		return flt(total_charge_mix_valuation / liquid_balance, 2)
+	else:
+		# If liquid balance is 0, return the total charge mix valuation
+		return flt(total_charge_mix_valuation, 2)
+
+
 # def get_data(filters):
 # 	"""Fetch aggregated Heat data for the specified date range.
 
@@ -127,7 +176,7 @@ def get_data(filters):
 # 	# Get total sums for the given date range from Heat doctype
 # 	result = frappe.db.sql(
 # 		f"""
-#         SELECT 
+#         SELECT
 #             COUNT(*) as total_heats,
 #             SUM(ifnull(total_charge_mix_in_kg,0)) as total_charge_mix_in_kg,
 #             SUM(ifnull(liquid_balence,0)) as liquid_balence,
@@ -150,18 +199,19 @@ def get_report_summary(result):
 	Returns:
 	    list: Number card definitions with values, labels, and styling
 	"""
-	num = 0
-	for row in result:
-		num += 1
+	num = len(result)
 	# Calculate totals from the result data
 	total_heats = num
 	total_charge_mix_in_kg = sum(flt(row["total_charge_mix_in_kg"], 2) for row in result)
 	liquid_balence = sum(flt(row["liquid_balence"], 2) for row in result)
 
 	# Calculate burning loss as percentage: (Total Charge Mix - Liquid Balance) / Total Charge Mix * 100
+	# If liquid balance is 0, burning loss should be 0% (not 100%)
 	burning_loss_percentage = 0
-	if total_charge_mix_in_kg > 0:
+	if total_charge_mix_in_kg > 0 and liquid_balence > 0:
 		burning_loss_percentage = ((total_charge_mix_in_kg - liquid_balence) / total_charge_mix_in_kg) * 100
+	elif total_charge_mix_in_kg > 0 and liquid_balence == 0:
+		burning_loss_percentage = 0
 
 	# Return number card definitions with different colors for visual distinction
 	return [
