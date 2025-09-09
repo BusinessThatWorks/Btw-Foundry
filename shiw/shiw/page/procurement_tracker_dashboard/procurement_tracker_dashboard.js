@@ -908,7 +908,7 @@ function fetchPurchaseReceiptData(filters, state) {
                                 workflow_state: 'Completed', // Purchase Receipts are typically completed when created
                                 status: 'Completed', // Use workflow_state as status for display
                                 supplier: row.supplier,
-                                grand_total: 0 // Not available in procurement tracker
+                                grand_total: row.pr_grand_total || 0
                             });
                         }
                     });
@@ -955,7 +955,7 @@ function fetchPurchaseReceiptData(filters, state) {
                                     workflow_state: 'Completed',
                                     status: 'Completed',
                                     supplier: row.supplier,
-                                    grand_total: 0
+                                    grand_total: row.pr_grand_total || 0
                                 });
                             }
                         });

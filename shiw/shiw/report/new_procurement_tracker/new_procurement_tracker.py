@@ -74,6 +74,7 @@ def get_columns():
 		},
 		{"label": "Received Qty", "fieldname": "received_qty", "fieldtype": "Float", "width": 120},
 		{"label": "Receipt Date", "fieldname": "receipt_date", "fieldtype": "Date", "width": 100},
+		{"label": "PR Grand Total", "fieldname": "pr_grand_total", "fieldtype": "Currency", "width": 150},
 		{
 			"label": "Purchase Invoice",
 			"fieldname": "purchase_invoice",
@@ -121,6 +122,7 @@ def get_data(filters):
             pr.name AS purchase_receipt,
             pri.qty AS received_qty,
             pr.posting_date AS receipt_date,
+            pr.grand_total AS pr_grand_total,
 
             pi.name AS purchase_invoice,
             pii.qty AS invoiced_qty,
