@@ -69,19 +69,18 @@ function createFilterBar(state) {
     const $fromWrap = $('<div style="min-width:200px;"></div>');
     const $toWrap = $('<div style="min-width:200px;"></div>');
     const $supplierWrap = $('<div style="min-width:220px;"></div>');
-    const $wfStatusWrap = $('<div style="min-width:220px;"></div>');
     const $btnWrap = $('<div style="display:flex;align-items:end;gap:8px;"></div>');
 
     // Assemble filter controls
-    $filterControls.append($fromWrap).append($toWrap).append($supplierWrap).append($wfStatusWrap);
+    $filterControls.append($fromWrap).append($toWrap).append($supplierWrap);
     $filterBar.append($filterControls).append($btnWrap);
     $(state.page.main).append($filterBar);
 
     // Create filter controls
-    createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $wfStatusWrap, $btnWrap);
+    createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $btnWrap);
 }
 
-function createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $wfStatusWrap, $btnWrap) {
+function createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $btnWrap) {
     // Date controls
     state.controls.from_date = frappe.ui.form.make_control({
         parent: $fromWrap.get(0),
@@ -118,18 +117,6 @@ function createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $wfStatu
         render_input: true,
     });
 
-    // Global Workflow Status filter
-    state.controls.workflow_status = frappe.ui.form.make_control({
-        parent: $wfStatusWrap.get(0),
-        df: {
-            fieldtype: 'Select',
-            label: __('Workflow Status'),
-            fieldname: 'workflow_status',
-            options: ['', 'Draft', 'Waiting For Review', 'Waiting For Approval', 'Approved', 'Rejected', 'Completed', 'Cancelled'],
-            reqd: 0,
-        },
-        render_input: true,
-    });
 
     // Buttons
     const $refreshBtn = $('<button class="btn btn-primary">' + __('Refresh') + '</button>');
@@ -347,7 +334,6 @@ function bindEventHandlers(state) {
     $(state.controls.from_date.$input).on('change', () => refreshDashboard(state));
     $(state.controls.to_date.$input).on('change', () => refreshDashboard(state));
     $(state.controls.supplier.$input).on('change', () => refreshDashboard(state));
-    $(state.controls.workflow_status.$input).on('change', () => refreshDashboard(state));
 
     // Section filter change events
     Object.keys(state.$tabs).forEach(tabId => {
@@ -507,10 +493,6 @@ function fetchMaterialRequestData(filters, state) {
                         filteredData = filteredData.filter(mr => mr.workflow_state === filters.mr_status);
                     }
 
-                    // Apply global workflow status filter if provided
-                    if (filters.workflow_status) {
-                        filteredData = filteredData.filter(mr => mr.workflow_state === filters.workflow_status);
-                    }
 
                     // Apply ID filter
                     if (filters.mr_id) {
@@ -788,10 +770,6 @@ function fetchPurchaseOrderData(filters, state) {
                         filteredData = filteredData.filter(po => po.workflow_state === filters.po_status);
                     }
 
-                    // Apply global workflow status filter if provided
-                    if (filters.workflow_status) {
-                        filteredData = filteredData.filter(po => po.workflow_state === filters.workflow_status);
-                    }
 
                     // Apply ID filter
                     if (filters.po_id) {
@@ -921,10 +899,6 @@ function fetchPurchaseReceiptData(filters, state) {
                         filteredData = filteredData.filter(pr => pr.workflow_state === filters.pr_status);
                     }
 
-                    // Apply global workflow status filter if provided
-                    if (filters.workflow_status) {
-                        filteredData = filteredData.filter(pr => pr.workflow_state === filters.workflow_status);
-                    }
 
                     // Apply ID filter
                     if (filters.pr_id) {
@@ -1038,8 +1012,8 @@ function fetchPurchaseInvoiceData(filters, state) {
                             purchaseInvoices.push({
                                 name: row.purchase_invoice,
                                 posting_date: row.invoice_date,
-                                workflow_state: 'Completed', // Purchase Invoices are typically completed when created
-                                status: 'Completed', // Use workflow_state as status for display
+                                workflow_state: row.pi_status,
+                                status: row.pi_status, // Use workflow_state as status for display
                                 supplier: row.supplier,
                                 grand_total: 0 // Not available in procurement tracker
                             });
@@ -1054,10 +1028,6 @@ function fetchPurchaseInvoiceData(filters, state) {
                         filteredData = filteredData.filter(pi => pi.workflow_state === filters.pi_status);
                     }
 
-                    // Apply global workflow status filter if provided
-                    if (filters.workflow_status) {
-                        filteredData = filteredData.filter(pi => pi.workflow_state === filters.workflow_status);
-                    }
 
                     // Apply ID filter
                     if (filters.pi_id) {
@@ -1085,8 +1055,8 @@ function fetchPurchaseInvoiceData(filters, state) {
                                 itemFilteredPIs.push({
                                     name: row.purchase_invoice,
                                     posting_date: row.invoice_date,
-                                    workflow_state: 'Completed',
-                                    status: 'Completed',
+                                    workflow_state: row.pi_status,
+                                    status: row.pi_status,
                                     supplier: row.supplier,
                                     grand_total: 0
                                 });
@@ -1213,8 +1183,8 @@ function updateStatusOptions(tabId, data, state) {
         });
     } else if (tabId === 'purchase_invoice') {
         data.forEach(row => {
-            if (row.purchase_invoice) {
-                statusSet.add('Completed'); // Purchase Invoices are typically completed
+            if (row.pi_status) {
+                statusSet.add(row.pi_status);
             }
         });
     }
@@ -1265,8 +1235,7 @@ function getFilters(state) {
     const filters = {
         from_date: state.controls.from_date.get_value(),
         to_date: state.controls.to_date.get_value(),
-        supplier: state.controls.supplier.get_value(),
-        workflow_status: state.controls.workflow_status.get_value()
+        supplier: state.controls.supplier.get_value()
     };
 
     // Add section-specific filters
