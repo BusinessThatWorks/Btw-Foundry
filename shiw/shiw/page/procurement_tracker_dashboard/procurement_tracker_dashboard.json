@@ -4,7 +4,7 @@
  "docstatus": 0,
  "doctype": "Page",
  "idx": 0,
- "modified": "2025-09-10 16:55:52.467325",
+ "modified": "2025-09-10 17:31:19.086474",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "procurement-tracker-dashboard",
@@ -24,6 +24,6 @@
  "script": null,
  "standard": "Yes",
  "style": null,
- "system_page": 0,
+ "system_page": 1,
  "title": "Procurement Tracker Dashboard"
 }
