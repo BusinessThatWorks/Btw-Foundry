@@ -1,10 +1,10 @@
 {
  "content": null,
- "creation": "2025-09-09 10:57:14.354713",
+ "creation": "2025-09-10 16:15:26.739914",
  "docstatus": 0,
  "doctype": "Page",
  "idx": 0,
- "modified": "2025-09-09 17:36:50.764199",
+ "modified": "2025-09-10 16:25:32.178288",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "mould-dashboard",
@@ -18,6 +18,6 @@
  "script": null,
  "standard": "Yes",
  "style": null,
- "system_page": 0,
+ "system_page": 1,
  "title": "Mould Dashboard"
 }

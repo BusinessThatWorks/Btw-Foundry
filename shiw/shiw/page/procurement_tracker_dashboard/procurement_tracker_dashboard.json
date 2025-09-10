@@ -1,29 +1,29 @@
 {
-    "allow_guest": 0,
-    "creation": "2025-01-27 10:00:00.000000",
-    "docstatus": 0,
-    "doctype": "Page",
-    "idx": 0,
-    "modified": "2025-01-27 10:00:00.000000",
-    "modified_by": "Administrator",
-    "module": "SHIW",
-    "name": "procurement-tracker-dashboard",
-    "owner": "Administrator",
-    "page_name": "procurement-tracker-dashboard",
-    "roles": [
-        {
-            "role": "System Manager"
-        },
-        {
-            "role": "Purchase Manager"
-        },
-        {
-            "role": "Purchase User"
-        }
-    ],
-    "script": null,
-    "standard": "No",
-    "title": "Procurement Tracker Dashboard"
+ "content": null,
+ "creation": "2025-09-10 16:15:26.793032",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2025-09-10 16:24:50.020719",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "procurement-tracker-dashboard",
+ "owner": "Administrator",
+ "page_name": "procurement-tracker-dashboard",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Purchase Manager"
+  },
+  {
+   "role": "Purchase User"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1,
+ "title": "Procurement Tracker Dashboard"
 }
-
-
