@@ -986,48 +986,43 @@ function fetchPurchaseReceiptData(filters, state) {
 
 function fetchPurchaseInvoiceData(filters, state) {
     return new Promise((resolve, reject) => {
-        // Use the procurement tracker report to get data with workflow_state
+        // Use the new Purchase Invoice Tracker report
         frappe.call({
             method: 'frappe.desk.query_report.run',
             args: {
-                report_name: 'New Procurement Tracker',
+                report_name: 'Purchase Invoice Tracker',
                 filters: {
                     from_date: filters.from_date,
                     to_date: filters.to_date,
-                    item_code: filters.item_name || ''
+                    supplier: filters.supplier || '',
+                    workflow_status: filters.pi_status || ''
                 },
                 ignore_prepared_report: 1,
             },
             callback: (r) => {
                 if (r.message && r.message.result) {
-                    let procurementData = r.message.result;
+                    let piData = r.message.result;
 
-                    // Extract unique Purchase Invoices from procurement data
+                    // Transform data to match expected format
                     const purchaseInvoices = [];
                     const seenPIs = new Set();
 
-                    procurementData.forEach(row => {
-                        if (row.purchase_invoice && !seenPIs.has(row.purchase_invoice)) {
-                            seenPIs.add(row.purchase_invoice);
+                    piData.forEach(row => {
+                        if (row.purchase_invoice_id && !seenPIs.has(row.purchase_invoice_id)) {
+                            seenPIs.add(row.purchase_invoice_id);
                             purchaseInvoices.push({
-                                name: row.purchase_invoice,
-                                posting_date: row.invoice_date,
-                                workflow_state: row.pi_status,
-                                status: row.pi_status, // Use workflow_state as status for display
+                                name: row.purchase_invoice_id,
+                                posting_date: row.date,
+                                workflow_state: row.status,
+                                status: row.status,
                                 supplier: row.supplier,
-                                grand_total: 0 // Not available in procurement tracker
+                                grand_total: row.grand_total || 0
                             });
                         }
                     });
 
                     // Apply additional filters
                     let filteredData = purchaseInvoices;
-
-                    // Apply status filter
-                    if (filters.pi_status) {
-                        filteredData = filteredData.filter(pi => pi.workflow_state === filters.pi_status);
-                    }
-
 
                     // Apply ID filter
                     if (filters.pi_id) {
@@ -1098,7 +1093,7 @@ function fetchPurchaseInvoiceData(filters, state) {
                     }));
 
                     // Update status options based on actual data
-                    updateStatusOptions('purchase_invoice', procurementData, state);
+                    updateStatusOptions('purchase_invoice', piData, state);
 
                     resolve({
                         summary: summary,
@@ -1183,8 +1178,8 @@ function updateStatusOptions(tabId, data, state) {
         });
     } else if (tabId === 'purchase_invoice') {
         data.forEach(row => {
-            if (row.pi_status) {
-                statusSet.add(row.pi_status);
+            if (row.status) {
+                statusSet.add(row.status);
             }
         });
     }
