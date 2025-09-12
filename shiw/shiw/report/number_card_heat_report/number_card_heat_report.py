@@ -205,13 +205,24 @@ def get_report_summary(result):
 	total_charge_mix_in_kg = sum(flt(row["total_charge_mix_in_kg"], 2) for row in result)
 	liquid_balence = sum(flt(row["liquid_balence"], 2) for row in result)
 
-	# Calculate burning loss as percentage: (Total Charge Mix - Liquid Balance) / Total Charge Mix * 100
-	# If liquid balance is 0, burning loss should be 0% (not 100%)
-	burning_loss_percentage = 0
-	if total_charge_mix_in_kg > 0 and liquid_balence > 0:
-		burning_loss_percentage = ((total_charge_mix_in_kg - liquid_balence) / total_charge_mix_in_kg) * 100
-	elif total_charge_mix_in_kg > 0 and liquid_balence == 0:
-		burning_loss_percentage = 0
+	# Calculate average burning loss percentage: Sum of individual burning loss percentages / Number of heats
+	# If liquid balance is 0 for a heat, burning loss should be 0% (not 100%)
+	total_burning_loss_percentage = 0
+	valid_heats = 0
+
+	for row in result:
+		individual_burning_loss = 0
+		if row["total_charge_mix_in_kg"] > 0 and row["liquid_balence"] > 0:
+			individual_burning_loss = (
+				(row["total_charge_mix_in_kg"] - row["liquid_balence"]) / row["total_charge_mix_in_kg"]
+			) * 100
+		elif row["liquid_balence"] == 0:
+			individual_burning_loss = 0  # When liquid balance is 0, burning loss should be 0%
+
+		total_burning_loss_percentage += individual_burning_loss
+		valid_heats += 1
+
+	burning_loss_percentage = total_burning_loss_percentage / valid_heats if valid_heats > 0 else 0
 
 	# Return number card definitions with different colors for visual distinction
 	return [

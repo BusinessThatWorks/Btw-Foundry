@@ -528,8 +528,11 @@ function renderHeatTable($container, heatData) {
                 <thead>
                     <tr>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Heat Entry')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Grade')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Furnace No')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Total Charge Mix (Kg)')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Liquid Balance')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Per Kg Cost (₹)')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Burning Loss (%)')}</th>
                     </tr>
                 </thead>
@@ -542,14 +545,21 @@ function renderHeatTable($container, heatData) {
     const $tbody = $table.find('tbody');
 
     heatData.forEach((row) => {
-        const burningLossPct = row.total_charge_mix_in_kg > 0 ?
-            ((row.total_charge_mix_in_kg - row.liquid_balence) / row.total_charge_mix_in_kg * 100) : 0;
+        let burningLossPct = 0;
+        if (row.total_charge_mix_in_kg > 0 && row.liquid_balence > 0) {
+            burningLossPct = ((row.total_charge_mix_in_kg - row.liquid_balence) / row.total_charge_mix_in_kg * 100);
+        } else if (row.liquid_balence === 0) {
+            burningLossPct = 0; // When liquid balance is 0, burning loss should be 0%
+        }
 
         const $tr = $(`
             <tr style="border-bottom: 1px solid #e9ecef;">
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/heat/${row.name}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.name}</a></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.material_grade || ''}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.furnace_no || ''}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.total_charge_mix_in_kg || 0, { fieldtype: 'Float', precision: 2 })}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.liquid_balence || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.per_kg_cost || 0, { fieldtype: 'Float', precision: 2 })}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right; white-space: nowrap;">${burningLossPct.toFixed(2)}%</td>
             </tr>
         `);
@@ -627,8 +637,11 @@ function renderOverviewTables($container, overviewData) {
                     <thead>
                         <tr>
                             <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Heat Entry')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Grade')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Furnace No')}</th>
                             <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Total Charge Mix (Kg)')}</th>
                             <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Liquid Balance')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Per Kg Cost (₹)')}</th>
                             <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Burning Loss (%)')}</th>
                         </tr>
                     </thead>
@@ -642,14 +655,21 @@ function renderOverviewTables($container, overviewData) {
 
         // Show only first 5 heat entries
         overviewData.heat.slice(0, 5).forEach((row) => {
-            const burningLossPct = row.total_charge_mix_in_kg > 0 ?
-                ((row.total_charge_mix_in_kg - row.liquid_balence) / row.total_charge_mix_in_kg * 100) : 0;
+            let burningLossPct = 0;
+            if (row.total_charge_mix_in_kg > 0 && row.liquid_balence > 0) {
+                burningLossPct = ((row.total_charge_mix_in_kg - row.liquid_balence) / row.total_charge_mix_in_kg * 100);
+            } else if (row.liquid_balence === 0) {
+                burningLossPct = 0; // When liquid balance is 0, burning loss should be 0%
+            }
 
             const $tr = $(`
                 <tr style="border-bottom: 1px solid #e9ecef;">
                     <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/heat/${row.name}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.name}</a></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.material_grade || ''}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.furnace_no || ''}</td>
                     <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.total_charge_mix_in_kg || 0, { fieldtype: 'Float', precision: 2 })}</td>
                     <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.liquid_balence || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.per_kg_cost || 0, { fieldtype: 'Float', precision: 2 })}</td>
                     <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right; white-space: nowrap;">${burningLossPct.toFixed(2)}%</td>
                 </tr>
             `);
