@@ -63,7 +63,6 @@ import frappe
 # 	return columns, data
 
 
-
 def execute(filters=None):
 	from_date = filters.get("from_date")
 	to_date = filters.get("to_date")
@@ -90,8 +89,18 @@ def execute(filters=None):
 		},
 		{"label": "Power Consumption", "fieldname": "power_consumption", "fieldtype": "Float", "width": 150},
 		{"label": "Burning Loss", "fieldname": "burning_loss", "fieldtype": "Float", "width": 120},
-		{"label": "Total Charge Mix In Kg", "fieldname": "total_charge_mix_in_kg", "fieldtype": "Float", "width": 180},
-		{"label": "Liquid metal at weighing Bal.", "fieldname": "liquid_balence", "fieldtype": "Float", "width": 220},
+		{
+			"label": "Total Charge Mix In Kg",
+			"fieldname": "total_charge_mix_in_kg",
+			"fieldtype": "Float",
+			"width": 180,
+		},
+		{
+			"label": "Liquid metal at weighing Bal.",
+			"fieldname": "liquid_balence",
+			"fieldtype": "Float",
+			"width": 220,
+		},
 		{"label": "Rate per Kg", "fieldname": "rate_per_kg", "fieldtype": "Float", "width": 150},
 	]
 

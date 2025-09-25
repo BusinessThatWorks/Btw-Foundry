@@ -109,6 +109,7 @@ def get_data(filters):
 		f"""
         SELECT
 			name,
+			date,
 			material_grade,
 			furnace_no,
             ifnull(total_charge_mix_in_kg,0) as total_charge_mix_in_kg,

@@ -141,7 +141,8 @@ function createTabbedInterface(state) {
         { id: 'material_request', label: __('Material Request'), icon: 'fa fa-file-text' },
         { id: 'purchase_order', label: __('Purchase Order'), icon: 'fa fa-shopping-cart' },
         { id: 'purchase_receipt', label: __('Purchase Receipt'), icon: 'fa fa-truck' },
-        { id: 'purchase_invoice', label: __('Purchase Invoice'), icon: 'fa fa-file-invoice' }
+        { id: 'purchase_invoice', label: __('Purchase Invoice'), icon: 'fa fa-file-invoice' },
+        { id: 'item_wise', label: __('Item Wise Tracker'), icon: 'fa fa-list' }
     ];
 
     tabs.forEach((tab, index) => {
@@ -205,12 +206,25 @@ function createContentContainers(state) {
 }
 
 function createSectionFilters(state, tabId) {
+    let inner = '';
+    if (tabId === 'item_wise') {
+        // Item-wise tracker: only PO No and Item filters
+        inner = `
+            <div id="${tabId}-po-filter" style="min-width:200px;"></div>
+            <div id="${tabId}-item-filter" style="min-width:220px;"></div>
+        `;
+    } else {
+        inner = `
+            <div id="${tabId}-status-filter" style="min-width:180px;"></div>
+            <div id="${tabId}-id-filter" style="min-width:180px;"></div>
+            <div id="${tabId}-item-filter" style="min-width:200px;"></div>
+        `;
+    }
+
     const $sectionFilters = $(`
         <div class="section-filters" style="background:#f1f3f4;padding:12px;border-radius:6px;margin-bottom:16px;">
             <div style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
-                <div id="${tabId}-status-filter" style="min-width:180px;"></div>
-                <div id="${tabId}-id-filter" style="min-width:180px;"></div>
-                <div id="${tabId}-item-filter" style="min-width:200px;"></div>
+                ${inner}
             </div>
         </div>
     `);
@@ -223,73 +237,78 @@ function createSectionFilters(state, tabId) {
 }
 
 function createSectionFilterControls(state, tabId) {
-    // Status filter
-    const statusField = getStatusFieldName(tabId);
-    const statusOptions = getStatusOptions(tabId);
-    state.controls[`${tabId}_status`] = frappe.ui.form.make_control({
-        parent: $(`#${tabId}-status-filter`).get(0),
-        df: {
-            fieldtype: 'Select',
-            label: __('Workflow Status'),
-            fieldname: `${tabId}_status`,
-            options: statusOptions,
-            reqd: 0,
-        },
-        render_input: true,
-    });
-
-    // Add border styling to status filter input
-    setTimeout(() => {
-        $(`#${tabId}-status-filter .form-control`).css({
-            'border': '1px solid #ced4da',
-            'border-radius': '4px',
-            'padding': '6px 12px'
+    if (tabId === 'item_wise') {
+        // PO No filter
+        state.controls[`${tabId}_po_no`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-po-filter`).get(0),
+            df: {
+                fieldtype: 'Data',
+                label: __('PO No'),
+                fieldname: `${tabId}_po_no`,
+                reqd: 0,
+            },
+            render_input: true,
         });
-    }, 100);
 
-    // ID filter
-    const idField = getIdFieldName(tabId);
-    state.controls[`${tabId}_id`] = frappe.ui.form.make_control({
-        parent: $(`#${tabId}-id-filter`).get(0),
-        df: {
-            fieldtype: 'Data',
-            label: __('ID'),
-            fieldname: `${tabId}_id`,
-            reqd: 0,
-        },
-        render_input: true,
-    });
-
-    // Add border styling to ID filter input
-    setTimeout(() => {
-        $(`#${tabId}-id-filter .form-control`).css({
-            'border': '1px solid #ced4da',
-            'border-radius': '4px',
-            'padding': '6px 12px'
+        // Item code filter
+        state.controls[`${tabId}_item_code`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-item-filter`).get(0),
+            df: {
+                fieldtype: 'Link',
+                options: 'Item',
+                label: __('Item'),
+                fieldname: `${tabId}_item_code`,
+                reqd: 0,
+            },
+            render_input: true,
         });
-    }, 100);
 
-    // Item name filter
-    state.controls[`${tabId}_item_name`] = frappe.ui.form.make_control({
-        parent: $(`#${tabId}-item-filter`).get(0),
-        df: {
-            fieldtype: 'Link',
-            options: 'Item',
-            label: __('Item'),
-            fieldname: `${tabId}_item_name`,
-            reqd: 0,
-        },
-        render_input: true,
-    });
-
-    // Add border styling to item filter input
-    setTimeout(() => {
-        $(`#${tabId}-item-filter .form-control`).css({
-            'border': '1px solid #ced4da',
-            'border-radius': '4px',
-            'padding': '6px 12px'
+        setTimeout(() => {
+            $(`#${tabId}-po-filter .form-control, #${tabId}-item-filter .form-control`).css({
+                'border': '1px solid #ced4da',
+                'border-radius': '4px',
+                'padding': '6px 12px'
+            });
+        }, 100);
+    } else {
+        // Status filter
+        const statusField = getStatusFieldName(tabId);
+        const statusOptions = getStatusOptions(tabId);
+        state.controls[`${tabId}_status`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-status-filter`).get(0),
+            df: {
+                fieldtype: 'Select',
+                label: __('Workflow Status'),
+                fieldname: `${tabId}_status`,
+                options: statusOptions, reqd: 0,
+            },
+            render_input: true,
         });
-    }, 100);
+        setTimeout(() => {
+            $(`#${tabId}-status-filter .form-control`).css({ 'border': '1px solid #ced4da', 'border-radius': '4px', 'padding': '6px 12px' });
+        }, 100);
+
+        // ID filter
+        const idField = getIdFieldName(tabId);
+        state.controls[`${tabId}_id`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-id-filter`).get(0),
+            df: { fieldtype: 'Data', label: __('ID'), fieldname: `${tabId}_id`, reqd: 0 },
+            render_input: true,
+        });
+        setTimeout(() => {
+            $(`#${tabId}-id-filter .form-control`).css({ 'border': '1px solid #ced4da', 'border-radius': '4px', 'padding': '6px 12px' });
+        }, 100);
+
+        // Item name filter
+        state.controls[`${tabId}_item_name`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-item-filter`).get(0),
+            df: { fieldtype: 'Link', options: 'Item', label: __('Item'), fieldname: `${tabId}_item_name`, reqd: 0 },
+            render_input: true,
+        });
+        setTimeout(() => {
+            $(`#${tabId}-item-filter .form-control`).css({ 'border': '1px solid #ced4da', 'border-radius': '4px', 'padding': '6px 12px' });
+        }, 100);
+    }
 }
 
 function getStatusFieldName(tabId) {
@@ -318,9 +337,92 @@ function getSectionTitle(tabId) {
         'material_request': __('Material Request Details'),
         'purchase_order': __('Purchase Order Details'),
         'purchase_receipt': __('Purchase Receipt Details'),
-        'purchase_invoice': __('Purchase Invoice Details')
+        'purchase_invoice': __('Purchase Invoice Details'),
+        'item_wise': __('Item Wise Tracker')
     };
     return titles[tabId] || __('Details');
+}
+
+function fetchItemWiseTrackerData(filters) {
+    return new Promise((resolve, reject) => {
+        frappe.call({
+            method: 'frappe.desk.query_report.run',
+            args: {
+                report_name: 'Item Wise Procurement Tracker',
+                filters: {
+                    from_date: filters.from_date,
+                    to_date: filters.to_date,
+                    supplier: filters.supplier || '',
+                    item_code: filters.item_code || '',
+                    po_no: filters.po_no || ''
+                },
+                ignore_prepared_report: 1,
+            },
+            callback: (r) => {
+                if (r.message && r.message.result) {
+                    resolve({
+                        summary: [{ value: r.message.result.length, label: __('Tracked Items'), datatype: 'Int', indicator: 'Blue' }],
+                        raw_data: r.message.result
+                    });
+                } else {
+                    resolve({ summary: [], raw_data: [] });
+                }
+            },
+            error: reject
+        });
+    });
+}
+
+function renderItemWiseTable($container, data) {
+    if (!data || data.length === 0) {
+        $container.append(`
+            <div class="no-data-message">
+                <div>${__('No item-wise data available for selected criteria')}</div>
+            </div>
+        `);
+        return;
+    }
+
+    const $table = $(`
+        <div class="data-table" style="width: 100%; margin-bottom: 30px;">
+            <h4>${__('Item Wise Tracker')}</h4>
+            <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                <thead>
+                    <tr>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('PO No')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Item Name')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Due Date')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Qty')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('UOM')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Received Qty')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Received %')}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    `);
+
+    const $tbody = $table.find('tbody');
+
+    data.forEach((row) => {
+        const receivedPct = row.received_pct || 0;
+        const $tr = $(`
+            <tr style="border-bottom: 1px solid #e9ecef;">
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/purchase-order/${row.po_no}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.po_no}</a></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.item_name || ''}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${frappe.format(row.required_by, { fieldtype: 'Date' })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.qty || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.uom || ''}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.received_qty || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right; white-space: nowrap;">${frappe.format(receivedPct, { fieldtype: 'Percent', precision: 2 })}</td>
+            </tr>
+        `);
+        $tbody.append($tr);
+    });
+
+    $container.append($table);
 }
 
 function setDefaultFilters(state) {
@@ -338,9 +440,14 @@ function bindEventHandlers(state) {
     // Section filter change events
     Object.keys(state.$tabs).forEach(tabId => {
         if (tabId !== 'overview') {
-            $(state.controls[`${tabId}_status`].$input).on('change', () => refreshDashboard(state));
-            $(state.controls[`${tabId}_id`].$input).on('change', () => refreshDashboard(state));
-            $(state.controls[`${tabId}_item_name`].$input).on('change', () => refreshDashboard(state));
+            if (tabId === 'item_wise') {
+                $(state.controls[`${tabId}_po_no`].$input).on('change', () => refreshDashboard(state));
+                $(state.controls[`${tabId}_item_code`].$input).on('change', () => refreshDashboard(state));
+            } else {
+                $(state.controls[`${tabId}_status`].$input).on('change', () => refreshDashboard(state));
+                $(state.controls[`${tabId}_id`].$input).on('change', () => refreshDashboard(state));
+                $(state.controls[`${tabId}_item_name`].$input).on('change', () => refreshDashboard(state));
+            }
         }
     });
 
@@ -404,8 +511,9 @@ function refreshDashboard(state) {
         fetchMaterialRequestData(filters, state),
         fetchPurchaseOrderData(filters, state),
         fetchPurchaseReceiptData(filters, state),
-        fetchPurchaseInvoiceData(filters, state)
-    ]).then(([procurementData, mrData, poData, prData, piData]) => {
+        fetchPurchaseInvoiceData(filters, state),
+        fetchItemWiseTrackerData(filters)
+    ]).then(([procurementData, mrData, poData, prData, piData, itemWiseData]) => {
         state.page.clear_indicator();
 
         // Create overview data
@@ -417,7 +525,8 @@ function refreshDashboard(state) {
             material_request: mrData,
             purchase_order: poData,
             purchase_receipt: prData,
-            purchase_invoice: piData
+            purchase_invoice: piData,
+            item_wise: itemWiseData
         });
     }).catch((error) => {
         state.page.clear_indicator();
@@ -755,7 +864,7 @@ function fetchPurchaseOrderData(filters, state) {
                                 name: row.purchase_order,
                                 transaction_date: row.po_date,
                                 workflow_state: row.po_status,
-                                status: row.po_status, // Use workflow_state as status for display
+                                status: row.po_doc_status || '',
                                 supplier: row.supplier,
                                 grand_total: row.po_grand_total
                             });
@@ -798,7 +907,7 @@ function fetchPurchaseOrderData(filters, state) {
                                     name: row.purchase_order,
                                     transaction_date: row.po_date,
                                     workflow_state: row.po_status,
-                                    status: row.po_status,
+                                    status: row.po_doc_status || '',
                                     supplier: row.supplier,
                                     grand_total: row.po_grand_total
                                 });
@@ -1236,15 +1345,19 @@ function getFilters(state) {
     // Add section-specific filters
     Object.keys(state.$tabs).forEach(tabId => {
         if (tabId !== 'overview') {
-            const statusField = getStatusFieldName(tabId);
-            const idField = getIdFieldName(tabId);
-
-            filters[statusField] = state.controls[`${tabId}_status`].get_value();
-            filters[idField] = state.controls[`${tabId}_id`].get_value();
-
-            // Get item_name from the current active tab only
-            if (state.currentTab === tabId) {
-                filters.item_name = state.controls[`${tabId}_item_name`].get_value();
+            if (tabId === 'item_wise') {
+                if (state.currentTab === tabId) {
+                    filters.item_code = state.controls[`${tabId}_item_code`].get_value();
+                    filters.po_no = state.controls[`${tabId}_po_no`].get_value();
+                }
+            } else {
+                const statusField = getStatusFieldName(tabId);
+                const idField = getIdFieldName(tabId);
+                filters[statusField] = state.controls[`${tabId}_status`].get_value();
+                filters[idField] = state.controls[`${tabId}_id`].get_value();
+                if (state.currentTab === tabId) {
+                    filters.item_name = state.controls[`${tabId}_item_name`].get_value();
+                }
             }
         }
     });
@@ -1259,6 +1372,7 @@ function renderDashboardData(state, data) {
     renderTabData(state, 'purchase_order', data.purchase_order);
     renderTabData(state, 'purchase_receipt', data.purchase_receipt);
     renderTabData(state, 'purchase_invoice', data.purchase_invoice);
+    renderTabData(state, 'item_wise', data.item_wise);
 }
 
 function renderTabData(state, tabId, tabData) {
@@ -1300,6 +1414,8 @@ function renderDetailedTables($container, tabId, rawData) {
         renderPurchaseReceiptTable($container, rawData);
     } else if (tabId === 'purchase_invoice') {
         renderPurchaseInvoiceTable($container, rawData);
+    } else if (tabId === 'item_wise') {
+        renderItemWiseTable($container, rawData);
     } else if (tabId === 'overview') {
         renderOverviewTables($container, rawData);
     }
@@ -1367,6 +1483,7 @@ function renderPurchaseOrderTable($container, data) {
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Purchase Order')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Date')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Workflow Status')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Status')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Supplier')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Grand Total')}</th>
                     </tr>
@@ -1380,11 +1497,13 @@ function renderPurchaseOrderTable($container, data) {
     const $tbody = $table.find('tbody');
 
     data.forEach((row) => {
+        const rowColor = getPurchaseOrderRowColor(row.workflow_state, row.status);
         const $tr = $(`
-            <tr style="border-bottom: 1px solid #e9ecef;">
+            <tr style="border-bottom: 1px solid #e9ecef; background:${rowColor};">
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/purchase-order/${row.name}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.name}</a></td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${frappe.format(row.transaction_date, { fieldtype: 'Date' })}</td>
-                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><span class="badge badge-${getStatusClass(row.status)}">${row.status || 'Draft'}</span></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><span class="badge badge-${getStatusClass(row.workflow_state)}">${row.workflow_state || 'Draft'}</span></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.status || ''}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.supplier || ''}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.grand_total || 0, { fieldtype: 'Currency' })}</td>
             </tr>
@@ -1514,6 +1633,29 @@ function getStatusClass(status) {
         'Closed': 'dark'
     };
     return statusClasses[status] || 'secondary';
+}
+
+function getPurchaseOrderRowColor(workflowState, status) {
+    // Default no background
+    const green = '#eaf7ec';
+    const orange = '#fff4e5';
+    const red = '#fdecea';
+
+    const ws = (workflowState || '').toLowerCase();
+    const st = (status || '').toLowerCase();
+
+    // Rules provided:
+    // if status=to bill and workflow_state = approaved -> green
+    if (st === 'to bill' && ws === 'approved') return green;
+
+    // if status=to receive and bill and workflow_state = approaved -> orange
+    if (st === 'to receive and bill' && ws === 'approved') return orange;
+
+    // if status = to received and bill and workflow_state = waiting for approval -> red
+    // Allow minor spelling variants (received/receive)
+    if ((st === 'to received and bill' || st === 'to receive and bill') && ws === 'waiting for approval') return red;
+
+    return 'transparent';
 }
 
 function createCard(card) {

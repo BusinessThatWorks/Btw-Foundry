@@ -17,6 +17,9 @@
   "total_rejected_quantity",
   "column_break_nbmx",
   "rejected_wt",
+  "rejected_qty",
+  "section_break_aurn",
+  "rejection_table",
   "section_break_zmpo",
   "amended_from"
  ],
@@ -88,13 +91,29 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "section_break_aurn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "rejection_table",
+   "fieldtype": "Table",
+   "label": "Rejection Table",
+   "options": "Rejection Table"
+  },
+  {
+   "fieldname": "rejected_qty",
+   "fieldtype": "Percent",
+   "label": "Rejected Quantity%",
+   "precision": "2"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-30 15:53:48.036092",
+ "modified": "2025-08-27 15:03:14.462669",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Second Line Rejection",

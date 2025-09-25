@@ -212,6 +212,7 @@ function createContentContainers(state) {
             const $tablesContainer = $(`
                 <div class="detailed-data-section">
                     <h3>${tabId === 'heat' ? __('Heat Details') : tabId === 'mould' ? __('Mould Details') : __('Overview Details')}</h3>
+                    ${tabId === 'heat' ? '<div id="heat-perkg-chart" style="margin-bottom:16px;"></div>' : ''}
                     <div class="data-tables-container" id="${tabId}-tables"></div>
                 </div>
             `);
@@ -495,6 +496,11 @@ function renderTabData(state, tabId, tabData) {
         $cardsContainer.append($card);
     });
 
+    // Render chart for heat tab
+    if (tabId === 'heat') {
+        renderPerKgCostChart(tabData.raw_data || []);
+    }
+
     // Render detailed tables
     if (tabData.raw_data && tabData.raw_data.length > 0) {
         renderDetailedTables($tablesContainer, tabId, tabData.raw_data);
@@ -769,5 +775,60 @@ function showError(state, message) {
             ${frappe.utils.escape_html(message)}
         </div>
     `);
+}
+
+function renderPerKgCostChart(heatData) {
+    const container = document.getElementById('heat-perkg-chart');
+    if (!container) return;
+
+    // Clear previous chart
+    container.innerHTML = '';
+
+    if (!heatData || heatData.length === 0) {
+        container.innerHTML = `<div class="no-data-message" style="padding:12px;">${__('No data for chart')}</div>`;
+        return;
+    }
+
+    // Build labels (dates) and values (per kg cost)
+    const labels = [];
+    const values = [];
+
+    heatData.forEach(row => {
+        const dateStr = row.date ? frappe.datetime.str_to_user(row.date) : '';
+        labels.push(dateStr || row.name);
+        const perKg = typeof row.per_kg_cost === 'number' ? row.per_kg_cost : 0;
+        values.push(perKg);
+    });
+
+    // Create chart
+    const chart = new frappe.Chart(container, {
+        title: __('Per Kg Cost Trend'),
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    name: __('Per Kg Cost'),
+                    type: 'line',
+                    values: values
+                }
+            ]
+        },
+        type: 'axis-mixed',
+        height: 240,
+        colors: ['#1f77b4'],
+        axisOptions: {
+            xAxisMode: 'tick',
+            yAxisMode: 'span',
+            xIsSeries: true
+        },
+        lineOptions: {
+            regionFill: 1,
+            hideDots: 0
+        },
+        tooltipOptions: {
+            formatTooltipX: d => d,
+            formatTooltipY: d => frappe.format(d, { fieldtype: 'Currency' })
+        }
+    });
 }
 
