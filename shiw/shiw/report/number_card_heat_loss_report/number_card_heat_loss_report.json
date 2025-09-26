@@ -1,0 +1,35 @@
+{
+    "doctype": "Report",
+    "add_total_row": 0,
+    "columns": [],
+    "creation": "2025-09-25 00:00:00.000000",
+    "disable_prepared_report": 1,
+    "filters": [
+        {
+            "fieldname": "from_date",
+            "label": "From Date",
+            "fieldtype": "Date"
+        },
+        {
+            "fieldname": "to_date",
+            "label": "To Date",
+            "fieldtype": "Date"
+        }
+    ],
+    "is_standard": "Yes",
+    "letter_head": null,
+    "modified": "2025-09-25 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "shiw",
+    "name": "Number Card Heat Loss report",
+    "owner": "Administrator",
+    "prepared_report": 0,
+    "ref_doctype": "Daily Heat Loss",
+    "report_name": "Number Card Heat Loss report",
+    "report_type": "Script Report",
+    "roles": [
+        {
+            "role": "System Manager"
+        }
+    ]
+}

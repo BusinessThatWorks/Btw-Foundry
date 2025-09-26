@@ -123,7 +123,7 @@ function createFilterControls(state, $fromWrap, $toWrap, $furnaceWrap, $batchTyp
         parent: $batchTypeWrap.get(0),
         df: {
             fieldtype: 'Select',
-            label: __('Batch Type'),
+            label: __('Mould Type'),
             fieldname: 'batch_type',
             options: [
                 'All',
@@ -159,6 +159,7 @@ function createTabbedInterface(state) {
     const tabs = [
         { id: 'overview', label: __('Overview'), icon: 'fa fa-tachometer' },
         { id: 'heat', label: __('Heat Process'), icon: 'fa fa-fire' },
+        { id: 'heatloss', label: __('Heat Loss'), icon: 'fa fa-thermometer-empty' },
         { id: 'mould', label: __('Mould Process'), icon: 'fa fa-cube' }
     ];
 
@@ -211,8 +212,9 @@ function createContentContainers(state) {
         if ($existingTablesContainer.length === 0) {
             const $tablesContainer = $(`
                 <div class="detailed-data-section">
-                    <h3>${tabId === 'heat' ? __('Heat Details') : tabId === 'mould' ? __('Mould Details') : __('Overview Details')}</h3>
+                    <h3>${tabId === 'heat' ? __('Heat Details') : tabId === 'heatloss' ? __('Heat Loss Details') : tabId === 'mould' ? __('Mould Details') : __('Overview Details')}</h3>
                     ${tabId === 'heat' ? '<div id="heat-perkg-chart" style="margin-bottom:16px;"></div>' : ''}
+                    ${tabId === 'heatloss' ? '<div id="heatloss-reason-chart" style="margin-bottom:16px;"></div>' : ''}
                     <div class="data-tables-container" id="${tabId}-tables"></div>
                 </div>
             `);
@@ -292,8 +294,9 @@ function refreshDashboard(state) {
     // Fetch data for each section
     Promise.all([
         fetchHeatData(filters),
+        fetchHeatLossData(filters),
         fetchMouldData(filters)
-    ]).then(([heatData, mouldData]) => {
+    ]).then(([heatData, heatLossData, mouldData]) => {
         state.page.clear_indicator();
 
         // Create overview data
@@ -309,6 +312,7 @@ function refreshDashboard(state) {
                 }
             },
             heat: heatData,
+            heatloss: heatLossData,
             mould: mouldData
         });
     }).catch((error) => {
@@ -336,6 +340,56 @@ function fetchHeatData(filters) {
                 } else {
                     resolve({ summary: [], raw_data: [] });
                 }
+            },
+            error: reject
+        });
+    });
+}
+
+function fetchHeatLossData(filters) {
+    return new Promise((resolve, reject) => {
+        frappe.call({
+            method: 'frappe.desk.query_report.run',
+            args: {
+                report_name: 'Number Card Heat Loss report',
+                filters: filters,
+                ignore_prepared_report: 1,
+            },
+            callback: (r) => {
+                const base = { summary: [], raw_data: [], reasons: [] };
+                if (r.message) {
+                    base.summary = r.message.report_summary || [];
+                    base.raw_data = r.message.result || [];
+                }
+                // If summary missing, compute averages from raw_data so cards still render
+                if (!base.summary || base.summary.length === 0) {
+                    const rows = base.raw_data || [];
+                    const n = rows.length;
+                    let sum_target = 0, sum_ach_liq = 0, sum_ach_pct = 0, sum_loss_liq = 0;
+                    rows.forEach(row => {
+                        sum_target += Number(row.target_liquid_metal || 0);
+                        sum_ach_liq += Number(row.achieved_liquid_metal || 0);
+                        sum_ach_pct += Number(row.achieved || 0);
+                        sum_loss_liq += Number(row.loss_liquid_metal || 0);
+                    });
+                    const avg = (sum, d) => d > 0 ? (sum / d) : 0;
+                    base.summary = [
+                        { value: avg(sum_target, n), label: __('Target Liquid Metal (Avg)'), datatype: 'Float', precision: 2, indicator: 'Blue' },
+                        { value: avg(sum_ach_liq, n), label: __('Achieved Liquid Metal (Avg)'), datatype: 'Float', precision: 2, indicator: 'Green' },
+                        { value: avg(sum_ach_pct, n), label: __('% Achieved (Avg)'), datatype: 'Float', precision: 2, indicator: 'Teal' },
+                        { value: avg(sum_loss_liq, n), label: __('Loss Liquid Metal (Avg)'), datatype: 'Float', precision: 2, indicator: 'Orange' }
+                    ];
+                }
+                // Fetch reasons table rows
+                frappe.call({
+                    method: 'shiw.shiw.page.unified_dashboard.unified_dashboard.get_heat_loss_reasons',
+                    args: { filters: filters },
+                    callback: (reasonsRes) => {
+                        base.reasons = reasonsRes.message || [];
+                        resolve(base);
+                    },
+                    error: () => resolve(base)
+                });
             },
             error: reject
         });
@@ -469,6 +523,7 @@ function renderDashboardData(state, data) {
     // Render data for each tab
     renderTabData(state, 'overview', data.overview);
     renderTabData(state, 'heat', data.heat);
+    renderTabData(state, 'heatloss', data.heatloss);
     renderTabData(state, 'mould', data.mould);
 }
 
@@ -480,7 +535,11 @@ function renderTabData(state, tabId, tabData) {
     $cardsContainer.empty();
     $tablesContainer.empty();
 
-    if (!tabData || !tabData.summary || !tabData.summary.length) {
+    const hasSummary = tabData && tabData.summary && tabData.summary.length > 0;
+    const hasRaw = tabData && tabData.raw_data && tabData.raw_data.length > 0;
+    const hasReasons = tabId === 'heatloss' && tabData && tabData.reasons && tabData.reasons.length > 0;
+
+    if (!hasSummary && !hasRaw && !hasReasons) {
         $cardsContainer.append(`
             <div class="no-data-message" style="text-align:center;color:#7f8c8d;padding:24px;grid-column:1/-1;">
                 <i class="fa fa-info-circle" style="font-size:2rem;margin-bottom:12px;"></i>
@@ -491,19 +550,60 @@ function renderTabData(state, tabId, tabData) {
     }
 
     // Render cards
-    tabData.summary.forEach((card) => {
+    (tabData.summary || []).forEach((card) => {
         const $card = createCard(card);
         $cardsContainer.append($card);
     });
+
+    // If heat tab, append cards for Foundry Return Existing and Liquid Metal Pig if not present
+    if (tabId === 'heat') {
+        const hasReturnCard = (tabData.summary || []).some(c => (c.label || '').includes('Foundry Return Existing'));
+        const hasPigCard = (tabData.summary || []).some(c => (c.label || '').includes('Liquid Metal Pig'));
+
+        // Compute totals from raw_data to ensure number cards are present
+        if (!hasReturnCard || !hasPigCard) {
+            let totalReturnExisting = 0;
+            let totalLiquidMetalPig = 0;
+            (tabData.raw_data || []).forEach(row => {
+                totalReturnExisting += Number(row.foundry_return_existing || 0);
+                totalLiquidMetalPig += Number(row.liquid_metal_pig || 0);
+            });
+
+            if (!hasReturnCard) {
+                $cardsContainer.append(createCard({
+                    value: totalReturnExisting,
+                    label: __('Foundry Return Existing'),
+                    datatype: 'Float',
+                    precision: 2,
+                    indicator: 'Purple'
+                }));
+            }
+            if (!hasPigCard) {
+                $cardsContainer.append(createCard({
+                    value: totalLiquidMetalPig,
+                    label: __('Liquid Metal Pig'),
+                    datatype: 'Float',
+                    precision: 2,
+                    indicator: 'Teal'
+                }));
+            }
+        }
+    }
 
     // Render chart for heat tab
     if (tabId === 'heat') {
         renderPerKgCostChart(tabData.raw_data || []);
     }
+    if (tabId === 'heatloss') {
+        renderHeatLossReasonChart(tabData.reasons || []);
+    }
 
     // Render detailed tables
     if (tabData.raw_data && tabData.raw_data.length > 0) {
         renderDetailedTables($tablesContainer, tabId, tabData.raw_data);
+    }
+    if (tabId === 'heatloss' && tabData.reasons && tabData.reasons.length > 0) {
+        renderHeatLossTable($tablesContainer, tabData);
     }
 }
 
@@ -512,9 +612,85 @@ function renderDetailedTables($container, tabId, rawData) {
         renderHeatTable($container, rawData);
     } else if (tabId === 'mould') {
         renderMouldTable($container, rawData);
+    } else if (tabId === 'heatloss') {
+        // handled separately to include reasons
     } else if (tabId === 'overview') {
         renderOverviewTables($container, rawData);
     }
+}
+
+function renderHeatLossTable($container, heatLossData) {
+    const reasons = heatLossData.reasons || [];
+    const $table = $(`
+        <div class="data-table" style="width: 100%; margin-bottom: 30px;">
+            <h4>${__('Reasons For Heat Loss')}</h4>
+            <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                <thead>
+                    <tr>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Date')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Reason')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Weight (Kg)')}</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    `);
+
+    const $tbody = $table.find('tbody');
+    reasons.forEach(r => {
+        const dateStr = r.date ? frappe.datetime.str_to_user(r.date) : '';
+        const $tr = $(`
+            <tr style="border-bottom: 1px solid #e9ecef;">
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left; white-space: nowrap;">${dateStr}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${frappe.utils.escape_html(r.reason_for_heat_loss || '')}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(r.weight_in_kg || 0, { fieldtype: 'Float', precision: 2 })}</td>
+            </tr>
+        `);
+        $tbody.append($tr);
+    });
+
+    $container.append($table);
+}
+
+function renderHeatLossReasonChart(reasonsData) {
+    const container = document.getElementById('heatloss-reason-chart');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (!reasonsData || reasonsData.length === 0) {
+        container.innerHTML = `<div class="no-data-message" style="padding:12px;">${__('No data for chart')}</div>`;
+        return;
+    }
+
+    // Aggregate weight by reason across selected date range
+    const reasonTotals = {};
+    reasonsData.forEach(r => {
+        const reason = r.reason_for_heat_loss || __('Unknown');
+        const wt = Number(r.weight_in_kg || 0);
+        reasonTotals[reason] = (reasonTotals[reason] || 0) + wt;
+    });
+
+    const labels = Object.keys(reasonTotals);
+    const values = labels.map(l => reasonTotals[l]);
+
+    new frappe.Chart(container, {
+        title: __('Heat Loss by Reason'),
+        data: {
+            labels: labels,
+            datasets: [
+                { name: __('Weight (Kg)'), type: 'bar', values: values }
+            ]
+        },
+        type: 'bar',
+        height: 240,
+        colors: ['#e67e22'],
+        axisOptions: { xAxisMode: 'tick', yAxisMode: 'span' },
+        tooltipOptions: {
+            formatTooltipX: d => d,
+            formatTooltipY: d => frappe.format(d, { fieldtype: 'Float', precision: 2 })
+        }
+    });
 }
 
 function renderHeatTable($container, heatData) {
@@ -538,6 +714,8 @@ function renderHeatTable($container, heatData) {
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Furnace No')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Total Charge Mix (Kg)')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Liquid Balance')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Foundry Return Existing')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Liquid Metal Pig')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Per Kg Cost (₹)')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Burning Loss (%)')}</th>
                     </tr>
@@ -565,6 +743,8 @@ function renderHeatTable($container, heatData) {
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.furnace_no || ''}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.total_charge_mix_in_kg || 0, { fieldtype: 'Float', precision: 2 })}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.liquid_balence || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.foundry_return_existing || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.liquid_metal_pig || 0, { fieldtype: 'Float', precision: 2 })}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.per_kg_cost || 0, { fieldtype: 'Float', precision: 2 })}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right; white-space: nowrap;">${burningLossPct.toFixed(2)}%</td>
             </tr>

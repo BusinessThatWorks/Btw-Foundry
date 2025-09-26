@@ -1,0 +1,242 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ _("Item History Dashboard") }}{% endblock %}
+
+{% block page_content %}
+<div class="item-history-dashboard">
+    <div class="dashboard-header">
+        <h1>{{ _("Item History Dashboard") }}</h1>
+        <p class="text-muted">{{ _("Track valuation rate changes for finished goods items") }}</p>
+    </div>
+
+    <div class="dashboard-filters">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="from-date">{{ _("From Date") }}</label>
+                    <input type="date" class="form-control" id="from-date" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="to-date">{{ _("To Date") }}</label>
+                    <input type="date" class="form-control" id="to-date" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="item-code">{{ _("Item Code") }}</label>
+                    <input type="text" class="form-control" id="item-code"
+                        placeholder="{{ _('Search by item code') }}" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="item-name">{{ _("Item Name") }}</label>
+                    <input type="text" class="form-control" id="item-name"
+                        placeholder="{{ _('Search by item name') }}" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-primary" id="refresh-btn">
+                    <i class="fa fa-refresh"></i> {{ _("Refresh") }}
+                </button>
+                <button class="btn btn-secondary" id="export-btn">
+                    <i class="fa fa-download"></i> {{ _("Export") }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <!-- Summary Cards -->
+        <div class="row summary-cards">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ _("Total Items") }}</h5>
+                        <h3 class="card-text" id="total-items">-</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ _("Items with Changes") }}</h5>
+                        <h3 class="card-text" id="items-with-changes">-</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ _("Total Changes") }}</h5>
+                        <h3 class="card-text" id="total-changes">-</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ _("Avg Change %") }}</h5>
+                        <h3 class="card-text" id="avg-change-percent">-</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row charts-section">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>{{ _("Valuation Rate Changes Over Time") }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="valuation-chart" style="height: 300px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>{{ _("Change Distribution") }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="change-distribution-chart" style="height: 300px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>{{ _("Item History Details") }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="item-history-table"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .item-history-dashboard {
+        padding: 20px;
+    }
+
+    .dashboard-header {
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .dashboard-filters {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .summary-cards {
+        margin-bottom: 30px;
+    }
+
+    .summary-cards .card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .summary-cards .card-body {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .summary-cards .card-title {
+        color: #6c757d;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .summary-cards .card-text {
+        color: #495057;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .charts-section {
+        margin-bottom: 30px;
+    }
+
+    .charts-section .card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .charts-section .card-header {
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        padding: 15px 20px;
+    }
+
+    .charts-section .card-body {
+        padding: 20px;
+    }
+
+    #item-history-table {
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .data-table th {
+        background: #f8f9fa;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #495057;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .data-table td {
+        padding: 12px;
+        border-bottom: 1px solid #e9ecef;
+        color: #495057;
+    }
+
+    .data-table tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .positive-change {
+        color: #28a745;
+        font-weight: bold;
+    }
+
+    .negative-change {
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+    .loading {
+        text-align: center;
+        padding: 40px;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
