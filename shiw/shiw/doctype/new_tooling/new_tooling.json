@@ -231,7 +231,7 @@
    "allow_on_submit": 1,
    "fieldname": "pouring_time",
    "fieldtype": "Time",
-   "label": "Pouring Time"
+   "label": "Filling Time"
   },
   {
    "fieldname": "column_break_gdwx",
@@ -304,7 +304,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-08-05 12:32:59.956631",
+ "modified": "2025-10-07 14:43:10.641747",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "New Tooling",

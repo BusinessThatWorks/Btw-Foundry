@@ -8,11 +8,30 @@
  "engine": "InnoDB",
  "field_order": [
   "company",
-  "furnace_name",
   "furnace_type",
-  "average_heat_time",
   "furnace_capacity__in_kg",
-  "exceed_limit"
+  "column_break_imsf",
+  "furnace_name",
+  "exceed_limit",
+  "section_break_vzqv",
+  "average_heat_time",
+  "custom_patching",
+  "custom_lining_heat_in_min",
+  "custom_lining_repair_time",
+  "column_break_fcml",
+  "custom_max_heats",
+  "custom_patching_time_in_min",
+  "custom_lining_time_in_min",
+  "custom_patching_cycle",
+  "section_break_qrmx",
+  "custom_shift_availability",
+  "custom_throughput",
+  "column_break_rqpw",
+  "section_break_vozg",
+  "custom_total_heats_completed",
+  "custom_next_planned_lining_date",
+  "column_break_wund",
+  "custom_last_lining_date"
  ],
  "fields": [
   {
@@ -52,12 +71,103 @@
    "fieldname": "exceed_limit",
    "fieldtype": "Float",
    "label": "Charge Mix Exceed Limit"
+  },
+  {
+   "fieldname": "column_break_imsf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_vzqv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_fcml",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_qrmx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_rqpw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_vozg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_wund",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "No. of heats possible before patching",
+   "fieldname": "custom_patching",
+   "fieldtype": "Int",
+   "label": "Patching"
+  },
+  {
+   "fieldname": "custom_lining_heat_in_min",
+   "fieldtype": "Int",
+   "label": "Lining Heat (In Min)"
+  },
+  {
+   "fieldname": "custom_lining_repair_time",
+   "fieldtype": "Int",
+   "label": "Lining Repair Time"
+  },
+  {
+   "description": "No. of heats possible before relining.",
+   "fieldname": "custom_max_heats",
+   "fieldtype": "Float",
+   "label": "Max Heats"
+  },
+  {
+   "fieldname": "custom_patching_time_in_min",
+   "fieldtype": "Int",
+   "label": "Patching Time (In Min)"
+  },
+  {
+   "fieldname": "custom_lining_time_in_min",
+   "fieldtype": "Int",
+   "label": "Lining Time (In Min)"
+  },
+  {
+   "fieldname": "custom_patching_cycle",
+   "fieldtype": "Int",
+   "label": "Patching Cycle"
+  },
+  {
+   "description": "Available production hours per day",
+   "fieldname": "custom_shift_availability",
+   "fieldtype": "Float",
+   "label": "Shift Availability"
+  },
+  {
+   "fieldname": "custom_throughput",
+   "fieldtype": "Float",
+   "label": "Throughput"
+  },
+  {
+   "fieldname": "custom_total_heats_completed",
+   "fieldtype": "Int",
+   "label": "Total Heats Completed"
+  },
+  {
+   "fieldname": "custom_next_planned_lining_date",
+   "fieldtype": "Date",
+   "label": "Next Planned Lining Date"
+  },
+  {
+   "fieldname": "custom_last_lining_date",
+   "fieldtype": "Date",
+   "label": "Last Lining Date"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-19 17:20:52.867625",
+ "modified": "2025-10-07 12:32:00.693506",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Furnace - Master",
