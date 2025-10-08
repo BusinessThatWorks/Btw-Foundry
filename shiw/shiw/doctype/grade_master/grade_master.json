@@ -13,6 +13,8 @@
   "subgrade",
   "column_break_jxtn",
   "foundry_return",
+  "column_break_nwqg",
+  "grade_group",
   "section_break_xhze",
   "min__c",
   "min__si",
@@ -178,12 +180,22 @@
    "fieldtype": "Link",
    "label": "Foundry Return",
    "options": "Item"
+  },
+  {
+   "fieldname": "column_break_nwqg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "grade_group",
+   "fieldtype": "Link",
+   "label": "Grade Group",
+   "options": "Grade Group"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-08 10:41:41.150248",
+ "modified": "2025-10-08 12:51:45.878894",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Grade Master",
