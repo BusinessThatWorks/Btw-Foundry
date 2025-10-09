@@ -260,15 +260,15 @@ page_js = {
 # 	{"dt": "DocType", "filters": [["module", "=", "Foundry-SHIW"]]},  # <-- Keep this as "Foundry-SHIW"
 # ]
 
-# fixtures = ["Custom Field"]
 fixtures = [
 	{"doctype": "Custom Field", "filters": {"module": "shiw"}},
-	# {"doctype": "Page", "filters": {"module": "shiw"}},
 ]
 
 # doctype_js = {
 #   "BOM": "public/js/bom.js"
 # }
+
+doctype_js = {"Production Plan": "public/js/Production_Plan.js"}
 
 
 # doc_events = {

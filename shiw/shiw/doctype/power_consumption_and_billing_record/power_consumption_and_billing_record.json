@@ -1,0 +1,371 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-10-09 10:22:47.146681",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "billing_date",
+  "column_break_basr",
+  "contract_demand_kva",
+  "section_break_msre",
+  "pf",
+  "column_break_akjk",
+  "lf",
+  "section_break_qelp",
+  "normal_ec_pkwh",
+  "normal_ec_account",
+  "normal_pf",
+  "column_break_rxjn",
+  "normal_chargeable_kwh",
+  "normal_chargeable_pf",
+  "section_break_bxur",
+  "peak_ec_pkwh",
+  "peak_ec_amount",
+  "peak_pf",
+  "column_break_jvzv",
+  "peak_chargeable_kwh",
+  "peak_chargeable_pf",
+  "section_break_kpwk",
+  "off_peak_ec_pkwh",
+  "column_break_vzcu",
+  "off_peak_chargeable_kwh",
+  "column_break_ewhf",
+  "off_peak_ec_amount",
+  "column_break_aslv",
+  "off_peak_chargeable_pf",
+  "column_break_tsda",
+  "off_peak_pf",
+  "section_break_hgul",
+  "energymin",
+  "addl_kva",
+  "column_break_hnko",
+  "total_ec_rs",
+  "demand_charge",
+  "column_break_tzea",
+  "normal_rskvamonth",
+  "addl_dc_rs",
+  "column_break_nqec",
+  "chargeable_normal_kva",
+  "total_dc_rs",
+  "section_break_unwx",
+  "lf_ref",
+  "column_break_potk",
+  "pf_ref",
+  "section_break_suxk",
+  "edim_units",
+  "column_break_wmsp",
+  "edfur_units",
+  "section_break_croh",
+  "net_ed_rs",
+  "payable_by_due_date_through_neftrtgs_rs",
+  "column_break_ikqr",
+  "amount_for_current_month_rs",
+  "section_break_kivm",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_kivm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Power Consumption And Billing Record",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "billing_date",
+   "fieldtype": "Date",
+   "label": "Billing Date"
+  },
+  {
+   "fieldname": "column_break_basr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "contract_demand_kva",
+   "fieldtype": "Data",
+   "label": "Contract Demand (KVA)"
+  },
+  {
+   "fieldname": "section_break_msre",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "pf",
+   "fieldtype": "Data",
+   "label": "PF"
+  },
+  {
+   "fieldname": "column_break_akjk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lf",
+   "fieldtype": "Percent",
+   "label": "LF%"
+  },
+  {
+   "fieldname": "section_break_qelp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "normal_ec_pkwh",
+   "fieldtype": "Float",
+   "label": "Normal EC (P/KWH)"
+  },
+  {
+   "fieldname": "normal_ec_account",
+   "fieldtype": "Float",
+   "label": "Normal EC Account"
+  },
+  {
+   "fieldname": "normal_pf",
+   "fieldtype": "Float",
+   "label": "Normal PF"
+  },
+  {
+   "fieldname": "column_break_rxjn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "normal_chargeable_kwh",
+   "fieldtype": "Float",
+   "label": "Normal Chargeable (KWH)"
+  },
+  {
+   "fieldname": "normal_chargeable_pf",
+   "fieldtype": "Float",
+   "label": "Normal Chargeable (PF)"
+  },
+  {
+   "fieldname": "section_break_bxur",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "peak_ec_pkwh",
+   "fieldtype": "Float",
+   "label": "Peak EC( P/KWH)"
+  },
+  {
+   "fieldname": "peak_ec_amount",
+   "fieldtype": "Float",
+   "label": "Peak EC Amount"
+  },
+  {
+   "fieldname": "peak_pf",
+   "fieldtype": "Float",
+   "label": "Peak (PF)"
+  },
+  {
+   "fieldname": "column_break_jvzv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "peak_chargeable_kwh",
+   "fieldtype": "Float",
+   "label": "Peak Chargeable (KWH)"
+  },
+  {
+   "fieldname": "peak_chargeable_pf",
+   "fieldtype": "Float",
+   "label": "Peak Chargeable (PF)"
+  },
+  {
+   "fieldname": "section_break_kpwk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "off_peak_ec_pkwh",
+   "fieldtype": "Float",
+   "label": "Off Peak EC (P/KWH)"
+  },
+  {
+   "fieldname": "column_break_vzcu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "off_peak_chargeable_kwh",
+   "fieldtype": "Float",
+   "label": "OFF Peak Chargeable (KWH)"
+  },
+  {
+   "fieldname": "column_break_ewhf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "off_peak_ec_amount",
+   "fieldtype": "Float",
+   "label": "OFF Peak EC Amount "
+  },
+  {
+   "fieldname": "column_break_aslv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "off_peak_chargeable_pf",
+   "fieldtype": "Float",
+   "label": "OFF Peak Chargeable PF"
+  },
+  {
+   "fieldname": "column_break_tsda",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "off_peak_pf",
+   "fieldtype": "Float",
+   "label": "OFF Peak PF"
+  },
+  {
+   "fieldname": "section_break_hgul",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "energymin",
+   "fieldtype": "Float",
+   "label": "Energy/Min"
+  },
+  {
+   "fieldname": "addl_kva",
+   "fieldtype": "Float",
+   "label": "ADDL KVA"
+  },
+  {
+   "fieldname": "column_break_hnko",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_ec_rs",
+   "fieldtype": "Currency",
+   "label": "Total EC (Rs)"
+  },
+  {
+   "fieldname": "demand_charge",
+   "fieldtype": "Float",
+   "label": "Demand Charge"
+  },
+  {
+   "fieldname": "column_break_tzea",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "normal_rskvamonth",
+   "fieldtype": "Float",
+   "label": "Normal (Rs/KVA/Month)"
+  },
+  {
+   "fieldname": "addl_dc_rs",
+   "fieldtype": "Float",
+   "label": "ADDL DC (Rs)"
+  },
+  {
+   "fieldname": "column_break_nqec",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "chargeable_normal_kva",
+   "fieldtype": "Float",
+   "label": "Chargeable Normal KVA"
+  },
+  {
+   "fieldname": "total_dc_rs",
+   "fieldtype": "Float",
+   "label": "Total DC (Rs)"
+  },
+  {
+   "fieldname": "section_break_unwx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "Reb (-)/Sur(+)",
+   "fieldname": "lf_ref",
+   "fieldtype": "Float",
+   "label": "LF"
+  },
+  {
+   "fieldname": "column_break_potk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Reb (-)/Sur (+)",
+   "fieldname": "pf_ref",
+   "fieldtype": "Float",
+   "label": "PF"
+  },
+  {
+   "fieldname": "section_break_suxk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "edim_units",
+   "fieldtype": "Float",
+   "label": "EDIM Units"
+  },
+  {
+   "fieldname": "column_break_wmsp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "edfur_units",
+   "fieldtype": "Float",
+   "label": "EDFUR Units"
+  },
+  {
+   "fieldname": "section_break_croh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "net_ed_rs",
+   "fieldtype": "Currency",
+   "label": "Net ED (Rs)"
+  },
+  {
+   "fieldname": "payable_by_due_date_through_neftrtgs_rs",
+   "fieldtype": "Float",
+   "label": "Payable by Due Date Through NEFT/RTGS (Rs)"
+  },
+  {
+   "fieldname": "column_break_ikqr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amount_for_current_month_rs",
+   "fieldtype": "Currency",
+   "label": "Amount For Current Month (Rs)"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-10-09 10:45:26.583383",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Power Consumption And Billing Record",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

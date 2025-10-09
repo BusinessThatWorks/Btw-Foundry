@@ -716,6 +716,7 @@ function renderHeatTable($container, heatData) {
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Liquid Balance')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Foundry Return Existing')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Liquid Metal Pig')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('BOM ₹/kg')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Per Kg Cost (₹)')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Burning Loss (%)')}</th>
                     </tr>
@@ -745,7 +746,8 @@ function renderHeatTable($container, heatData) {
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.liquid_balence || 0, { fieldtype: 'Float', precision: 2 })}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.foundry_return_existing || 0, { fieldtype: 'Float', precision: 2 })}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.liquid_metal_pig || 0, { fieldtype: 'Float', precision: 2 })}</td>
-                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.per_kg_cost || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${row.bom_cost_per_kg ? frappe.format(row.bom_cost_per_kg, { fieldtype: 'Float', precision: 2 }) : ''}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; text-align: right; ${getPerKgCostColor(row.per_kg_cost, row.bom_cost_per_kg)}">${frappe.format(row.per_kg_cost || 0, { fieldtype: 'Float', precision: 2 })}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right; white-space: nowrap;">${burningLossPct.toFixed(2)}%</td>
             </tr>
         `);
@@ -827,6 +829,7 @@ function renderOverviewTables($container, overviewData) {
                             <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Furnace No')}</th>
                             <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Total Charge Mix (Kg)')}</th>
                             <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Liquid Balance')}</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('BOM ₹/kg')}</th>
                             <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Per Kg Cost (₹)')}</th>
                             <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Burning Loss (%)')}</th>
                         </tr>
@@ -855,7 +858,8 @@ function renderOverviewTables($container, overviewData) {
                     <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.furnace_no || ''}</td>
                     <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.total_charge_mix_in_kg || 0, { fieldtype: 'Float', precision: 2 })}</td>
                     <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.liquid_balence || 0, { fieldtype: 'Float', precision: 2 })}</td>
-                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.per_kg_cost || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${row.bom_cost_per_kg ? frappe.format(row.bom_cost_per_kg, { fieldtype: 'Float', precision: 2 }) : ''}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e9ecef; text-align: right; ${getPerKgCostColor(row.per_kg_cost, row.bom_cost_per_kg)}">${frappe.format(row.per_kg_cost || 0, { fieldtype: 'Float', precision: 2 })}</td>
                     <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right; white-space: nowrap;">${burningLossPct.toFixed(2)}%</td>
                 </tr>
             `);
@@ -943,6 +947,33 @@ function getIndicatorColor(indicator) {
         'blue': 'linear-gradient(90deg,#3498db,#2980b9)'
     };
     return colors[indicator] || colors.blue;
+}
+
+function getPerKgCostColor(perKgCost, bomCostPerKg) {
+    /**
+     * Get color styling for Per Kg Cost column based on comparison with BOM cost
+     * 
+     * Args:
+     *     perKgCost (number): Per kg cost value
+     *     bomCostPerKg (number): BOM cost per kg value
+     * 
+     * Returns:
+     *     string: CSS color style
+     */
+    const perKg = parseFloat(perKgCost) || 0;
+    const bomCost = parseFloat(bomCostPerKg) || 0;
+
+    // If no BOM cost available, use default color
+    if (bomCost === 0) {
+        return 'color: #495057;';
+    }
+
+    // If per kg cost is less than BOM cost, show in red
+    if (perKg < bomCost) {
+        return 'color: #dc3545; font-weight: 600;'; // Red color with bold
+    } else {
+        return 'color: #28a745; font-weight: 600;'; // Green color with bold
+    }
 }
 
 function showError(state, message) {
