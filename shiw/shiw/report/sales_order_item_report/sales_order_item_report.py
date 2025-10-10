@@ -40,6 +40,7 @@ def get_columns(filters=None):
 		{"label": "Quantity", "fieldname": "qty", "fieldtype": "Float", "width": 100},
 		{"label": "Item Bunch Weight", "fieldname": "item_bunch_weight", "fieldtype": "Float", "width": 150},
 		{"label": "Grade", "fieldname": "grade", "fieldtype": "Data", "width": 120},
+		{"label": "Grade Group", "fieldname": "grade_group", "fieldtype": "Data", "width": 120},
 		{"label": "Total Weight", "fieldname": "total_quantity", "fieldtype": "Float", "width": 150},
 		{
 			"label": "1 Ton Furnace (kg/min)",
@@ -168,17 +169,32 @@ def get_data(filters):
 			filters["sales_order"] = str(filters.get("sales_order")).strip()
 		if filters.get("item_code"):
 			filters["item_code"] = str(filters.get("item_code")).strip()
+		if filters.get("grade"):
+			filters["grade"] = str(filters.get("grade")).strip()
+		if filters.get("grade_group"):
+			filters["grade_group"] = str(filters.get("grade_group")).strip()
 
 		# Helper to safely fetch throughput by furnace capacity
 		def get_throughput_by_capacity(capacity_kg):
 			try:
-				# Try fetching custom_throughput if present
-				val = frappe.db.get_value(
+				# Get all furnaces with this capacity
+				all_furnaces = frappe.db.get_all(
 					"Furnace - Master",
-					{"furnace_capacity__in_kg": capacity_kg},
-					"custom_throughput",
+					filters={"furnace_capacity__in_kg": capacity_kg},
+					fields=["name", "furnace_name", "custom_throughput", "furnace_capacity__in_kg"],
 				)
-				return float(val) if val not in [None, ""] else 0.0
+
+				if not all_furnaces:
+					return 0.0
+
+				# If multiple furnaces, use the one with the highest throughput
+				highest_throughput = 0.0
+				for furnace in all_furnaces:
+					throughput = furnace.get("custom_throughput", 0) or 0
+					if throughput > highest_throughput:
+						highest_throughput = throughput
+
+				return float(highest_throughput)
 			except Exception:
 				return 0.0
 
@@ -205,7 +221,7 @@ def get_data(filters):
 		avg_heat_time_500kg_min = get_avg_heat_time_minutes(500)
 		avg_heat_time_200kg_min = get_avg_heat_time_minutes(200)
 
-		# Build the SQL query to join Sales Order, Sales Order Item, and Item tables
+		# Build the SQL query to join Sales Order, Sales Order Item, Item, and Grade Master tables
 		query = """
             SELECT 
                 so.name AS sales_order_id,
@@ -215,10 +231,12 @@ def get_data(filters):
                 soi.qty,
                 i.custom_bunch_weight_per_mould AS item_bunch_weight,
                 i.custom_grade_ AS grade,
+                gm.grade_group,
                 (soi.qty * i.custom_bunch_weight_per_mould) AS total_quantity
             FROM `tabSales Order` so
             INNER JOIN `tabSales Order Item` soi ON soi.parent = so.name
             INNER JOIN `tabItem` i ON i.name = soi.item_code
+            LEFT JOIN `tabGrade Master` gm ON gm.name = i.custom_grade_
             WHERE so.docstatus = 1
         """
 
@@ -229,6 +247,10 @@ def get_data(filters):
 			query += " AND so.name = %(sales_order)s"
 		if filters.get("item_code"):
 			query += " AND soi.item_code = %(item_code)s"
+		if filters.get("grade"):
+			query += " AND i.custom_grade_ = %(grade)s"
+		if filters.get("grade_group"):
+			query += " AND gm.grade_group = %(grade_group)s"
 
 		query += " ORDER BY so.name, soi.idx"
 
@@ -241,6 +263,7 @@ def get_data(filters):
 			row["item_bunch_weight"] = row["item_bunch_weight"] or 0
 			row["total_quantity"] = row["total_quantity"] or 0
 			row["grade"] = row["grade"] or ""
+			row["grade_group"] = row["grade_group"] or ""
 			row["throughput_1t"] = throughput_1t
 			row["throughput_500kg"] = throughput_500kg
 			row["throughput_200kg"] = throughput_200kg

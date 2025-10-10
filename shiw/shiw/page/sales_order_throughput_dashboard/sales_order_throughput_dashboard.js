@@ -7,13 +7,68 @@ frappe.pages['sales-order-throughput-dashboard'].on_page_load = function (wrappe
 
     const $container = $('<div class="so-dashboard-container"></div>').appendTo(page.body);
 
+    // Create number cards section
+    const $cards_section = $('<div class="row mb-4"></div>').appendTo($container);
+
+    // Number cards
+    const $card1 = $('<div class="col-md-3 mb-3"></div>').appendTo($cards_section);
+    const $card2 = $('<div class="col-md-3 mb-3"></div>').appendTo($cards_section);
+    const $card3 = $('<div class="col-md-3 mb-3"></div>').appendTo($cards_section);
+    const $card4 = $('<div class="col-md-3 mb-3"></div>').appendTo($cards_section);
+
+    // Neutral, minimal cards (no colors)
+    const baseCardStyle = 'background:#fff; color:#1f2937; border:none; border-top:4px solid #e5e7eb; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.05)';
+    const bodyStyle = 'padding:18px 16px;';
+    const titleStyle = 'margin:0; font-size:12px; color:#6b7280; font-weight:600;';
+    const valueStyle = 'margin:4px 0 2px; font-size:36px; font-weight:700; letter-spacing:0.3px; color:#111827;';
+    const subStyle = 'color:#6b7280; font-size:12px;';
+
+    const $total_weight_card = $('<div class="card text-center" style="' + baseCardStyle + '"></div>').appendTo($card1);
+    const $heat_1t_card = $('<div class="card text-center" style="' + baseCardStyle + '"></div>').appendTo($card2);
+    const $heat_500kg_card = $('<div class="card text-center" style="' + baseCardStyle + '"></div>').appendTo($card3);
+    const $heat_200kg_card = $('<div class="card text-center" style="' + baseCardStyle + '"></div>').appendTo($card4);
+
+    // Card content
+    $total_weight_card.html(`
+		<div class="card-body" style="` + bodyStyle + `">
+			<h5 class="card-title" style="` + titleStyle + `">Total Weight</h5>
+			<h2 class="card-text" style="` + valueStyle + `" id="total-weight-value">0.00</h2>
+			<small style="` + subStyle + `">kg</small>
+		</div>
+	`);
+
+    $heat_1t_card.html(`
+		<div class="card-body" style="` + bodyStyle + `">
+			<h5 class="card-title" style="` + titleStyle + `">Total Estimated Heats</h5>
+			<h2 class="card-text" style="` + valueStyle + `" id="heat-1t-value">0.00</h2>
+			<small style="` + subStyle + `">1 Ton Furnace</small>
+		</div>
+	`);
+
+    $heat_500kg_card.html(`
+		<div class="card-body" style="` + bodyStyle + `">
+			<h5 class="card-title" style="` + titleStyle + `">Total Estimated Heats</h5>
+			<h2 class="card-text" style="` + valueStyle + `" id="heat-500kg-value">0.00</h2>
+			<small style="` + subStyle + `">500kg Furnace</small>
+		</div>
+	`);
+
+    $heat_200kg_card.html(`
+		<div class="card-body" style="` + bodyStyle + `">
+			<h5 class="card-title" style="` + titleStyle + `">Total Estimated Heats</h5>
+			<h2 class="card-text" style="` + valueStyle + `" id="heat-200kg-value">0.00</h2>
+			<small style="` + subStyle + `">200kg Furnace</small>
+		</div>
+	`);
+
     // Create filter section with better layout
     const $filters = $('<div class="form-section" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;"></div>').appendTo($container);
     $('<div class="section-head" style="font-weight: bold; margin-bottom: 15px; color: #333;">Filters</div>').appendTo($filters);
 
-    // Create two rows for better spacing
+    // Create three rows for better spacing
     const $filter_row1 = $('<div class="row" style="margin-bottom: 15px;"></div>').appendTo($filters);
     const $filter_row2 = $('<div class="row" style="margin-bottom: 15px;"></div>').appendTo($filters);
+    const $filter_row3 = $('<div class="row" style="margin-bottom: 15px;"></div>').appendTo($filters);
 
     // Create filter controls with better layout
     // Row 1: Date filters
@@ -65,8 +120,33 @@ frappe.pages['sales-order-throughput-dashboard'].on_page_load = function (wrappe
         render_input: true
     });
 
-    // Row 2: Furnace filter and refresh button
-    const $furnace_col = $('<div class="col-md-6" style="padding-right: 10px;"></div>').appendTo($filter_row2);
+    // Row 2: Grade and Grade Group filters
+    const $grade_col = $('<div class="col-md-3" style="padding-right: 10px;"></div>').appendTo($filter_row2);
+    const grade_ctrl = frappe.ui.form.make_control({
+        df: {
+            fieldtype: 'Link',
+            label: 'Grade',
+            fieldname: 'grade',
+            options: 'Grade Master'
+        },
+        parent: $grade_col,
+        render_input: true
+    });
+
+    const $grade_group_col = $('<div class="col-md-3" style="padding-right: 10px;"></div>').appendTo($filter_row2);
+    const grade_group_ctrl = frappe.ui.form.make_control({
+        df: {
+            fieldtype: 'Link',
+            label: 'Grade Group',
+            fieldname: 'grade_group',
+            options: 'Grade Group'
+        },
+        parent: $grade_group_col,
+        render_input: true
+    });
+
+    // Row 3: Furnace filter and refresh button
+    const $furnace_col = $('<div class="col-md-6" style="padding-right: 10px;"></div>').appendTo($filter_row3);
     const furnace_options_ctrl = frappe.ui.form.make_control({
         df: {
             fieldtype: 'MultiSelect',
@@ -80,7 +160,7 @@ frappe.pages['sales-order-throughput-dashboard'].on_page_load = function (wrappe
     });
 
     // Refresh button in its own column
-    const $refresh_col = $('<div class="col-md-6" style="display: flex; align-items: end; padding-top: 20px;"></div>').appendTo($filter_row2);
+    const $refresh_col = $('<div class="col-md-6" style="display: flex; align-items: end; padding-top: 20px;"></div>').appendTo($filter_row3);
     const $refresh_btn = $('<button class="btn btn-primary" style="width: 120px;">Refresh</button>').appendTo($refresh_col);
 
     // Tabs for Data and Totals views
@@ -101,6 +181,52 @@ frappe.pages['sales-order-throughput-dashboard'].on_page_load = function (wrappe
 
     let last_result = null;
 
+    function update_number_cards(data) {
+        if (!data || !data.result || !data.result.length) {
+            $('#total-weight-value').text('0.00');
+            $('#heat-1t-value').text('0.00');
+            $('#heat-500kg-value').text('0.00');
+            $('#heat-200kg-value').text('0.00');
+            return;
+        }
+
+        // Filter only the total rows (subtotal rows)
+        const total_rows = data.result.filter(row => row && row.bold);
+
+        let total_weight = 0;
+        let total_heat_1t = 0;
+        let total_heat_500kg = 0;
+        let total_heat_200kg = 0;
+
+        total_rows.forEach(row => {
+            // Sum total_quantity (Total Weight)
+            if (row.total_quantity && typeof row.total_quantity === 'number') {
+                total_weight += row.total_quantity;
+            }
+
+            // Sum total_est_heats_1t
+            if (row.total_est_heats_1t && typeof row.total_est_heats_1t === 'number') {
+                total_heat_1t += row.total_est_heats_1t;
+            }
+
+            // Sum total_est_heats_500kg
+            if (row.total_est_heats_500kg && typeof row.total_est_heats_500kg === 'number') {
+                total_heat_500kg += row.total_est_heats_500kg;
+            }
+
+            // Sum total_est_heats_200kg
+            if (row.total_est_heats_200kg && typeof row.total_est_heats_200kg === 'number') {
+                total_heat_200kg += row.total_est_heats_200kg;
+            }
+        });
+
+        // Update the cards
+        $('#total-weight-value').text(total_weight.toFixed(2));
+        $('#heat-1t-value').text(total_heat_1t.toFixed(2));
+        $('#heat-500kg-value').text(total_heat_500kg.toFixed(2));
+        $('#heat-200kg-value').text(total_heat_200kg.toFixed(2));
+    }
+
     async function load_data() {
         try {
             const filters = {
@@ -108,6 +234,8 @@ frappe.pages['sales-order-throughput-dashboard'].on_page_load = function (wrappe
                 to_date: to_date_ctrl.get_value(),
                 sales_order: sales_order_ctrl.get_value(),
                 item_code: item_code_ctrl.get_value(),
+                grade: grade_ctrl.get_value(),
+                grade_group: grade_group_ctrl.get_value(),
                 furnace_options: furnace_options_ctrl.get_value()
             };
 
@@ -123,6 +251,7 @@ frappe.pages['sales-order-throughput-dashboard'].on_page_load = function (wrappe
             last_result = result.message;
             render_table(last_result);
             render_totals(last_result);
+            update_number_cards(last_result);
 
         } catch (error) {
             console.error('Error loading data:', error);

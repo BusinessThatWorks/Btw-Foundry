@@ -28,6 +28,18 @@ frappe.query_reports["Sales Order Item Report"] = {
             "options": "Item"
         },
         {
+            "fieldname": "grade",
+            "label": "Grade",
+            "fieldtype": "Link",
+            "options": "Grade Master"
+        },
+        {
+            "fieldname": "grade_group",
+            "label": "Grade Group",
+            "fieldtype": "Link",
+            "options": "Grade Group"
+        },
+        {
             "fieldname": "furnace_options",
             "label": "Furnace Filter",
             "fieldtype": "MultiSelect",

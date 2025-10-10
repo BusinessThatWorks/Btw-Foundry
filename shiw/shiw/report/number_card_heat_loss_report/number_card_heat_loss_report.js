@@ -19,3 +19,5 @@ frappe.query_reports["Number Card Heat Loss report"] = {
 };
 
 
+
+

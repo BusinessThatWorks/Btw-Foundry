@@ -63,16 +63,10 @@ def get_columns():
 		},
 		{"label": "Liquid Balance", "fieldname": "liquid_balence", "fieldtype": "Float", "width": 160},
 		{
-			"label": "Foundry Return Existing",
-			"fieldname": "foundry_return_existing",
+			"label": "BOM ₹/kg",
+			"fieldname": "bom_cost_per_kg",
 			"fieldtype": "Float",
-			"width": 180,
-		},
-		{
-			"label": "Liquid Metal Pig",
-			"fieldname": "liquid_metal_pig",
-			"fieldtype": "Float",
-			"width": 160,
+			"width": 120,
 		},
 		{
 			"label": "Per Kg Cost (₹)",
@@ -126,8 +120,6 @@ def get_data(filters):
 			furnace_no,
             ifnull(total_charge_mix_in_kg,0) as total_charge_mix_in_kg,
             ifnull(liquid_balence,0) as liquid_balence,
-            ifnull(foundry_return_existing,0) as foundry_return_existing,
-            ifnull(liquid_metal_pig,0) as liquid_metal_pig,
             ifnull(burning_loss,0) as burning_loss,
             ifnull(total_charge_mix_valuation,0) as total_charge_mix_valuation
         FROM `tabHeat`
@@ -137,9 +129,10 @@ def get_data(filters):
 		as_dict=True,
 	)
 
-	# Calculate per kg cost for each row
+	# Calculate per kg cost and BOM cost per kg for each row
 	for row in result:
 		row["per_kg_cost"] = calculate_per_kg_cost(row["total_charge_mix_valuation"], row["liquid_balence"])
+		row["bom_cost_per_kg"] = get_bom_cost_per_kg(row["material_grade"])
 
 	return result
 
@@ -160,6 +153,49 @@ def calculate_per_kg_cost(total_charge_mix_valuation, liquid_balance):
 	else:
 		# If liquid balance is 0, return the total charge mix valuation
 		return flt(total_charge_mix_valuation, 2)
+
+
+def get_bom_cost_per_kg(grade):
+	"""
+	Get BOM cost per kg for a given grade.
+
+	Args:
+	    grade (str): Grade name
+
+	Returns:
+	    float: BOM cost per kg, or None if no BOM found
+	"""
+	if not grade:
+		return None
+
+	# Search for BOM with pattern BOM-{grade} LM* and is_default=1
+	bom_pattern = f"BOM-{grade} LM"
+
+	try:
+		# Find BOM documents that start with the pattern and have is_default=1
+		bom_list = frappe.get_all(
+			"BOM",
+			filters={"name": ["like", f"{bom_pattern}%"], "is_default": 1, "docstatus": 1},
+			fields=["name", "total_cost", "quantity"],
+			limit=1,
+		)
+
+		if not bom_list:
+			return None
+
+		bom = bom_list[0]
+		total_cost = bom.get("total_cost", 0)
+		quantity = bom.get("quantity", 0)
+
+		# Calculate cost per kg
+		if quantity > 0:
+			return flt(total_cost / quantity, 2)
+		else:
+			return None
+
+	except Exception as e:
+		frappe.log_error(f"Error fetching BOM cost for grade {grade}: {str(e)}")
+		return None
 
 
 # def get_data(filters):
@@ -219,8 +255,6 @@ def get_report_summary(result):
 	total_heats = num
 	total_charge_mix_in_kg = sum(flt(row["total_charge_mix_in_kg"], 2) for row in result)
 	liquid_balence = sum(flt(row["liquid_balence"], 2) for row in result)
-	total_foundry_return_existing = sum(flt(row.get("foundry_return_existing", 0), 2) for row in result)
-	total_liquid_metal_pig = sum(flt(row.get("liquid_metal_pig", 0), 2) for row in result)
 
 	# Calculate average burning loss percentage: Sum of individual burning loss percentages / Number of heats
 	# If liquid balance is 0 for a heat, burning loss should be 0% (not 100%)
@@ -262,20 +296,6 @@ def get_report_summary(result):
 			"datatype": "Float",
 			"precision": 2,
 			"indicator": "Black",
-		},
-		{
-			"value": total_foundry_return_existing,
-			"label": _("Foundry Return Existing"),
-			"datatype": "Float",
-			"precision": 2,
-			"indicator": "Purple",
-		},
-		{
-			"value": total_liquid_metal_pig,
-			"label": _("Liquid Metal Pig"),
-			"datatype": "Float",
-			"precision": 2,
-			"indicator": "Teal",
 		},
 		{
 			"value": burning_loss_percentage,

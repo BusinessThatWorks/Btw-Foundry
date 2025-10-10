@@ -34,6 +34,20 @@
             "label": "Item",
             "options": "Item",
             "reqd": 0
+        },
+        {
+            "fieldname": "grade",
+            "fieldtype": "Link",
+            "label": "Grade",
+            "options": "Grade Master",
+            "reqd": 0
+        },
+        {
+            "fieldname": "grade_group",
+            "fieldtype": "Link",
+            "label": "Grade Group",
+            "options": "Grade Group",
+            "reqd": 0
         }
     ],
     "is_standard": "Yes",
