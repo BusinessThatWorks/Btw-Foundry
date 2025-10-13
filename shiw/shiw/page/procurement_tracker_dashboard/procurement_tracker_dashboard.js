@@ -1115,99 +1115,165 @@ function fetchPurchaseInvoiceData(filters, state) {
                     // Transform data to match expected format
                     const purchaseInvoices = [];
                     const seenPIs = new Set();
+                    let totalGrandTotal = 0; // Calculate sum of grand total
 
                     piData.forEach(row => {
                         if (row.purchase_invoice_id && !seenPIs.has(row.purchase_invoice_id)) {
                             seenPIs.add(row.purchase_invoice_id);
+                            const grandTotal = parseFloat(row.grand_total || 0);
+                            totalGrandTotal += grandTotal;
+
                             purchaseInvoices.push({
                                 name: row.purchase_invoice_id,
                                 posting_date: row.date,
+                                due_date: row.due_date || null, // Will be fetched separately
+                                custom_grn_date: row.custom_grn_date || null, // Will be fetched separately
                                 workflow_state: row.status,
                                 status: row.status,
                                 supplier: row.supplier,
-                                grand_total: row.grand_total || 0
+                                grand_total: grandTotal
                             });
                         }
                     });
 
-                    // Apply additional filters
-                    let filteredData = purchaseInvoices;
+                    // Fetch due_date and custom_grn_date from Purchase Invoice documents
+                    if (purchaseInvoices.length > 0) {
+                        const invoiceNames = purchaseInvoices.map(pi => pi.name);
 
-                    // Apply ID filter
-                    if (filters.pi_id) {
-                        filteredData = filteredData.filter(pi => pi.name.toLowerCase().includes(filters.pi_id.toLowerCase()));
-                    }
+                        frappe.call({
+                            method: 'frappe.client.get_list',
+                            args: {
+                                doctype: 'Purchase Invoice',
+                                filters: [['Purchase Invoice', 'name', 'in', invoiceNames]],
+                                fields: ['name', 'due_date', 'custom_grn_date'],
+                                limit_page_length: 1000
+                            },
+                            callback: (piDetails) => {
+                                if (piDetails.message) {
+                                    // Create a map for quick lookup
+                                    const piDetailsMap = {};
+                                    piDetails.message.forEach(pi => {
+                                        piDetailsMap[pi.name] = {
+                                            due_date: pi.due_date,
+                                            custom_grn_date: pi.custom_grn_date
+                                        };
+                                    });
 
-                    // Apply supplier filter if specified
-                    if (filters.supplier) {
-                        filteredData = filteredData.filter(pi => pi.supplier === filters.supplier);
-                    }
+                                    // Update purchase invoices with the fetched data
+                                    purchaseInvoices.forEach(pi => {
+                                        const details = piDetailsMap[pi.name];
+                                        if (details) {
+                                            pi.due_date = details.due_date;
+                                            pi.custom_grn_date = details.custom_grn_date;
+                                        }
+                                    });
+                                }
 
-                    // Apply item filter if specified - filter the original procurement data first
-                    if (filters.item_name) {
-                        const itemFilteredProcurementData = procurementData.filter(row =>
-                            row.item_code === filters.item_name
-                        );
-
-                        // Extract unique Purchase Invoices from item-filtered data
-                        const itemFilteredPIs = [];
-                        const seenItemFilteredPIs = new Set();
-
-                        itemFilteredProcurementData.forEach(row => {
-                            if (row.purchase_invoice && !seenItemFilteredPIs.has(row.purchase_invoice)) {
-                                seenItemFilteredPIs.add(row.purchase_invoice);
-                                itemFilteredPIs.push({
-                                    name: row.purchase_invoice,
-                                    posting_date: row.invoice_date,
-                                    workflow_state: row.pi_status,
-                                    status: row.pi_status,
-                                    supplier: row.supplier,
-                                    grand_total: 0
-                                });
+                                // Continue with the rest of the processing
+                                processPurchaseInvoiceData();
+                            },
+                            error: (error) => {
+                                console.warn('Could not fetch Purchase Invoice details:', error);
+                                // Continue with the rest of the processing even if this fails
+                                processPurchaseInvoiceData();
                             }
                         });
-
-                        // Apply other filters to item-filtered data
-                        filteredData = itemFilteredPIs;
+                    } else {
+                        processPurchaseInvoiceData();
                     }
 
-                    // Apply status filter
-                    if (filters.pi_status) {
-                        filteredData = filteredData.filter(pi => pi.workflow_state === filters.pi_status);
+                    function processPurchaseInvoiceData() {
+                        // Apply additional filters
+                        let filteredData = purchaseInvoices;
+
+                        // Apply ID filter
+                        if (filters.pi_id) {
+                            filteredData = filteredData.filter(pi => pi.name.toLowerCase().includes(filters.pi_id.toLowerCase()));
+                        }
+
+                        // Apply supplier filter if specified
+                        if (filters.supplier) {
+                            filteredData = filteredData.filter(pi => pi.supplier === filters.supplier);
+                        }
+
+                        // Apply item filter if specified - filter the original procurement data first
+                        if (filters.item_name) {
+                            const itemFilteredProcurementData = procurementData.filter(row =>
+                                row.item_code === filters.item_name
+                            );
+
+                            // Extract unique Purchase Invoices from item-filtered data
+                            const itemFilteredPIs = [];
+                            const seenItemFilteredPIs = new Set();
+
+                            itemFilteredProcurementData.forEach(row => {
+                                if (row.purchase_invoice && !seenItemFilteredPIs.has(row.purchase_invoice)) {
+                                    seenItemFilteredPIs.add(row.purchase_invoice);
+                                    itemFilteredPIs.push({
+                                        name: row.purchase_invoice,
+                                        posting_date: row.invoice_date,
+                                        workflow_state: row.pi_status,
+                                        status: row.pi_status,
+                                        supplier: row.supplier,
+                                        grand_total: 0
+                                    });
+                                }
+                            });
+
+                            // Apply other filters to item-filtered data
+                            filteredData = itemFilteredPIs;
+                        }
+
+                        // Apply status filter
+                        if (filters.pi_status) {
+                            filteredData = filteredData.filter(pi => pi.workflow_state === filters.pi_status);
+                        }
+
+                        // Apply ID filter
+                        if (filters.pi_id) {
+                            filteredData = filteredData.filter(pi => pi.name.toLowerCase().includes(filters.pi_id.toLowerCase()));
+                        }
+
+                        // Apply supplier filter
+                        if (filters.supplier) {
+                            filteredData = filteredData.filter(pi => pi.supplier === filters.supplier);
+                        }
+
+                        // Create status summary based on workflow_state
+                        const statusCounts = {};
+                        let filteredTotalGrandTotal = 0;
+
+                        filteredData.forEach(item => {
+                            const status = item.workflow_state || 'Draft';
+                            statusCounts[status] = (statusCounts[status] || 0) + 1;
+                            filteredTotalGrandTotal += parseFloat(item.grand_total || 0);
+                        });
+
+                        const summary = Object.keys(statusCounts).map(status => ({
+                            value: statusCounts[status],
+                            label: `${status} Purchase Invoices`,
+                            datatype: 'Int',
+                            indicator: getStatusIndicator(status),
+                            description: `Purchase invoices with ${status} status`
+                        }));
+
+                        // Add total grand total card (keep existing workflow state cards)
+                        summary.push({
+                            value: filteredTotalGrandTotal,
+                            label: __('Total Invoice Value'),
+                            datatype: 'Currency',
+                            indicator: 'Teal',
+                            description: __('Sum of grand total for selected date range')
+                        });
+
+                        // Update status options based on actual data
+                        updateStatusOptions('purchase_invoice', piData, state);
+
+                        resolve({
+                            summary: summary,
+                            raw_data: filteredData
+                        });
                     }
-
-                    // Apply ID filter
-                    if (filters.pi_id) {
-                        filteredData = filteredData.filter(pi => pi.name.toLowerCase().includes(filters.pi_id.toLowerCase()));
-                    }
-
-                    // Apply supplier filter
-                    if (filters.supplier) {
-                        filteredData = filteredData.filter(pi => pi.supplier === filters.supplier);
-                    }
-
-                    // Create status summary based on workflow_state
-                    const statusCounts = {};
-                    filteredData.forEach(item => {
-                        const status = item.workflow_state || 'Draft';
-                        statusCounts[status] = (statusCounts[status] || 0) + 1;
-                    });
-
-                    const summary = Object.keys(statusCounts).map(status => ({
-                        value: statusCounts[status],
-                        label: `${status} Purchase Invoices`,
-                        datatype: 'Int',
-                        indicator: getStatusIndicator(status),
-                        description: `Purchase invoices with ${status} status`
-                    }));
-
-                    // Update status options based on actual data
-                    updateStatusOptions('purchase_invoice', piData, state);
-
-                    resolve({
-                        summary: summary,
-                        raw_data: filteredData
-                    });
                 } else {
                     resolve({ summary: [], raw_data: [] });
                 }
@@ -1502,7 +1568,7 @@ function renderPurchaseOrderTable($container, data) {
             <tr style="border-bottom: 1px solid #e9ecef; background:${rowColor};">
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/purchase-order/${row.name}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.name}</a></td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${frappe.format(row.transaction_date, { fieldtype: 'Date' })}</td>
-                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><span class="badge badge-${getStatusClass(row.workflow_state)}">${row.workflow_state || 'Draft'}</span></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><span class="badge badge-${getStatusClass(row.status)}">${row.status || 'Draft'}</span></td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.status || ''}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.supplier || ''}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.grand_total || 0, { fieldtype: 'Currency' })}</td>
@@ -1579,6 +1645,8 @@ function renderPurchaseInvoiceTable($container, data) {
                     <tr>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Purchase Invoice')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Date')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Due Date')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('GRN Date')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Workflow Status')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Supplier')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Grand Total')}</th>
@@ -1597,7 +1665,9 @@ function renderPurchaseInvoiceTable($container, data) {
             <tr style="border-bottom: 1px solid #e9ecef;">
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/purchase-invoice/${row.name}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.name}</a></td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${frappe.format(row.posting_date, { fieldtype: 'Date' })}</td>
-                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><span class="badge badge-${getStatusClass(row.status)}">${row.status || 'Draft'}</span></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${frappe.format(row.due_date, { fieldtype: 'Date' })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${frappe.format(row.custom_grn_date, { fieldtype: 'Date' })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><span class="badge badge-${getStatusClass(row.workflow_state)}">${row.workflow_state || 'Draft'}</span></td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.supplier || ''}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.grand_total || 0, { fieldtype: 'Currency' })}</td>
             </tr>

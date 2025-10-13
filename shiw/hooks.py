@@ -48,6 +48,7 @@ app_license = "mit"
 page_js = {
 	"heat-dashboard": "shiw/page/heat_dashboard/heat_dashboard.js",
 	"mould-dashboard": "shiw/page/mould_dashboard/mould_dashboard.js",
+	"custom-asset-repair-dashboard": "shiw/page/custom_asset_repair_dashboard/custom_asset_repair_dashboard.js",
 }
 
 # include js in doctype views
@@ -262,21 +263,25 @@ page_js = {
 
 fixtures = [
 	{"doctype": "Custom Field", "filters": {"module": "shiw"}},
+	{"doctype": "Custom Field", "filters": {"dt": "Salary Structure Deductions"}},
 ]
 
 # doctype_js = {
 #   "BOM": "public/js/bom.js"
 # }
 
-doctype_js = {"Production Plan": "public/js/Production_Plan.js"}
+doctype_js = {
+	"Production Plan": "public/js/Production_Plan.js",
+	"Salary Structure": "public/js/salary_structure_formula.js",  # Re-enabled
+}
 
 
-# doc_events = {
-#     "BOM": {
-#       "before_save": "shiw.override.bom.apply_custom_rates_on_save",
-#         "on_submit": "shiw.override.bom.enqueue_post_submit_rate_fix"
-#     }
-# }
+doc_events = {
+	"Salary Structure": {
+		"before_save": "shiw.override.salary_structure_override.validate_salary_structure_formulas",
+		"on_save": "shiw.override.salary_structure_override.calculate_salary_structure_deductions",
+	}
+}
 # override_doctype_class = {
 #     "BOM": "shiw.override.bom_override.CustomBOM"
 # }
