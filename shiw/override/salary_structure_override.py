@@ -65,6 +65,17 @@ def calculate_salary_structure_deductions(doc, method):
 			if earning.abbreviation:
 				earnings_context[earning.abbreviation] = earning.amount or 0.0
 
+		# Add aggregate aliases for convenience in formulas
+		try:
+			total = sum(float(v) for v in earnings_context.values())
+			earnings_context.setdefault("gross_pay", total)
+			earnings_context.setdefault("gross", total)
+			earnings_context.setdefault("GROSS_PAY", total)
+			earnings_context.setdefault("total_earnings", total)
+			earnings_context.setdefault("TOTAL_EARNINGS", total)
+		except Exception:
+			pass
+
 		# Calculate each deduction
 		for deduction in doc.deductions:
 			if hasattr(deduction, "custom_amount_formula") and deduction.custom_amount_formula:

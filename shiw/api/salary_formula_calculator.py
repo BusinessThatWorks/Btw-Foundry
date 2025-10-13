@@ -144,6 +144,17 @@ def evaluate_formula(formula, context=None):
 			elif isinstance(node, ast.Subscript):
 				raise ValueError("Subscript access is not allowed")
 
+		# Provide default value 0 for any undefined variable names
+		undefined_names = set()
+		for node in ast.walk(expr):
+			if isinstance(node, ast.Name):
+				if node.id not in safe_dict:
+					undefined_names.add(node.id)
+		for name in undefined_names:
+			safe_dict[name] = 0.0
+		if undefined_names:
+			print(f"🧮 Filled undefined names with 0: {sorted(list(undefined_names))}")
+
 		# Evaluate the expression
 		result = eval(compile(expr, "<string>", "eval"), safe_dict)
 		print(f"🧮 Evaluation result: {result}")
@@ -173,12 +184,16 @@ def normalize_context(raw):
 			return {}
 		# If it's already a dict-like mapping
 		if isinstance(raw, dict):
-			return {str(k): _to_float(v) for k, v in raw.items()}
+			mapping = {str(k): _to_float(v) for k, v in raw.items()}
+			_augment_with_gross(mapping)
+			return mapping
 		# Sometimes comes as JSON string
 		if isinstance(raw, str):
 			try:
 				parsed = json.loads(raw)
-				return normalize_context(parsed)
+				mapping = normalize_context(parsed)
+				_augment_with_gross(mapping)
+				return mapping
 			except Exception:
 				return {}
 		# List of pairs [["B", 20000], ["HRA", 10000]]
@@ -194,6 +209,7 @@ def normalize_context(raw):
 					val = item.get("value") or item.get("amount") or item.get("val")
 					if key is not None and val is not None:
 						result[str(key)] = _to_float(val)
+			_augment_with_gross(result)
 			return result
 		return {}
 	except Exception:
@@ -205,6 +221,19 @@ def _to_float(v):
 		return float(v) if v not in [None, ""] else 0.0
 	except Exception:
 		return 0.0
+
+
+def _augment_with_gross(mapping):
+	"""Add common aggregate aliases like gross_pay/total_earnings to mapping."""
+	try:
+		total = sum(_to_float(v) for v in mapping.values())
+		mapping.setdefault('gross_pay', total)
+		mapping.setdefault('gross', total)
+		mapping.setdefault('GROSS_PAY', total)
+		mapping.setdefault('total_earnings', total)
+		mapping.setdefault('TOTAL_EARNINGS', total)
+	except Exception:
+		pass
 
 
 @frappe.whitelist()

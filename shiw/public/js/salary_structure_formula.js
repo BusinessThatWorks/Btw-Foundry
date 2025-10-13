@@ -286,6 +286,19 @@ function get_earnings_context(frm) {
         console.log('💰 No earnings found');
     }
 
+    // Provide convenient aggregate aliases often used in formulas
+    try {
+        const total = Object.values(context).reduce((sum, v) => sum + (Number(v) || 0), 0);
+        // common aliases
+        context.gross_pay = total;
+        context.gross = total;
+        context.GROSS_PAY = total;
+        context.total_earnings = total;
+        context.TOTAL_EARNINGS = total;
+    } catch (e) {
+        console.warn('💰 Failed computing gross_pay:', e);
+    }
+
     console.log('💰 Final context:', context);
     return context;
 }
