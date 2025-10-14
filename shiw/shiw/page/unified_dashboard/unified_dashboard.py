@@ -93,6 +93,7 @@ def get_heat_loss_reasons(filters=None):
 			SELECT
 				p.name as parent_name,
 				p.date as date,
+				p.shift_type as shift_type,
 				c.reason_for_heat_loss as reason_for_heat_loss,
 				ifnull(c.weight_in_kg, 0) as weight_in_kg
 			FROM `tabDaily Heat Loss` p
@@ -106,6 +107,8 @@ def get_heat_loss_reasons(filters=None):
 			},
 			as_dict=True,
 		)
+		# Debug logging
+		frappe.logger().info(f"Heat Loss Reasons Query Result: {rows[:3] if rows else 'No data'}")
 		return rows
 	except Exception as e:
 		frappe.log_error(f"Heat Loss Reasons Error: {str(e)}", "Unified Dashboard")

@@ -30,6 +30,7 @@ def get_columns():
 			"width": 180,
 		},
 		{"label": "Date", "fieldname": "date", "fieldtype": "Date", "width": 120},
+		{"label": "Shift Type", "fieldname": "shift_type", "fieldtype": "Data", "width": 120},
 		{
 			"label": "Target Liquid Metal",
 			"fieldname": "target_liquid_metal",
@@ -69,6 +70,7 @@ def get_data(filters):
 		SELECT
 			name,
 			date,
+			shift_type,
 			ifnull(target_liquid_metal, 0) as target_liquid_metal,
 			ifnull(achieved_liquid_metal, 0) as achieved_liquid_metal,
 			ifnull(achieved, 0) as achieved,
