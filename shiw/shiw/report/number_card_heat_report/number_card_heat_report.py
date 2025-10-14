@@ -63,6 +63,18 @@ def get_columns():
 		},
 		{"label": "Liquid Balance", "fieldname": "liquid_balence", "fieldtype": "Float", "width": 160},
 		{
+			"label": "Foundry Return Existing",
+			"fieldname": "foundry_return_existing",
+			"fieldtype": "Float",
+			"width": 180,
+		},
+		{
+			"label": "Liquid Metal Pig",
+			"fieldname": "liquid_metal_pig",
+			"fieldtype": "Float",
+			"width": 160,
+		},
+		{
 			"label": "BOM ₹/kg",
 			"fieldname": "bom_cost_per_kg",
 			"fieldtype": "Float",
@@ -121,7 +133,9 @@ def get_data(filters):
             ifnull(total_charge_mix_in_kg,0) as total_charge_mix_in_kg,
             ifnull(liquid_balence,0) as liquid_balence,
             ifnull(burning_loss,0) as burning_loss,
-            ifnull(total_charge_mix_valuation,0) as total_charge_mix_valuation
+            ifnull(total_charge_mix_valuation,0) as total_charge_mix_valuation,
+            ifnull(foundry_return_existing,0) as foundry_return_existing,
+            ifnull(liquid_metal_pig,0) as liquid_metal_pig
         FROM `tabHeat`
         WHERE {where_clause}
         """,
@@ -255,6 +269,8 @@ def get_report_summary(result):
 	total_heats = num
 	total_charge_mix_in_kg = sum(flt(row["total_charge_mix_in_kg"], 2) for row in result)
 	liquid_balence = sum(flt(row["liquid_balence"], 2) for row in result)
+	total_foundry_return_existing = sum(flt(row["foundry_return_existing"], 2) for row in result)
+	total_liquid_metal_pig = sum(flt(row["liquid_metal_pig"], 2) for row in result)
 
 	# Calculate average burning loss percentage: Sum of individual burning loss percentages / Number of heats
 	# If liquid balance is 0 for a heat, burning loss should be 0% (not 100%)
@@ -296,6 +312,20 @@ def get_report_summary(result):
 			"datatype": "Float",
 			"precision": 2,
 			"indicator": "Black",
+		},
+		{
+			"value": total_foundry_return_existing,
+			"label": _("Foundry Return Existing"),
+			"datatype": "Float",
+			"precision": 2,
+			"indicator": "Purple",
+		},
+		{
+			"value": total_liquid_metal_pig,
+			"label": _("Liquid Metal Pig"),
+			"datatype": "Float",
+			"precision": 2,
+			"indicator": "Teal",
 		},
 		{
 			"value": burning_loss_percentage,

@@ -1,5 +1,6 @@
 // Copyright (c) 2025, beetashoke chakraborty and contributors
 // For license information, please see license.txt
+// Updated: Removed color logic for now - v3.0 - 2025-01-27
 
 // Ensure the page is registered before adding event handlers
 if (!frappe.pages['unified-dashboard']) {
@@ -324,6 +325,7 @@ function refreshDashboard(state) {
 
 function fetchHeatData(filters) {
     return new Promise((resolve, reject) => {
+        console.log('Fetching heat data with filters:', filters);
         frappe.call({
             method: 'frappe.desk.query_report.run',
             args: {
@@ -332,22 +334,28 @@ function fetchHeatData(filters) {
                 ignore_prepared_report: 1,
             },
             callback: (r) => {
+                console.log('Heat data response:', r);
                 if (r.message && r.message.report_summary) {
                     resolve({
                         summary: r.message.report_summary,
                         raw_data: r.message.result || []
                     });
                 } else {
+                    console.log('No heat data found, returning empty');
                     resolve({ summary: [], raw_data: [] });
                 }
             },
-            error: reject
+            error: (err) => {
+                console.error('Heat data fetch error:', err);
+                reject(err);
+            }
         });
     });
 }
 
 function fetchHeatLossData(filters) {
     return new Promise((resolve, reject) => {
+        console.log('Fetching heat loss data with filters:', filters);
         frappe.call({
             method: 'frappe.desk.query_report.run',
             args: {
@@ -356,6 +364,7 @@ function fetchHeatLossData(filters) {
                 ignore_prepared_report: 1,
             },
             callback: (r) => {
+                console.log('Heat loss data response:', r);
                 const base = { summary: [], raw_data: [], reasons: [] };
                 if (r.message) {
                     base.summary = r.message.report_summary || [];
@@ -391,7 +400,10 @@ function fetchHeatLossData(filters) {
                     error: () => resolve(base)
                 });
             },
-            error: reject
+            error: (err) => {
+                console.error('Heat loss data fetch error:', err);
+                reject(err);
+            }
         });
     });
 }
@@ -409,6 +421,7 @@ function fetchMouldData(filters) {
             mouldFilters.doctype_name = filters.batch_type;
         }
 
+        console.log('Fetching mould data with filters:', mouldFilters);
         frappe.call({
             method: 'frappe.desk.query_report.run',
             args: {
@@ -417,16 +430,21 @@ function fetchMouldData(filters) {
                 ignore_prepared_report: 1,
             },
             callback: (r) => {
+                console.log('Mould data response:', r);
                 if (r.message && r.message.report_summary) {
                     resolve({
                         summary: r.message.report_summary,
                         raw_data: r.message.result || []
                     });
                 } else {
+                    console.log('No mould data found, returning empty');
                     resolve({ summary: [], raw_data: [] });
                 }
             },
-            error: reject
+            error: (err) => {
+                console.error('Mould data fetch error:', err);
+                reject(err);
+            }
         });
     });
 }
@@ -555,40 +573,8 @@ function renderTabData(state, tabId, tabData) {
         $cardsContainer.append($card);
     });
 
-    // If heat tab, append cards for Foundry Return Existing and Liquid Metal Pig if not present
-    if (tabId === 'heat') {
-        const hasReturnCard = (tabData.summary || []).some(c => (c.label || '').includes('Foundry Return Existing'));
-        const hasPigCard = (tabData.summary || []).some(c => (c.label || '').includes('Liquid Metal Pig'));
-
-        // Compute totals from raw_data to ensure number cards are present
-        if (!hasReturnCard || !hasPigCard) {
-            let totalReturnExisting = 0;
-            let totalLiquidMetalPig = 0;
-            (tabData.raw_data || []).forEach(row => {
-                totalReturnExisting += Number(row.foundry_return_existing || 0);
-                totalLiquidMetalPig += Number(row.liquid_metal_pig || 0);
-            });
-
-            if (!hasReturnCard) {
-                $cardsContainer.append(createCard({
-                    value: totalReturnExisting,
-                    label: __('Foundry Return Existing'),
-                    datatype: 'Float',
-                    precision: 2,
-                    indicator: 'Purple'
-                }));
-            }
-            if (!hasPigCard) {
-                $cardsContainer.append(createCard({
-                    value: totalLiquidMetalPig,
-                    label: __('Liquid Metal Pig'),
-                    datatype: 'Float',
-                    precision: 2,
-                    indicator: 'Teal'
-                }));
-            }
-        }
-    }
+    // Note: Foundry Return Existing and Liquid Metal Pig cards are now included 
+    // directly in the report summary from the Number card Heat report
 
     // Render chart for heat tab
     if (tabId === 'heat') {
@@ -951,7 +937,7 @@ function getIndicatorColor(indicator) {
 
 function getPerKgCostColor(perKgCost, bomCostPerKg) {
     /**
-     * Get color styling for Per Kg Cost column based on comparison with BOM cost
+     * Get color styling for Per Kg Cost column
      * 
      * Args:
      *     perKgCost (number): Per kg cost value
@@ -960,21 +946,11 @@ function getPerKgCostColor(perKgCost, bomCostPerKg) {
      * Returns:
      *     string: CSS color style
      */
-    const perKg = parseFloat(perKgCost) || 0;
-    const bomCost = parseFloat(bomCostPerKg) || 0;
-
-    // If no BOM cost available, use default color
-    if (bomCost === 0) {
-        return 'color: #495057;';
-    }
-
-    // If per kg cost is less than BOM cost, show in red
-    if (perKg < bomCost) {
-        return 'color: #dc3545; font-weight: 600;'; // Red color with bold
-    } else {
-        return 'color: #28a745; font-weight: 600;'; // Green color with bold
-    }
+    
+    // For now, just return normal color
+    return 'color: #495057;';
 }
+
 
 function showError(state, message) {
     // Show error in current tab
@@ -1042,4 +1018,5 @@ function renderPerKgCostChart(heatData) {
         }
     });
 }
+
 
