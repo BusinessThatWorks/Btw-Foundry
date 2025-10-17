@@ -18,8 +18,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Item",
-   "options": "Item",
-   "reqd": 1
+   "options": "Item"
   },
   {
    "fieldname": "weight",
@@ -32,8 +31,7 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Amount",
-   "precision": "2",
-   "reqd": 1
+   "precision": "2"
   },
   {
    "default": "0",
@@ -53,13 +51,14 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-08-11 22:37:21.684409",
+ "modified": "2025-10-15 15:22:26.265284",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Charge mix component table",
  "owner": "Administrator",
  "permissions": [],
  "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_giqz",
+  "custom_is_downtime",
   "shift_type",
   "melter",
   "heat_no",
@@ -98,6 +99,11 @@
    "fieldname": "section_break_giqz",
    "fieldtype": "Section Break",
    "label": "Details"
+  },
+  {
+   "fieldname": "custom_is_downtime",
+   "fieldtype": "Check",
+   "label": "Is Downtime"
   },
   {
    "fieldname": "melter",
