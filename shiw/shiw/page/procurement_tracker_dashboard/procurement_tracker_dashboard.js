@@ -331,6 +331,16 @@ function getIdFieldName(tabId) {
     return idFields[tabId] || 'id';
 }
 
+function getItemFieldName(tabId) {
+    const itemFields = {
+        'material_request': 'mr_item_name',
+        'purchase_order': 'po_item_name',
+        'purchase_receipt': 'pr_item_name',
+        'purchase_invoice': 'pi_item_name'
+    };
+    return itemFields[tabId] || 'item_name';
+}
+
 function getSectionTitle(tabId) {
     const titles = {
         'overview': __('Procurement Overview'),
@@ -570,7 +580,7 @@ function fetchMaterialRequestData(filters, state) {
                 filters: {
                     from_date: filters.from_date,
                     to_date: filters.to_date,
-                    item_code: filters.item_name || ''
+                    item_code: filters.mr_item_name || ''
                 },
                 ignore_prepared_report: 1,
             },
@@ -845,7 +855,7 @@ function fetchPurchaseOrderData(filters, state) {
                 filters: {
                     from_date: filters.from_date,
                     to_date: filters.to_date,
-                    item_code: filters.item_name || ''
+                    item_code: filters.po_item_name || ''
                 },
                 ignore_prepared_report: 1,
             },
@@ -891,9 +901,9 @@ function fetchPurchaseOrderData(filters, state) {
                     }
 
                     // Apply item filter if specified - filter the original procurement data first
-                    if (filters.item_name) {
+                    if (filters.po_item_name) {
                         const itemFilteredProcurementData = procurementData.filter(row =>
-                            row.item_code === filters.item_name
+                            row.item_code === filters.po_item_name
                         );
 
                         // Extract unique Purchase Orders from item-filtered data
@@ -974,7 +984,7 @@ function fetchPurchaseReceiptData(filters, state) {
                 filters: {
                     from_date: filters.from_date,
                     to_date: filters.to_date,
-                    item_code: filters.item_name || ''
+                    item_code: filters.pr_item_name || ''
                 },
                 ignore_prepared_report: 1,
             },
@@ -1020,9 +1030,9 @@ function fetchPurchaseReceiptData(filters, state) {
                     }
 
                     // Apply item filter if specified - filter the original procurement data first
-                    if (filters.item_name) {
+                    if (filters.pr_item_name) {
                         const itemFilteredProcurementData = procurementData.filter(row =>
-                            row.item_code === filters.item_name
+                            row.item_code === filters.pr_item_name
                         );
 
                         // Extract unique Purchase Receipts from item-filtered data
@@ -1064,9 +1074,12 @@ function fetchPurchaseReceiptData(filters, state) {
 
                     // Create status summary based on workflow_state
                     const statusCounts = {};
+                    let filteredTotalGrandTotal = 0;
+                    
                     filteredData.forEach(item => {
                         const status = item.workflow_state || 'Draft';
                         statusCounts[status] = (statusCounts[status] || 0) + 1;
+                        filteredTotalGrandTotal += parseFloat(item.grand_total || 0);
                     });
 
                     const summary = Object.keys(statusCounts).map(status => ({
@@ -1076,6 +1089,15 @@ function fetchPurchaseReceiptData(filters, state) {
                         indicator: getStatusIndicator(status),
                         description: `Purchase receipts with ${status} status`
                     }));
+
+                    // Add total grand total card
+                    summary.push({
+                        value: filteredTotalGrandTotal,
+                        label: __('Total Receipt Value'),
+                        datatype: 'Currency',
+                        indicator: 'Orange',
+                        description: __('Sum of grand total for selected date range')
+                    });
 
                     // Update status options based on actual data
                     updateStatusOptions('purchase_receipt', procurementData, state);
@@ -1197,9 +1219,9 @@ function fetchPurchaseInvoiceData(filters, state) {
                         }
 
                         // Apply item filter if specified - filter the original procurement data first
-                        if (filters.item_name) {
+                        if (filters.pi_item_name) {
                             const itemFilteredProcurementData = procurementData.filter(row =>
-                                row.item_code === filters.item_name
+                                row.item_code === filters.pi_item_name
                             );
 
                             // Extract unique Purchase Invoices from item-filtered data
@@ -1408,22 +1430,19 @@ function getFilters(state) {
         supplier: state.controls.supplier.get_value()
     };
 
-    // Add section-specific filters
+    // Add section-specific filters for all tabs
     Object.keys(state.$tabs).forEach(tabId => {
         if (tabId !== 'overview') {
             if (tabId === 'item_wise') {
-                if (state.currentTab === tabId) {
-                    filters.item_code = state.controls[`${tabId}_item_code`].get_value();
-                    filters.po_no = state.controls[`${tabId}_po_no`].get_value();
-                }
+                filters.item_code = state.controls[`${tabId}_item_code`].get_value();
+                filters.po_no = state.controls[`${tabId}_po_no`].get_value();
             } else {
                 const statusField = getStatusFieldName(tabId);
                 const idField = getIdFieldName(tabId);
+                const itemField = getItemFieldName(tabId);
                 filters[statusField] = state.controls[`${tabId}_status`].get_value();
                 filters[idField] = state.controls[`${tabId}_id`].get_value();
-                if (state.currentTab === tabId) {
-                    filters.item_name = state.controls[`${tabId}_item_name`].get_value();
-                }
+                filters[itemField] = state.controls[`${tabId}_item_name`].get_value();
             }
         }
     });
