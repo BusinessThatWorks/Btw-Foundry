@@ -118,7 +118,7 @@ def execute(filters=None):
 		fields=[
 			"name as id",
 			"date",
-			"shift_timing as shift",
+			"shift_type as shift",
 			"furnace_no",
 			"material_grade",
 			"power_consumptionkwh as power_consumption",
@@ -127,7 +127,7 @@ def execute(filters=None):
 			"liquid_balence",
 		],
 		filters=filters_dict,
-		order_by="date DESC, shift_timing ASC",
+		order_by="date DESC, shift_type ASC",
 	)
 
 	# compute rate per kg
