@@ -7,12 +7,98 @@ from frappe.model.document import Document
 
 class Heat(Document):
 	def onload(self):
-		"""Set field properties when form loads"""
+		"""Set field properties when form loads and log load event"""
+		frappe.log_error(f"🔥 HEAT ONLOAD CALLED for Heat {self.name}", "Heat Debug")
 		self.set_field_properties()
+	
+	def before_save(self):
+		"""Lightweight pre-save hook to confirm method is called"""
+		frappe.log_error(f"🔥 HEAT BEFORE_SAVE CALLED for Heat {self.name}", "Heat Debug")
 	
 	def before_validate(self):
 		"""Dynamically modify field properties before validation"""
 		self.set_field_properties()
+		
+		# If downtime is checked, clear mandatory child table rows to avoid validation errors
+		if self.custom_is_downtime:
+			# Clear the charge_mix_component_item table to avoid validation errors
+			if hasattr(self, 'charge_mix_component_item') and self.charge_mix_component_item:
+				self.charge_mix_component_item = []
+				frappe.log_error("Cleared charge_mix_component_item table due to downtime mode", "Heat Debug")
+			
+			# Clear the table_vkjb table to avoid validation errors  
+			if hasattr(self, 'table_vkjb') and self.table_vkjb:
+				self.table_vkjb = []
+				frappe.log_error("Cleared table_vkjb table due to downtime mode", "Heat Debug")
+
+	def on_submit(self):
+		"""Create and submit Stock Entry for charge mix component items after submission"""
+		frappe.log_error(f"🔥 HEAT AFTER_SUBMIT CALLED for Heat {self.name}", "Heat Debug")
+		
+		# ----------------------------------------------------------------------
+		# 🔁 Automatic Stock Entry on Heat Submit (Material Issue)
+		# ----------------------------------------------------------------------
+
+		# 1. Dynamically get the exact warehouse "name" field
+		company_name = "Shree Hanuman Iron Works"
+		warehouse_label = "Estimated Foundry Return"
+
+		SOURCE_WH = frappe.db.get_value(
+			"Warehouse",
+			{"warehouse_name": warehouse_label, "company": company_name},
+			"name"
+		)
+
+		if not SOURCE_WH:
+			frappe.throw(f"❌ Could not find warehouse '{warehouse_label}' for company '{company_name}'.")
+
+		# 2. Float utility
+		def flt(val):
+			try:
+				return float(val) if val not in [None, ""] else 0.0
+			except Exception:
+				return 0.0
+
+		# 3. Build stock entry items
+		items = []
+		for row in (self.charge_mix_component_item or []):
+			if getattr(row, 'is_stock_entry', 0):
+				qty = flt(getattr(row, 'weight', 0))
+
+				if qty <= 0:
+					frappe.throw(f"Row {row.idx}: Weight must be > 0.")
+
+				item_code = getattr(row, 'item', None)
+				if not item_code or not frappe.db.exists("Item", item_code):
+					frappe.throw(f"Row {row.idx}: Item '{item_code}' not found.")
+
+				items.append({
+					"item_code": item_code,
+					"qty": qty,
+					"s_warehouse": SOURCE_WH,
+				})
+
+		# 4. Create and submit Stock Entry
+		if items:
+			stock_entry = frappe.get_doc({
+				"doctype": "Stock Entry",
+				"stock_entry_type": "Material Issue",
+				"items": items,
+				"remarks": f"Auto Material Issue from Heat {self.name}"
+			})
+			stock_entry.insert()
+			stock_entry.submit()
+
+			# 5. Link back to Heat
+			self.db_set("linked_stock_entry", stock_entry.name)
+
+			frappe.log_error(f"🔥 Stock Entry Created: {stock_entry.name}", "Heat Debug")
+			frappe.msgprint(f"✅ Stock Entry Created: {stock_entry.name}")
+		else:
+			frappe.log_error("🔥 No rows marked for stock entry – skipping creation", "Heat Debug")
+			frappe.msgprint("✅ No rows marked for stock entry – skipping creation.")
+		
+		frappe.log_error(f"🔥 HEAT AFTER_SUBMIT COMPLETED for Heat {self.name}", "Heat Debug")
 	
 	def validate(self):
 		"""Override validation when downtime is checked"""

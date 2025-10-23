@@ -205,8 +205,6 @@ def get_columns():
 def get_data(filters):
     data = []
     try:
-        frappe.log_error("Start get_data", "Pouring Debug")
-
         # Fetch Charge Mix rows
         charge_rows = frappe.db.sql("""
             SELECT
@@ -262,8 +260,11 @@ def get_data(filters):
             grouped[parent]["rows"].setdefault(key, {"charge": [], "consumption": []})
             grouped[parent]["rows"][key]["consumption"].append(r)
 
-        # Build final rows with smart display
-        for parent_id, parent_grp in grouped.items():
+        # Sort grouped data by parent_id
+        sorted_groups = sorted(grouped.items())
+        
+        # Build final rows with smart display + expand/collapse functionality
+        for parent_id, parent_grp in sorted_groups:
             parent_info = parent_grp["parent_info"]
             rows = parent_grp["rows"]
             first_row = True
@@ -341,12 +342,12 @@ def get_data(filters):
                         "cons_rate": flt_blank(co.get("cons_rate")),
                         "cons_amount": flt_blank(co.get("cons_amount")),
                         "total_consumption": total_consumption if first_row else None,
+                        "indent": 0 if first_row else 1,  # First row is parent, others are children
                     }
 
                     data.append(row)
                     first_row = False
 
-        frappe.log_error(f"Final rows prepared: {len(data)}", "Pouring Done")
         return data
 
     except Exception as e:

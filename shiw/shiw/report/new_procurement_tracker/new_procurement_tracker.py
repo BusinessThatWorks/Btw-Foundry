@@ -380,7 +380,7 @@ def get_data(filters):
         SELECT
             mr.name AS material_request,
             mr.transaction_date AS indent_date,
-            mr.status AS mr_status,
+            mr.workflow_state AS mr_status,
 
             mri.item_code,
             mri.item_name,
