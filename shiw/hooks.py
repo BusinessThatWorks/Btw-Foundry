@@ -263,7 +263,6 @@ page_js = {
 
 fixtures = [
 	{"doctype": "Custom Field", "filters": {"module": "shiw"}},
-	{"doctype": "Custom Field", "filters": {"dt": "Salary Structure Deductions"}},
 ]
 
 # doctype_js = {
