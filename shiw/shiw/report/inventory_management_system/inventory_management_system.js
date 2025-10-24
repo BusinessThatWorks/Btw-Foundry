@@ -422,14 +422,15 @@ frappe.query_reports["Inventory Management System"] = {
 
         if (column.fieldname === "store_qty" && data) {
             let bg = "";
-            if (data.status === "Red") bg = "#ff4d4d";       // red
-            else if (data.status === "Green") bg = "#4dff88"; // green
-            else if (data.status === "Purple") bg = "#b84dff"; // purple
+            if (data.status === "Red") bg = "#ff9999";       // medium-light red
+            else if (data.status === "Green") bg = "#99ff99"; // medium-light green
+            else if (data.status === "Purple") bg = "#cc99ff"; // medium-light purple
 
             return `<div style="background-color:${bg}; 
                                 border-radius:12px; 
                                 padding:4px; 
-                                text-align:center;">
+                                text-align:center;
+                                font-weight:bold;">
                         ${data.store_qty}
                     </div>`;
         }
