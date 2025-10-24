@@ -245,6 +245,24 @@ def get_columns():
 			"fieldtype": "Currency",
 			"width": 180,
 		},
+		{
+			"label": "Open Indent",
+			"fieldname": "open_indent",
+			"fieldtype": "Float",
+			"width": 120,
+		},
+		{
+			"label": "Open PO",
+			"fieldname": "open_po",
+			"fieldtype": "Float",
+			"width": 120,
+		},
+		{
+			"label": "Open Transit",
+			"fieldname": "open_transit",
+			"fieldtype": "Float",
+			"width": 120,
+		},
 		# hidden helper column
 		{"label": "Status", "fieldname": "status", "fieldtype": "Data", "hidden": 1},
 	]
@@ -300,6 +318,15 @@ def get_data(filters):
 			excess_qty = store_qty - max_qty
 			excess_stock_valuation = excess_qty * valuation_rate
 
+		# Get open indent quantity (Material Requests not linked to PO)
+		open_indent_qty = get_open_indent_quantity(it.name)
+
+		# Get open PO quantity (Purchase Orders not yet received)
+		open_po_qty = get_open_po_quantity(it.name)
+
+		# Get open transit quantity (Items in transit)
+		open_transit_qty = get_open_transit_quantity(it.name)
+
 		# Determine status
 		if store_qty < min_qty:
 			status = "Red"
@@ -318,7 +345,109 @@ def get_data(filters):
 				"custom_maximum_stock": max_qty,
 				"balance_valuation": stock_value,
 				"excess_stock_valuation": excess_stock_valuation,
+				"open_indent": open_indent_qty,
+				"open_po": open_po_qty,
+				"open_transit": open_transit_qty,
 				"status": status,  # hidden column for filtering
 			}
 		)
 	return data
+
+
+def get_open_indent_quantity(item_code):
+	"""
+	Get open indent quantity for an item.
+	Open indent = Material Requests that are NOT linked to any Purchase Order Item
+	"""
+	try:
+		# Get all material request IDs that are linked to Purchase Order Items
+		linked_mr_ids = frappe.db.sql(
+			"""
+			SELECT DISTINCT material_request 
+			FROM `tabPurchase Order Item` 
+			WHERE material_request IS NOT NULL AND material_request != ''
+		""",
+			as_list=True,
+		)
+
+		linked_mr_list = [row[0] for row in linked_mr_ids] if linked_mr_ids else []
+
+		# Get open material requests (not linked to any PO)
+		open_mr_conditions = ""
+		if linked_mr_list:
+			open_mr_conditions = f"AND mr.name NOT IN ({','.join(['%s'] * len(linked_mr_list))})"
+
+		# Get quantities from open material requests for this item
+		open_indent_qty = frappe.db.sql(
+			f"""
+			SELECT SUM(ifnull(mri.qty, 0))
+			FROM `tabMaterial Request` mr
+			INNER JOIN `tabMaterial Request Item` mri ON mr.name = mri.parent
+			WHERE mr.docstatus = 1 
+			AND mr.status != 'Completed'
+			AND mri.item_code = %s
+			{open_mr_conditions}
+		""",
+			[item_code, *linked_mr_list],
+			as_list=True,
+		)
+
+		return float(open_indent_qty[0][0] or 0) if open_indent_qty and open_indent_qty[0][0] else 0
+	except Exception as e:
+		frappe.log_error(f"Error getting open indent for {item_code}: {str(e)}")
+		return 0
+
+
+def get_open_po_quantity(item_code):
+	"""
+	Get open PO quantity for an item.
+	Open PO = Purchase Orders that don't have corresponding Purchase Receipts
+	"""
+	try:
+		# Get quantities from Purchase Orders that don't have Purchase Receipts
+		open_po_qty = frappe.db.sql(
+			"""
+			SELECT SUM(ifnull(poi.qty, 0))
+			FROM `tabPurchase Order` po
+			INNER JOIN `tabPurchase Order Item` poi ON po.name = poi.parent
+			LEFT JOIN `tabPurchase Receipt Item` pri ON po.name = pri.purchase_order
+			WHERE po.docstatus = 1 
+			AND po.status IN ('To Receive and Bill', 'To Bill', 'To Receive')
+			AND poi.item_code = %s
+			AND pri.purchase_order IS NULL
+		""",
+			[item_code],
+			as_list=True,
+		)
+
+		return float(open_po_qty[0][0] or 0) if open_po_qty and open_po_qty[0][0] else 0
+	except Exception as e:
+		frappe.log_error(f"Error getting open PO for {item_code}: {str(e)}")
+		return 0
+
+
+def get_open_transit_quantity(item_code):
+	"""
+	Get open transit quantity for an item.
+	Open Transit = Items that are in transit (Material Transfer entries)
+	"""
+	try:
+		# Get quantities from Stock Entries that are Material Transfers
+		open_transit_qty = frappe.db.sql(
+			"""
+			SELECT SUM(ifnull(se_item.qty, 0))
+			FROM `tabStock Entry` se
+			INNER JOIN `tabStock Entry Detail` se_item ON se.name = se_item.parent
+			WHERE se.docstatus = 1 
+			AND se.purpose = 'Material Transfer'
+			AND se_item.item_code = %s
+			AND se_item.t_warehouse = %s
+		""",
+			[item_code, WAREHOUSE],
+			as_list=True,
+		)
+
+		return float(open_transit_qty[0][0] or 0) if open_transit_qty and open_transit_qty[0][0] else 0
+	except Exception as e:
+		frappe.log_error(f"Error getting open transit for {item_code}: {str(e)}")
+		return 0
