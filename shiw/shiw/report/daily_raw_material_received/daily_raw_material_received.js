@@ -63,6 +63,12 @@ frappe.query_reports["Daily Raw Material Received"] = {
 					}
 				};
 			}
+		},
+		{
+			fieldname: "item_group",
+			label: "Item Group",
+			fieldtype: "Link",
+			options: "Item Group"
 		}
 	],
 
@@ -83,6 +89,10 @@ frappe.query_reports["Daily Raw Material Received"] = {
 
 		if (column.fieldname === "amount") {
 			return `<span style="color: blue; font-weight: bold;">${value}</span>`;
+		}
+
+		if (column.fieldname === "item_group") {
+			return `<span style="color: purple; font-weight: bold;">${value}</span>`;
 		}
 
 		return value;
