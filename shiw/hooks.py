@@ -157,23 +157,16 @@ page_js = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"shiw.tasks.all"
-# 	],
-# 	"daily": [
-# 		"shiw.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"shiw.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"shiw.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"shiw.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"all": ["shiw.tasks.all"],
+	"daily": ["shiw.tasks.daily"],
+	"hourly": ["shiw.tasks.hourly"],
+	"weekly": ["shiw.tasks.weekly"],
+	"monthly": ["shiw.tasks.monthly"],
+	"cron": {
+		"59 11 * * *": ["shiw.api.simple_daily_email.send_daily_critical_stock_email"],  # 11:59 AM daily
+	},
+}
 
 # Testing
 # -------
