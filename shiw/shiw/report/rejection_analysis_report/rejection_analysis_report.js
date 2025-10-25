@@ -54,13 +54,9 @@ frappe.query_reports["Rejection Analysis Report"] = {
             return `<span style="color: #c0392b; font-weight: bold; background-color: #f8d7da;">${value}</span>`;
         }
 
-        // Highlight percentage column
+        // Keep percentage column normal
         if (column.fieldname === "percentage") {
-            if (value && value !== "0.00%") {
-                return `<span style="color: #8e44ad; font-weight: bold; background-color: #f4ecf7;">${value}</span>`;
-            } else {
-                return `<span style="color: #7f8c8d;">${value}</span>`;
-            }
+            return value;
         }
 
         return value;
