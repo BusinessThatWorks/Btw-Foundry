@@ -54,6 +54,13 @@ function initializeDashboard(state) {
     // Bind event handlers
     bindEventHandlers(state);
 
+    // Set initial refresh button visibility (show for overview tab by default)
+    if (state.currentTab === 'overview') {
+        state.controls.refreshBtn.show();
+    } else {
+        state.controls.refreshBtn.hide();
+    }
+
     // Load initial data
     refreshDashboard(state);
 }
@@ -125,6 +132,25 @@ function createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $btnWrap
 
     // Store button references
     state.controls.refreshBtn = $refreshBtn;
+
+    // Apply black outline borders to main filter fields
+    setTimeout(() => {
+        $(state.controls.from_date.$input).css({
+            'border': '1px solid #000000',
+            'border-radius': '4px',
+            'padding': '6px 12px'
+        });
+        $(state.controls.to_date.$input).css({
+            'border': '1px solid #000000',
+            'border-radius': '4px',
+            'padding': '6px 12px'
+        });
+        $(state.controls.supplier.$input).css({
+            'border': '1px solid #000000',
+            'border-radius': '4px',
+            'padding': '6px 12px'
+        });
+    }, 100);
 }
 
 function createTabbedInterface(state) {
@@ -208,16 +234,18 @@ function createContentContainers(state) {
 function createSectionFilters(state, tabId) {
     let inner = '';
     if (tabId === 'item_wise') {
-        // Item-wise tracker: only PO No and Item filters
+        // Item-wise tracker: only PO No and Item filters with refresh button
         inner = `
             <div id="${tabId}-po-filter" style="min-width:200px;"></div>
             <div id="${tabId}-item-filter" style="min-width:220px;"></div>
+            <div id="${tabId}-refresh-btn" style="min-width:120px;display:flex;flex-direction:column;justify-content:end;"></div>
         `;
     } else {
         inner = `
             <div id="${tabId}-status-filter" style="min-width:180px;"></div>
             <div id="${tabId}-id-filter" style="min-width:180px;"></div>
             <div id="${tabId}-item-filter" style="min-width:200px;"></div>
+            <div id="${tabId}-refresh-btn" style="min-width:120px;display:flex;flex-direction:column;justify-content:end;"></div>
         `;
     }
 
@@ -263,9 +291,50 @@ function createSectionFilterControls(state, tabId) {
             render_input: true,
         });
 
+        // Refresh button for item-wise tab - create as a proper input field
+        state.controls[`${tabId}_refresh`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-refresh-btn`).get(0),
+            df: {
+                fieldtype: 'Button',
+                label: __('Action'),
+                fieldname: `${tabId}_refresh`,
+                reqd: 0,
+            },
+            render_input: true,
+        });
+
+        // Customize the button after creation
+        setTimeout(() => {
+            // Find all possible button elements
+            const $formControl = $(`#${tabId}-refresh-btn .form-control`);
+            const $button = $(`#${tabId}-refresh-btn button`);
+            const $input = $(`#${tabId}-refresh-btn input`);
+
+            // Try to find the actual button element
+            let $targetElement = $button.length ? $button : $formControl.length ? $formControl : $input;
+
+            if ($targetElement.length) {
+                console.log('Found button element:', $targetElement[0]);
+                $targetElement.removeClass('form-control').addClass('btn btn-primary');
+                $targetElement.attr('style', `
+                    background-color: #007bff !important;
+                    border-color: #007bff !important;
+                    color: white !important;
+                    height: 32px !important;
+                    padding: 6px 12px !important;
+                    width: 100% !important;
+                    border: 1px solid #007bff !important;
+                    border-radius: 4px !important;
+                `);
+                $targetElement.html(__('Refresh'));
+            } else {
+                console.log('No button element found in:', $(`#${tabId}-refresh-btn`).html());
+            }
+        }, 300);
+
         setTimeout(() => {
             $(`#${tabId}-po-filter .form-control, #${tabId}-item-filter .form-control`).css({
-                'border': '1px solid #ced4da',
+                'border': '1px solid #000000',
                 'border-radius': '4px',
                 'padding': '6px 12px'
             });
@@ -284,9 +353,6 @@ function createSectionFilterControls(state, tabId) {
             },
             render_input: true,
         });
-        setTimeout(() => {
-            $(`#${tabId}-status-filter .form-control`).css({ 'border': '1px solid #ced4da', 'border-radius': '4px', 'padding': '6px 12px' });
-        }, 100);
 
         // ID filter
         const idField = getIdFieldName(tabId);
@@ -295,9 +361,6 @@ function createSectionFilterControls(state, tabId) {
             df: { fieldtype: 'Data', label: __('ID'), fieldname: `${tabId}_id`, reqd: 0 },
             render_input: true,
         });
-        setTimeout(() => {
-            $(`#${tabId}-id-filter .form-control`).css({ 'border': '1px solid #ced4da', 'border-radius': '4px', 'padding': '6px 12px' });
-        }, 100);
 
         // Item name filter
         state.controls[`${tabId}_item_name`] = frappe.ui.form.make_control({
@@ -305,8 +368,54 @@ function createSectionFilterControls(state, tabId) {
             df: { fieldtype: 'Link', options: 'Item', label: __('Item'), fieldname: `${tabId}_item_name`, reqd: 0 },
             render_input: true,
         });
+
+        // Refresh button for other tabs - create as a proper input field
+        state.controls[`${tabId}_refresh`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-refresh-btn`).get(0),
+            df: {
+                fieldtype: 'Button',
+                label: __('Action'),
+                fieldname: `${tabId}_refresh`,
+                reqd: 0,
+            },
+            render_input: true,
+        });
+
+        // Customize the button after creation
         setTimeout(() => {
-            $(`#${tabId}-item-filter .form-control`).css({ 'border': '1px solid #ced4da', 'border-radius': '4px', 'padding': '6px 12px' });
+            // Find all possible button elements
+            const $formControl = $(`#${tabId}-refresh-btn .form-control`);
+            const $button = $(`#${tabId}-refresh-btn button`);
+            const $input = $(`#${tabId}-refresh-btn input`);
+
+            // Try to find the actual button element
+            let $targetElement = $button.length ? $button : $formControl.length ? $formControl : $input;
+
+            if ($targetElement.length) {
+                console.log('Found button element:', $targetElement[0]);
+                $targetElement.removeClass('form-control').addClass('btn btn-primary');
+                $targetElement.attr('style', `
+                    background-color: #007bff !important;
+                    border-color: #007bff !important;
+                    color: white !important;
+                    height: 32px !important;
+                    padding: 6px 12px !important;
+                    width: 100% !important;
+                    border: 1px solid #007bff !important;
+                    border-radius: 4px !important;
+                `);
+                $targetElement.html(__('Refresh'));
+            } else {
+                console.log('No button element found in:', $(`#${tabId}-refresh-btn`).html());
+            }
+        }, 300);
+
+        setTimeout(() => {
+            $(`#${tabId}-status-filter .form-control, #${tabId}-id-filter .form-control, #${tabId}-item-filter .form-control`).css({
+                'border': '1px solid #000000',
+                'border-radius': '4px',
+                'padding': '6px 12px'
+            });
         }, 100);
     }
 }
@@ -453,10 +562,14 @@ function bindEventHandlers(state) {
             if (tabId === 'item_wise') {
                 $(state.controls[`${tabId}_po_no`].$input).on('change', () => refreshDashboard(state));
                 $(state.controls[`${tabId}_item_code`].$input).on('change', () => refreshDashboard(state));
+                // Bind refresh button event for item-wise tab
+                $(state.controls[`${tabId}_refresh`].$input).on('click', () => refreshDashboard(state));
             } else {
                 $(state.controls[`${tabId}_status`].$input).on('change', () => refreshDashboard(state));
                 $(state.controls[`${tabId}_id`].$input).on('change', () => refreshDashboard(state));
                 $(state.controls[`${tabId}_item_name`].$input).on('change', () => refreshDashboard(state));
+                // Bind refresh button event for other tabs
+                $(state.controls[`${tabId}_refresh`].$input).on('click', () => refreshDashboard(state));
             }
         }
     });
@@ -477,6 +590,13 @@ function bindEventHandlers(state) {
             // Update tab buttons
             $('.nav-link').removeClass('active');
             $(`#${tabId}-tab`).addClass('active');
+
+            // Show/hide main refresh button based on current tab
+            if (tabId === 'overview') {
+                state.controls.refreshBtn.show();
+            } else {
+                state.controls.refreshBtn.hide();
+            }
 
             // Trigger refresh for the current tab
             refreshDashboard(state);
@@ -1075,7 +1195,7 @@ function fetchPurchaseReceiptData(filters, state) {
                     // Create status summary based on workflow_state
                     const statusCounts = {};
                     let filteredTotalGrandTotal = 0;
-                    
+
                     filteredData.forEach(item => {
                         const status = item.workflow_state || 'Draft';
                         statusCounts[status] = (statusCounts[status] || 0) + 1;
@@ -1096,7 +1216,8 @@ function fetchPurchaseReceiptData(filters, state) {
                         label: __('Total Receipt Value'),
                         datatype: 'Currency',
                         indicator: 'Orange',
-                        description: __('Sum of grand total for selected date range')
+                        description: __('Sum of grand total for selected date range'),
+                        prefix: '₹'
                     });
 
                     // Update status options based on actual data
@@ -1285,7 +1406,8 @@ function fetchPurchaseInvoiceData(filters, state) {
                             label: __('Total Invoice Value'),
                             datatype: 'Currency',
                             indicator: 'Teal',
-                            description: __('Sum of grand total for selected date range')
+                            description: __('Sum of grand total for selected date range'),
+                            prefix: '₹'
                         });
 
                         // Update status options based on actual data
@@ -1306,11 +1428,15 @@ function fetchPurchaseInvoiceData(filters, state) {
 }
 
 function createProcurementOverviewData(procurementData, mrData, poData, prData, piData) {
-    // Calculate totals
+    // Calculate totals - only count cards, exclude currency cards
     const totalMr = mrData.summary.reduce((sum, card) => sum + (card.value || 0), 0);
     const totalPo = poData.summary.reduce((sum, card) => sum + (card.value || 0), 0);
-    const totalPr = prData.summary.reduce((sum, card) => sum + (card.value || 0), 0);
-    const totalPi = piData.summary.reduce((sum, card) => sum + (card.value || 0), 0);
+    const totalPr = prData.summary
+        .filter(card => card.datatype === 'Int') // Only count cards, exclude currency cards
+        .reduce((sum, card) => sum + (card.value || 0), 0);
+    const totalPi = piData.summary
+        .filter(card => card.datatype === 'Int') // Only count cards, exclude currency cards
+        .reduce((sum, card) => sum + (card.value || 0), 0);
 
     return {
         summary: [
@@ -1761,6 +1887,11 @@ function createCard(card) {
         value = format_number(card.value || 0, null, 2);
     } else {
         value = format_number(card.value || 0);
+    }
+
+    // Add prefix if specified
+    if (card.prefix) {
+        value = card.prefix + value;
     }
 
     const description = card.description ? `<div class="card-description" style="font-size:0.85rem;color:#95a5a6;margin-top:4px;">${frappe.utils.escape_html(card.description)}</div>` : '';

@@ -91,7 +91,7 @@ def send_low_stock_notification(low_stock_items):
 	"""
 	Send email notification for low stock items
 	"""
-	recipient_email = "erp@clapgrow.com"
+	recipient_email = "beetashoke.chakraborty@clapgrow.com"
 
 	# Create email subject
 	subject = f"🚨 CRITICAL STOCK ALERT - {len(low_stock_items)} Items Below Minimum Stock"
@@ -120,7 +120,7 @@ def send_all_good_notification():
 	"""
 	Send email notification when all critical items have sufficient stock
 	"""
-	recipient_email = "erp@clapgrow.com"
+	recipient_email = "beetashoke.chakraborty@clapgrow.com"
 
 	# Create email subject
 	subject = "✅ CRITICAL STOCK STATUS - All Items Have Sufficient Stock"
