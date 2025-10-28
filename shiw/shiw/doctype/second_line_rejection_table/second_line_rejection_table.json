@@ -64,7 +64,7 @@
    "fieldname": "rejection_reason",
    "fieldtype": "Select",
    "label": "Rejection Reason",
-   "options": "\nCold Metal\nSand Drop\nMisrun/Cold Shut\nSand Wash\nSoft Ramming\nMismatch\nShrinkage\nBlowhole\nPinhole\nShort Pouring\nMetal Penetration\nCrack\nSlag Inclusion\nCore Defect\nGas Void\nBad Surface\nImproper Cast Mark"
+   "options": "\nCold Metal\nSand Drop\nMisrun/Cold Shut\nSand Wash\nSoft Ramming\nMismatch\nShrinkage\nBlowhole\nPinhole\nShort Pouring\nMetal Penetration\nCrack\nSlag Inclusion\nCore Defect\nGas Void\nBad Surface\nImproper Cast Mark\nMarking unclear\nDefective core / core miss\nMould Broken\nPoor surface / lapping\nBroken edge / pin hole\nLeakage\nBend\nGrinding Damage / undercut\nChemical Deviation\nCore lift\nExtra metal / sand sticking\nDimension issue\nHandling break\nAny other"
   },
   {
    "fieldname": "available_quantity",
@@ -82,7 +82,7 @@
  "is_submittable": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-31 12:07:39.000525",
+ "modified": "2025-10-28 12:36:26.786159",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Second Line Rejection Table",
