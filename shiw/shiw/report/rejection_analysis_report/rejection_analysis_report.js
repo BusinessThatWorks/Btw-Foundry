@@ -32,35 +32,6 @@ frappe.query_reports["Rejection Analysis Report"] = {
         }
     ],
 
-    formatter: function (value, row, column, data, default_formatter) {
-        value = default_formatter(value, row, column, data);
-
-        // Highlight totals row
-        if (row.item_name === "TOTAL") {
-            if (column.fieldname === "item_name") {
-                return `<span style="color: #2c3e50; font-weight: bold; background-color: #ecf0f1; padding: 5px;">${value}</span>`;
-            } else {
-                return `<span style="color: #2c3e50; font-weight: bold; background-color: #ecf0f1; padding: 5px;">${value}</span>`;
-            }
-        }
-
-        // Highlight non-zero values in rejection reason columns
-        if (column.fieldname !== "item_name" && column.fieldname !== "total_rejected" && value > 0) {
-            return `<span style="color: #e74c3c; font-weight: bold;">${value}</span>`;
-        }
-
-        // Highlight total rejected column
-        if (column.fieldname === "total_rejected" && value > 0) {
-            return `<span style="color: #c0392b; font-weight: bold; background-color: #f8d7da;">${value}</span>`;
-        }
-
-        // Keep percentage column normal
-        if (column.fieldname === "percentage") {
-            return value;
-        }
-
-        return value;
-    },
 
     onload: function () {
         // Set default date range to last 30 days

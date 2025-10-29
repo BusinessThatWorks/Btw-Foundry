@@ -95,11 +95,6 @@ def execute(filters=None):
 	# Prepare data for report
 	data = []
 
-	# Calculate totals for each rejection reason
-	reason_totals = {}
-	for reason in rejection_reasons:
-		reason_totals[reason] = 0
-
 	# Calculate total weight first to use for percentage calculation
 	total_weight_all_items = 0
 	for item_name in sorted(all_items):
@@ -127,8 +122,6 @@ def execute(filters=None):
 			quantity = item_rejection_data.get(item_name, {}).get(reason, 0)
 			row[reason] = quantity
 			total_rejected += quantity
-			# Add to reason total
-			reason_totals[reason] += quantity
 
 		row["total_rejected"] = total_rejected
 
@@ -137,19 +130,9 @@ def execute(filters=None):
 			percentage = (total_rejected / total_weight_all_items) * 100
 		else:
 			percentage = 0
-		row["percentage"] = f"{round(percentage, 2)}%"
+		row["percentage"] = round(percentage, 2)
 
 		data.append(row)
-
-	# Add totals row
-	totals_row = {"item_name": "TOTAL"}
-	total_all_rejected = 0
-	for reason in rejection_reasons:
-		totals_row[reason] = reason_totals[reason]
-		total_all_rejected += reason_totals[reason]
-	totals_row["total_rejected"] = total_all_rejected
-	totals_row["percentage"] = "100.00%"  # Total row shows 100%
-	data.append(totals_row)
 
 	# Prepare columns
 	columns = [
@@ -178,8 +161,9 @@ def execute(filters=None):
 		{
 			"label": "Percentage (%)",
 			"fieldname": "percentage",
-			"fieldtype": "Data",
+			"fieldtype": "Float",
 			"width": 120,
+			"precision": 2,
 		}
 	)
 
