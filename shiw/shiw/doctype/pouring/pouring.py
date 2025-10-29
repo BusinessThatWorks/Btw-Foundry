@@ -291,10 +291,10 @@ class Pouring(Document):
 			grade = tooling_doc.grade or ""
 			foundry_return_weight = flt(tooling_doc.runner_riser_weight)
 
-			frappe.log_error(
-				f"Tooling: {tooling_id}, Grade: {grade}, Runner Riser Weight: {foundry_return_weight}, Qty Total: {qty_total}",
-				"Pouring Debug",
-			)
+			# Use short title and detailed message
+			title = "Pouring Debug"
+			message = f"Tooling: {tooling_id}, Grade: {grade}, Runner Riser Weight: {foundry_return_weight}, Qty Total: {qty_total}"
+			frappe.log_error(title[:140], message)
 
 			for d in tooling_doc.details_table:
 				item_code = (d.item or "").replace("PTRN - ", "").rsplit("-", 1)[0].strip()
@@ -422,7 +422,10 @@ class Pouring(Document):
 					)
 
 			frappe.msgprint("<br>".join(debug_rows))
-			frappe.log_error("\n".join(debug_rows), "Debug Pouring Stock Entry Rows")
+			# Ensure short title (<=140) and long message content
+			title = "Debug Pouring Stock Entry Rows"
+			message = "\n".join(debug_rows)
+			frappe.log_error(title[:140], message)
 
 			if fractional_errors:
 				frappe.throw("<br>".join(fractional_errors))
