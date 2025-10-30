@@ -1023,6 +1023,9 @@ function exportAsPDF(state) {
                     return cells.slice(0, columnCount);
                 });
 
+                // Determine index of Status column in the exported set
+                const statusColIndex = head[0].findIndex(h => h.toLowerCase() === 'status');
+
                 pdf.autoTable({
                     head,
                     body,
@@ -1032,6 +1035,33 @@ function exportAsPDF(state) {
                     styles: { fontSize: 8, cellPadding: 2 },
                     headStyles: { fillColor: [248, 249, 250], textColor: 44 },
                     rowPageBreak: 'avoid',
+                    didParseCell: (data) => {
+                        if (data.section === 'body') {
+                            // Zebra striping for readability (skip Status col so its color dominates)
+                            if (data.row.index % 2 === 0 && data.column.index !== statusColIndex) {
+                                data.cell.styles.fillColor = [251, 252, 253];
+                            }
+
+                            if (statusColIndex !== -1 && data.column.index === statusColIndex) {
+                                const v = String(data.cell.raw || '').toLowerCase();
+                                // Lighter, badge-like colors
+                                // Sufficient: light green bg, dark green text
+                                if (v.includes('sufficient')) {
+                                    data.cell.styles.fillColor = [235, 248, 240]; // #EBF8F0
+                                    data.cell.styles.textColor = [27, 94, 32];   // dark green
+                                } else if (v.includes('pending')) {
+                                    data.cell.styles.fillColor = [255, 246, 230]; // light orange
+                                    data.cell.styles.textColor = [183, 110, 0];   // amber
+                                } else if (v.includes('shortage')) {
+                                    data.cell.styles.fillColor = [255, 235, 238]; // light red
+                                    data.cell.styles.textColor = [183, 28, 28];   // red
+                                }
+                                data.cell.styles.halign = 'center';
+                                data.cell.styles.fontStyle = 'normal';
+                                data.cell.styles.cellPadding = 2.5;
+                            }
+                        }
+                    },
                     didDrawPage: (data) => {
                         pdf.setFontSize(12);
                         pdf.setTextColor(44);
