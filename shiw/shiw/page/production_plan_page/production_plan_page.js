@@ -352,7 +352,22 @@ function renderSummaryCards(state, summary) {
         return;
     }
 
-    summary.forEach((card) => {
+    // Hide unwanted number cards
+    const hiddenLabels = new Set([
+        'Total Actual Qty',
+        'Total Required Qty',
+        'Total Open Indent',
+        'Total Open PO',
+        'Total Combined Stock'
+    ]);
+
+    const visibleCards = summary.filter(card => !hiddenLabels.has(card.label));
+
+    if (visibleCards.length === 0) {
+        return; // nothing to render
+    }
+
+    visibleCards.forEach((card) => {
         const $card = createCard(card);
         state.$cards.append($card);
     });
