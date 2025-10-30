@@ -217,32 +217,60 @@ function getFilters(state) {
 
 function fetchProductionPlanData(filters) {
     return new Promise((resolve, reject) => {
-        frappe.call({
-            method: 'frappe.desk.query_report.run',
-            args: {
-                report_name: 'Production Plan Report',
-                filters: filters,
-                ignore_prepared_report: 1,
-            },
-            callback: (r) => {
-                if (r.message && r.message.result) {
-                    const data = r.message.result;
-                    const summary = calculateSummaryStats(data);
-                    resolve({
-                        summary: summary,
-                        raw_data: data,
-                        columns: r.message.columns || []
-                    });
-                } else {
-                    resolve({ summary: [], raw_data: [], columns: [] });
-                }
-            },
-            error: reject
+        // Fetch report data and total_planned_qty in parallel
+        const reportPromise = new Promise((res, rej) => {
+            frappe.call({
+                method: 'frappe.desk.query_report.run',
+                args: {
+                    report_name: 'Production Plan Report',
+                    filters: filters,
+                    ignore_prepared_report: 1,
+                },
+                callback: (r) => {
+                    if (r.message && r.message.result) {
+                        res({ data: r.message.result, columns: r.message.columns || [] });
+                    } else {
+                        res({ data: [], columns: [] });
+                    }
+                },
+                error: rej
+            });
         });
+
+        const plannedQtyPromise = new Promise((res) => {
+            if (!filters.production_plan) {
+                res(0);
+                return;
+            }
+            frappe.call({
+                method: 'frappe.client.get_value',
+                args: {
+                    doctype: 'Production Plan',
+                    fieldname: 'total_planned_qty',
+                    filters: { name: filters.production_plan }
+                },
+                callback: (r) => {
+                    const v = r && r.message ? (r.message.total_planned_qty || 0) : 0;
+                    res(v);
+                },
+                error: () => res(0)
+            });
+        });
+
+        Promise.all([reportPromise, plannedQtyPromise])
+            .then(([report, totalPlannedQty]) => {
+                const summary = calculateSummaryStats(report.data, { totalPlannedQty });
+                resolve({
+                    summary,
+                    raw_data: report.data,
+                    columns: report.columns
+                });
+            })
+            .catch(reject);
     });
 }
 
-function calculateSummaryStats(data) {
+function calculateSummaryStats(data, extras) {
     if (!data || data.length === 0) {
         return [];
     }
@@ -264,13 +292,13 @@ function calculateSummaryStats(data) {
     const departments = [...new Set(data.map(row => row.custom_department).filter(dept => dept))];
     const departmentCount = departments.length;
 
-    return [
+    const cards = [
         {
             value: totalItems,
-            label: 'Total Items',
+            label: 'Total Raw Material Used',
             datatype: 'Int',
             indicator: 'Blue',
-            description: 'Total number of items in production plan'
+            description: 'Total number of raw materials in production plan'
         },
         {
             value: totalActualQty,
@@ -336,6 +364,21 @@ function calculateSummaryStats(data) {
             prefix: '₹'
         }
     ];
+
+    // Append Total Planned Quantity if available
+    const totalPlannedQty = extras && extras.totalPlannedQty ? extras.totalPlannedQty : 0;
+    if (totalPlannedQty) {
+        cards.unshift({
+            value: totalPlannedQty,
+            label: 'Total Planned Quantity',
+            datatype: 'Float',
+            indicator: 'Purple',
+            description: 'Total planned quantity from selected Production Plan',
+            precision: 2
+        });
+    }
+
+    return cards;
 }
 
 function renderDashboardData(state, data) {
@@ -451,15 +494,15 @@ function renderDataTable(state, data, columns) {
                 <thead style="background:#f8f9fa;">
                     <tr>
                         <th style="padding:12px;text-align:left;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Item Code</th>
-                        <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Actual Qty</th>
-                        <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Required Qty</th>
+                        <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Quantity Requirement</th>
+                        <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Quantity in Stock</th>
+                        <th style="padding:12px;text-align:center;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Status</th>
                         <th style="padding:12px;text-align:left;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Department</th>
-                        <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Open Indent</th>
-                        <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Open PO</th>
+                        <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Indented but not Ordered</th>
+                        <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Ordered but not Received</th>
                         <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Combined Stock</th>
                         <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Rate</th>
                         <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Total Cost</th>
-                        <th style="padding:12px;text-align:center;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Status</th>
                         <th style="padding:12px;text-align:center;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Actions</th>
                     </tr>
                 </thead>
@@ -484,7 +527,7 @@ function renderTableRow(row) {
     if (actual >= required) {
         statusBadge = `<span class="badge badge-success">Sufficient</span>`;
     } else if (combined >= required) {
-        statusBadge = `<span class="badge badge-warning">Pending</span>`;
+        statusBadge = `<span class="badge badge-warning">In Transit</span>`;
     } else {
         statusBadge = `<span class="badge badge-danger">Shortage</span>`;
     }
@@ -497,10 +540,13 @@ function renderTableRow(row) {
                 </a>
             </td>
             <td style="padding:12px;border-bottom:1px solid #e9ecef;text-align:right;font-family:monospace;font-weight:500;">
-                ${format_number(actual, null, 2)}
+                ${format_number(required, null, 2)}
             </td>
             <td style="padding:12px;border-bottom:1px solid #e9ecef;text-align:right;font-family:monospace;font-weight:500;">
-                ${format_number(required, null, 2)}
+                ${format_number(actual, null, 2)}
+            </td>
+            <td style="padding:12px;border-bottom:1px solid #e9ecef;text-align:center;">
+                ${statusBadge}
             </td>
             <td style="padding:12px;border-bottom:1px solid #e9ecef;">
                 ${row.custom_department || '-'}
@@ -519,9 +565,6 @@ function renderTableRow(row) {
             </td>
             <td style="padding:12px;border-bottom:1px solid #e9ecef;text-align:right;font-family:monospace;font-weight:500;">
                 ${format_number(totalCost, null, 2)}
-            </td>
-            <td style="padding:12px;border-bottom:1px solid #e9ecef;text-align:center;">
-                ${statusBadge}
             </td>
             <td style="padding:12px;border-bottom:1px solid #e9ecef;text-align:center;">
                 <button class="btn btn-sm btn-outline-primary" onclick="viewItemDetails('${row.item_code}')">
@@ -603,7 +646,7 @@ function calculateDepartmentData(data) {
 
 function calculateStockStatusData(data) {
     let sufficient = 0;
-    let pending = 0;
+    let inTransit = 0; // previously pending
     let shortage = 0;
 
     data.forEach(row => {
@@ -614,15 +657,15 @@ function calculateStockStatusData(data) {
         if (actual >= required) {
             sufficient++;
         } else if (combined >= required) {
-            pending++;
+            inTransit++;
         } else {
             shortage++;
         }
     });
 
     return {
-        labels: ['Sufficient', 'Pending', 'Shortage'],
-        data: [sufficient, pending, shortage],
+        labels: ['Sufficient', 'In Transit', 'Shortage'],
+        data: [sufficient, inTransit, shortage],
         colors: ['#27ae60', '#f39c12', '#e74c3c']
     };
 }
@@ -1085,7 +1128,7 @@ function exportAsPDF(state) {
                                 if (v.includes('sufficient')) {
                                     data.cell.styles.fillColor = [235, 248, 240]; // #EBF8F0
                                     data.cell.styles.textColor = [27, 94, 32];   // dark green
-                                } else if (v.includes('pending')) {
+                                } else if (v.includes('pending') || v.includes('in transit')) {
                                     data.cell.styles.fillColor = [255, 246, 230]; // light orange
                                     data.cell.styles.textColor = [183, 110, 0];   // amber
                                 } else if (v.includes('shortage')) {
