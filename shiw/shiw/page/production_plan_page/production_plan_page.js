@@ -854,10 +854,32 @@ function loadPdfLibs() {
             }));
         }
 
+        const ensureAutoTable = () => {
+            try {
+                const jsPDFNS = window.jspdf || window.jsPDF;
+                const J = jsPDFNS && (jsPDFNS.jsPDF || jsPDFNS);
+                const hasAutoTable = !!(J && J.API && J.API.autoTable);
+                if (hasAutoTable) {
+                    resolve();
+                    return;
+                }
+            } catch (e) {
+                // fallthrough to load plugin
+            }
+
+            // Load jsPDF-AutoTable plugin
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js';
+            s.onload = () => resolve();
+            s.onerror = () => reject(new Error('jsPDF-AutoTable load failed'));
+            document.head.appendChild(s);
+        };
+
         if (tasks.length === 0) {
-            resolve();
+            // jsPDF may already be present; still ensure autotable
+            ensureAutoTable();
         } else {
-            Promise.all(tasks).then(() => resolve()).catch(reject);
+            Promise.all(tasks).then(() => ensureAutoTable()).catch(reject);
         }
     });
 }
@@ -874,23 +896,21 @@ function exportAsPDF(state) {
         const h2c = window.html2canvas;
         const jsPDFNS = window.jspdf || window.jsPDF;
         const jsPDF = jsPDFNS.jsPDF || jsPDFNS;
-
-        // Build a temporary container with filters + cards + charts + table
-        const temp = document.createElement('div');
-        temp.style.background = '#ffffff';
-        temp.style.padding = '16px';
-        temp.style.width = '1000px';
-        temp.style.boxSizing = 'border-box';
+        // STEP 1: Build a temporary container ONLY for title + filters + cards + charts
+        const tempSummary = document.createElement('div');
+        tempSummary.style.background = '#ffffff';
+        tempSummary.style.padding = '16px';
+        tempSummary.style.width = '1000px';
+        tempSummary.style.boxSizing = 'border-box';
 
         const title = document.createElement('div');
         title.style.fontSize = '18px';
         title.style.fontWeight = '700';
         title.style.marginBottom = '12px';
         title.style.color = '#2c3e50';
-        title.textContent = 'Production Plan Dashboard — Summary, Charts & Details';
-        temp.appendChild(title);
+        title.textContent = 'Production Plan Dashboard — Summary & Charts';
+        tempSummary.appendChild(title);
 
-        // Filters summary
         const filterBarSummary = document.createElement('div');
         filterBarSummary.style.fontSize = '12px';
         filterBarSummary.style.margin = '0 0 12px 0';
@@ -900,15 +920,13 @@ function exportAsPDF(state) {
         if (filters.item_code) filterParts.push(`Item: ${filters.item_code}`);
         if (filters.department) filterParts.push(`Department: ${filters.department}`);
         filterBarSummary.textContent = `Filters — ${filterParts.join(' | ') || 'None'}`;
-        temp.appendChild(filterBarSummary);
+        tempSummary.appendChild(filterBarSummary);
 
-        // Clone cards
         if (state.$cards && state.$cards[0]) {
             const cloneCards = state.$cards[0].cloneNode(true);
-            temp.appendChild(cloneCards);
+            tempSummary.appendChild(cloneCards);
         }
 
-        // Render charts as images to ensure they appear in PDF
         if (state.$charts && state.$charts[0]) {
             const chartsWrapper = document.createElement('div');
             chartsWrapper.style.display = 'grid';
@@ -943,36 +961,21 @@ function exportAsPDF(state) {
                 chartsTitle.style.margin = '16px 0 8px 0';
                 chartsTitle.style.fontWeight = '600';
                 chartsTitle.style.color = '#2c3e50';
-                temp.appendChild(chartsTitle);
-                temp.appendChild(chartsWrapper);
+                tempSummary.appendChild(chartsTitle);
+                tempSummary.appendChild(chartsWrapper);
             }
         }
 
-        // Clone table
-        if (state.$table && state.$table[0]) {
-            const tableTitle = document.createElement('div');
-            tableTitle.textContent = 'Item Details';
-            tableTitle.style.margin = '16px 0 8px 0';
-            tableTitle.style.fontWeight = '600';
-            tableTitle.style.color = '#2c3e50';
-            temp.appendChild(tableTitle);
+        document.body.appendChild(tempSummary);
 
-            const cloneTable = state.$table[0].cloneNode(true);
-            // Remove in-table export button to avoid duplicate actions in PDF screenshot
-            const btn = cloneTable.querySelector('button');
-            if (btn) btn.remove();
-            temp.appendChild(cloneTable);
-        }
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const margin = 10;
+        const pageWidth = 210 - margin * 2;
+        const pageHeight = 297 - margin * 2;
 
-        document.body.appendChild(temp);
-
-        // Render to canvas, then paginate PDF if needed
-        h2c(temp, { scale: 2, useCORS: true, backgroundColor: '#ffffff', windowWidth: 1000 }).then((canvas) => {
+        // Render summary to images (may take multiple pages)
+        h2c(tempSummary, { scale: 2, useCORS: true, backgroundColor: '#ffffff', windowWidth: 1000 }).then((canvas) => {
             const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const margin = 10;
-            const pageWidth = 210 - margin * 2;
-            const pageHeight = 297 - margin * 2;
             const imgWidth = pageWidth;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
@@ -989,12 +992,62 @@ function exportAsPDF(state) {
                 heightLeft -= pageHeight;
             }
 
-            pdf.save(`production_plan_${filters.production_plan}_summary.pdf`);
+            // Compute startY on the last page so table can begin on same page if space remains
+            const usedOnLastPage = imgHeight % pageHeight; // visible height on last page
+            let tableStartY = usedOnLastPage === 0 ? margin : margin + usedOnLastPage + 6; // small gap
+            // If not enough room for table header, bump to new page
+            if (tableStartY > (margin + pageHeight - 20)) {
+                pdf.addPage();
+                tableStartY = margin;
+            }
 
-            document.body.removeChild(temp);
+            // Clean up the temp summary container
+            document.body.removeChild(tempSummary);
+
+            // STEP 2: Append the data table using jsPDF-AutoTable to avoid row breaks
+            try {
+                const tableRoot = state.$table && state.$table[0] ? state.$table[0] : null;
+                const domTable = tableRoot ? tableRoot.querySelector('table') : null;
+                if (!domTable) {
+                    pdf.save(`production_plan_${filters.production_plan}_summary.pdf`);
+                    return;
+                }
+
+                const headerTexts = Array.from(domTable.querySelectorAll('thead th')).map(th => th.textContent.trim());
+                // Drop the last column (Actions) if present
+                const columnCount = Math.max(0, headerTexts.length - 1);
+                const head = [headerTexts.slice(0, columnCount)];
+
+                const body = Array.from(domTable.querySelectorAll('tbody tr')).map(tr => {
+                    const cells = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
+                    return cells.slice(0, columnCount);
+                });
+
+                pdf.autoTable({
+                    head,
+                    body,
+                    startY: tableStartY,
+                    margin: { left: margin, right: margin },
+                    theme: 'grid',
+                    styles: { fontSize: 8, cellPadding: 2 },
+                    headStyles: { fillColor: [248, 249, 250], textColor: 44 },
+                    rowPageBreak: 'avoid',
+                    didDrawPage: (data) => {
+                        pdf.setFontSize(12);
+                        pdf.setTextColor(44);
+                        pdf.text('Item Details', margin, 8 + 2);
+                    },
+                    margin: { top: 14, left: margin, right: margin }
+                });
+
+                pdf.save(`production_plan_${filters.production_plan}_summary.pdf`);
+            } catch (e) {
+                console.error('AutoTable generation failed:', e);
+                pdf.save(`production_plan_${filters.production_plan}_summary.pdf`);
+            }
         }).catch((err) => {
             console.error('PDF render failed:', err);
-            document.body.removeChild(temp);
+            document.body.removeChild(tempSummary);
             frappe.msgprint('Failed to create PDF. Please try again.');
         });
     }).catch((err) => {
@@ -1094,3 +1147,4 @@ function loadChartJS() {
         document.head.appendChild(script);
     });
 }
+
