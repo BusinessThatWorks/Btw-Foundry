@@ -30,6 +30,8 @@ def get_columns():
 		{"fieldname": "open_indent", "label": "Open Indent", "fieldtype": "Float", "width": 100},
 		{"fieldname": "open_po", "label": "Open PO", "fieldtype": "Float", "width": 100},
 		{"fieldname": "combined_stock", "label": "Combined Stock", "fieldtype": "Float", "width": 120},
+		{"fieldname": "rate", "label": "Rate", "fieldtype": "Currency", "width": 110},
+		{"fieldname": "total_cost", "label": "Total Cost", "fieldtype": "Currency", "width": 130},
 	]
 	return columns
 
@@ -82,6 +84,13 @@ def get_data(filters):
 		open_po = row.get("open_po") or 0
 		open_indent = row.get("open_indent") or 0
 		row["combined_stock"] = actual_qty + open_po + open_indent
+
+		# Fetch weighted average valuation rate from Bin for this item
+		rate = get_weighted_valuation_rate(item_code)
+		row["rate"] = rate
+		# Total cost = rate * required quantity
+		required_qty = row.get("required_bom_qty") or 0
+		row["total_cost"] = (rate or 0) * required_qty
 	return data
 
 
@@ -154,4 +163,37 @@ def get_open_po_quantity(item_code):
 		return float(open_po_qty[0][0] or 0) if open_po_qty and open_po_qty[0][0] else 0
 	except Exception as e:
 		frappe.log_error(f"Error getting open PO for {item_code}: {str(e)}")
+		return 0
+
+
+def get_weighted_valuation_rate(item_code):
+	"""
+	Compute weighted-average valuation rate for an item across all bins.
+	Weight by actual_qty to reflect stock balance valuation.
+	Falls back to simple average when quantities are zero.
+	"""
+	try:
+		rows = frappe.db.sql(
+			"""
+			SELECT ifnull(actual_qty, 0) AS qty, ifnull(valuation_rate, 0) AS rate
+			FROM `tabBin`
+			WHERE item_code = %s
+			""",
+			[item_code],
+			as_dict=True,
+		)
+
+		if not rows:
+			return 0
+
+		total_qty = sum(r["qty"] for r in rows)
+		if total_qty > 0:
+			weighted_sum = sum((r["qty"] or 0) * (r["rate"] or 0) for r in rows)
+			return weighted_sum / total_qty if total_qty else 0
+
+		# If all quantities are zero, return simple average of non-zero rates
+		rates = [r["rate"] for r in rows if (r["rate"] or 0) > 0]
+		return sum(rates) / len(rates) if rates else 0
+	except Exception as e:
+		frappe.log_error(f"Error getting valuation rate for {item_code}: {str(e)}")
 		return 0

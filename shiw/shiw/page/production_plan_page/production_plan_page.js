@@ -254,6 +254,7 @@ function calculateSummaryStats(data) {
     const totalOpenIndent = data.reduce((sum, row) => sum + (row.open_indent || 0), 0);
     const totalOpenPO = data.reduce((sum, row) => sum + (row.open_po || 0), 0);
     const totalCombinedStock = data.reduce((sum, row) => sum + (row.combined_stock || 0), 0);
+    const totalCost = data.reduce((sum, row) => sum + (row.total_cost || 0), 0);
 
     // Calculate shortage items
     const shortageItems = data.filter(row => (row.actual_qty || 0) < (row.required_bom_qty || 0));
@@ -324,6 +325,15 @@ function calculateSummaryStats(data) {
             datatype: 'Int',
             indicator: 'Brown',
             description: 'Number of departments involved'
+        },
+        {
+            value: totalCost,
+            label: 'Total Amount Required',
+            datatype: 'Float',
+            indicator: 'Teal',
+            description: 'Sum of Total Cost for all items',
+            precision: 2,
+            prefix: '₹'
         }
     ];
 }
@@ -387,13 +397,14 @@ function createCard(card) {
         value = format_number(card.value || 0);
     }
 
+    const prefixedValue = card.prefix ? `${card.prefix} ${value}` : value;
     const description = card.description ? `<div class="card-description" style="font-size:0.85rem;color:#95a5a6;margin-top:4px;">${frappe.utils.escape_html(card.description)}</div>` : '';
 
     return $(`
         <div class="number-card" style="background:#fff;border-radius:12px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.1);position:relative;overflow:hidden;transition:transform 0.2s ease,box-shadow 0.2s ease;">
             <div class="card-indicator" style="position:absolute;top:0;left:0;right:0;height:4px;background:${getIndicatorColor(indicator)}"></div>
             <div class="card-content" style="text-align:center;">
-                <div class="card-value" style="font-size:2.4rem;font-weight:700;color:#2c3e50;margin-bottom:8px;">${value}</div>
+                <div class="card-value" style="font-size:2.4rem;font-weight:700;color:#2c3e50;margin-bottom:8px;">${prefixedValue}</div>
                 <div class="card-label" style="font-size:1rem;color:#7f8c8d;font-weight:500;">${frappe.utils.escape_html(card.label || '')}</div>
                 ${description}
             </div>
@@ -446,6 +457,8 @@ function renderDataTable(state, data, columns) {
                         <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Open Indent</th>
                         <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Open PO</th>
                         <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Combined Stock</th>
+                        <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Rate</th>
+                        <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Total Cost</th>
                         <th style="padding:12px;text-align:center;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Status</th>
                         <th style="padding:12px;text-align:center;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Actions</th>
                     </tr>
@@ -464,6 +477,8 @@ function renderTableRow(row) {
     const actual = row.actual_qty || 0;
     const required = row.required_bom_qty || 0;
     const combined = row.combined_stock || 0;
+    const rate = row.rate || 0;
+    const totalCost = row.total_cost || 0;
 
     let statusBadge;
     if (actual >= required) {
@@ -498,6 +513,12 @@ function renderTableRow(row) {
             </td>
             <td style="padding:12px;border-bottom:1px solid #e9ecef;text-align:right;font-family:monospace;font-weight:500;">
                 ${format_number(combined, null, 2)}
+            </td>
+            <td style="padding:12px;border-bottom:1px solid #e9ecef;text-align:right;font-family:monospace;font-weight:500;">
+                ${format_number(rate, null, 2)}
+            </td>
+            <td style="padding:12px;border-bottom:1px solid #e9ecef;text-align:right;font-family:monospace;font-weight:500;">
+                ${format_number(totalCost, null, 2)}
             </td>
             <td style="padding:12px;border-bottom:1px solid #e9ecef;text-align:center;">
                 ${statusBadge}
