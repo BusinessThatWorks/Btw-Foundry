@@ -180,7 +180,7 @@ function bindEventHandlers(state) {
 
     // Button events
     state.controls.refreshBtn.on('click', () => refreshDashboard(state));
-    state.controls.exportBtn.on('click', () => exportData(state));
+    state.controls.exportBtn.on('click', () => openExportDialog(state));
 }
 
 function refreshDashboard(state) {
@@ -795,6 +795,212 @@ function exportTableData() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+}
+
+// Open export dialog to choose format
+function openExportDialog(state) {
+    const d = new frappe.ui.Dialog({
+        title: 'Export',
+        fields: [
+            {
+                fieldname: 'format',
+                fieldtype: 'Select',
+                label: 'Format',
+                options: ['PDF', 'Excel', 'CSV'].join('\n'),
+                default: 'PDF',
+                reqd: 1
+            }
+        ],
+        primary_action_label: 'Download',
+        primary_action(values) {
+            const fmt = values.format;
+            if (fmt === 'PDF') {
+                exportAsPDF(state);
+            } else if (fmt === 'Excel') {
+                exportData(state);
+            } else if (fmt === 'CSV') {
+                exportTableData();
+            }
+            d.hide();
+        }
+    });
+    d.show();
+}
+
+// Load libs for PDF export
+function loadPdfLibs() {
+    return new Promise((resolve, reject) => {
+        const haveH2C = !!window.html2canvas;
+        const haveJSPDF = !!(window.jspdf || window.jsPDF);
+        const tasks = [];
+
+        if (!haveH2C) {
+            tasks.push(new Promise((res, rej) => {
+                const s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+                s.onload = () => res();
+                s.onerror = () => rej(new Error('html2canvas load failed'));
+                document.head.appendChild(s);
+            }));
+        }
+
+        if (!haveJSPDF) {
+            tasks.push(new Promise((res, rej) => {
+                const s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
+                s.onload = () => res();
+                s.onerror = () => rej(new Error('jsPDF load failed'));
+                document.head.appendChild(s);
+            }));
+        }
+
+        if (tasks.length === 0) {
+            resolve();
+        } else {
+            Promise.all(tasks).then(() => resolve()).catch(reject);
+        }
+    });
+}
+
+// Export colorful PDF of cards + charts
+function exportAsPDF(state) {
+    const filters = getFilters(state);
+    if (!filters.production_plan) {
+        frappe.msgprint('Please select a Production Plan first');
+        return;
+    }
+
+    loadPdfLibs().then(() => {
+        const h2c = window.html2canvas;
+        const jsPDFNS = window.jspdf || window.jsPDF;
+        const jsPDF = jsPDFNS.jsPDF || jsPDFNS;
+
+        // Build a temporary container with filters + cards + charts + table
+        const temp = document.createElement('div');
+        temp.style.background = '#ffffff';
+        temp.style.padding = '16px';
+        temp.style.width = '1000px';
+        temp.style.boxSizing = 'border-box';
+
+        const title = document.createElement('div');
+        title.style.fontSize = '18px';
+        title.style.fontWeight = '700';
+        title.style.marginBottom = '12px';
+        title.style.color = '#2c3e50';
+        title.textContent = 'Production Plan Dashboard — Summary, Charts & Details';
+        temp.appendChild(title);
+
+        // Filters summary
+        const filterBarSummary = document.createElement('div');
+        filterBarSummary.style.fontSize = '12px';
+        filterBarSummary.style.margin = '0 0 12px 0';
+        filterBarSummary.style.color = '#576574';
+        const filterParts = [];
+        if (filters.production_plan) filterParts.push(`Production Plan: ${filters.production_plan}`);
+        if (filters.item_code) filterParts.push(`Item: ${filters.item_code}`);
+        if (filters.department) filterParts.push(`Department: ${filters.department}`);
+        filterBarSummary.textContent = `Filters — ${filterParts.join(' | ') || 'None'}`;
+        temp.appendChild(filterBarSummary);
+
+        // Clone cards
+        if (state.$cards && state.$cards[0]) {
+            const cloneCards = state.$cards[0].cloneNode(true);
+            temp.appendChild(cloneCards);
+        }
+
+        // Render charts as images to ensure they appear in PDF
+        if (state.$charts && state.$charts[0]) {
+            const chartsWrapper = document.createElement('div');
+            chartsWrapper.style.display = 'grid';
+            chartsWrapper.style.gridTemplateColumns = '1fr 1fr';
+            chartsWrapper.style.gap = '20px';
+            chartsWrapper.style.marginTop = '16px';
+
+            const sourceCanvases = state.$charts[0].querySelectorAll('canvas');
+            sourceCanvases.forEach((canvas) => {
+                try {
+                    const img = document.createElement('img');
+                    img.src = canvas.toDataURL('image/png');
+                    img.style.width = '100%';
+                    img.style.height = 'auto';
+                    img.style.background = '#ffffff';
+
+                    const card = document.createElement('div');
+                    card.style.background = '#ffffff';
+                    card.style.borderRadius = '8px';
+                    card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                    card.style.padding = '20px';
+                    card.appendChild(img);
+                    chartsWrapper.appendChild(card);
+                } catch (e) {
+                    // ignore
+                }
+            });
+
+            if (chartsWrapper.children.length > 0) {
+                const chartsTitle = document.createElement('div');
+                chartsTitle.textContent = 'Charts';
+                chartsTitle.style.margin = '16px 0 8px 0';
+                chartsTitle.style.fontWeight = '600';
+                chartsTitle.style.color = '#2c3e50';
+                temp.appendChild(chartsTitle);
+                temp.appendChild(chartsWrapper);
+            }
+        }
+
+        // Clone table
+        if (state.$table && state.$table[0]) {
+            const tableTitle = document.createElement('div');
+            tableTitle.textContent = 'Item Details';
+            tableTitle.style.margin = '16px 0 8px 0';
+            tableTitle.style.fontWeight = '600';
+            tableTitle.style.color = '#2c3e50';
+            temp.appendChild(tableTitle);
+
+            const cloneTable = state.$table[0].cloneNode(true);
+            // Remove in-table export button to avoid duplicate actions in PDF screenshot
+            const btn = cloneTable.querySelector('button');
+            if (btn) btn.remove();
+            temp.appendChild(cloneTable);
+        }
+
+        document.body.appendChild(temp);
+
+        // Render to canvas, then paginate PDF if needed
+        h2c(temp, { scale: 2, useCORS: true, backgroundColor: '#ffffff', windowWidth: 1000 }).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const margin = 10;
+            const pageWidth = 210 - margin * 2;
+            const pageHeight = 297 - margin * 2;
+            const imgWidth = pageWidth;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            let heightLeft = imgHeight;
+            let position = margin;
+
+            pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                pdf.addPage();
+                position = heightLeft - imgHeight + margin;
+                pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save(`production_plan_${filters.production_plan}_summary.pdf`);
+
+            document.body.removeChild(temp);
+        }).catch((err) => {
+            console.error('PDF render failed:', err);
+            document.body.removeChild(temp);
+            frappe.msgprint('Failed to create PDF. Please try again.');
+        });
+    }).catch((err) => {
+        console.error('PDF libs load error:', err);
+        frappe.msgprint('Could not load PDF libraries. Check your network and try again.');
+    });
 }
 
 function viewItemDetails(itemCode) {

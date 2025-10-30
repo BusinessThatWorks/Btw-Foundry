@@ -1,4 +1,5 @@
-frappe.ready(function () {
+// Initialize dashboard when DOM is ready
+$(document).ready(function () {
     // Initialize dashboard
     initializeDashboard();
 
@@ -23,9 +24,7 @@ frappe.ready(function () {
 });
 
 function initializeDashboard() {
-    // Initialize charts containers
-    $('#valuation-chart').html('<div class="loading">Loading chart...</div>');
-    $('#change-distribution-chart').html('<div class="loading">Loading chart...</div>');
+    // Initialize table container
     $('#item-history-table').html('<div class="loading">Loading data...</div>');
 }
 
@@ -43,15 +42,39 @@ function loadDashboardData() {
             filters: JSON.stringify(filters)
         },
         callback: function (response) {
-            if (response.message) {
-                const data = response.message.data || [];
-                renderDashboard(data);
+            hideLoadingState();
+            console.log('Full response:', response); // Debug log
+
+            if (response && response.message) {
+                // Try different possible data locations
+                let data = [];
+                if (response.message.result) {
+                    data = response.message.result;
+                } else if (response.message.data) {
+                    data = response.message.data;
+                } else if (Array.isArray(response.message)) {
+                    data = response.message;
+                }
+
+                console.log('Item History Data:', data); // Debug log
+                console.log('Data type:', typeof data);
+                console.log('Is array:', Array.isArray(data));
+
+                if (data && Array.isArray(data) && data.length > 0) {
+                    renderDashboard(data);
+                } else {
+                    console.log('No valid data found in response');
+                    $('#item-history-table').html('<div class="text-center text-muted">No data found for the selected criteria</div>');
+                }
             } else {
-                frappe.msgprint(__('Error loading data'));
+                console.log('No message in response:', response);
+                $('#item-history-table').html('<div class="text-center text-muted">No data found for the selected criteria</div>');
             }
         },
         error: function (err) {
-            frappe.msgprint(__('Error loading data: ') + err.message);
+            hideLoadingState();
+            console.error('Item History Dashboard Error:', err);
+            frappe.msgprint(__('Error loading data: ') + (err.message || err));
         }
     });
 }
@@ -70,24 +93,58 @@ function showLoadingState() {
     $('#items-with-changes').text('Loading...');
     $('#total-changes').text('Loading...');
     $('#avg-change-percent').text('Loading...');
-    $('#valuation-chart').html('<div class="loading">Loading chart...</div>');
-    $('#change-distribution-chart').html('<div class="loading">Loading chart...</div>');
     $('#item-history-table').html('<div class="loading">Loading data...</div>');
 }
 
+function hideLoadingState() {
+    // Clear loading states but keep the elements
+}
+
 function renderDashboard(data) {
-    // Calculate summary statistics
-    const summary = calculateSummary(data);
+    console.log('renderDashboard called with data:', data);
+    console.log('Data length:', data ? data.length : 'undefined');
 
-    // Update summary cards
-    updateSummaryCards(summary);
+    if (!data || !Array.isArray(data) || data.length === 0) {
+        console.log('No valid data to render');
+        $('#item-history-table').html('<div class="text-center text-muted">No data found</div>');
+        return;
+    }
 
-    // Render charts
-    renderValuationChart(data);
-    renderChangeDistributionChart(data);
+    // Simple table display
+    let tableHtml = '<table class="table table-striped table-bordered"><thead><tr>';
+    tableHtml += '<th>Item Code</th><th>Item Name</th><th>Creation Date</th><th>Current Rate</th>';
+    tableHtml += '<th>Version Date</th><th>Previous Rate</th><th>Change Amount</th><th>Change %</th><th>Modified By</th>';
+    tableHtml += '</tr></thead><tbody>';
 
-    // Render data table
-    renderDataTable(data);
+    data.forEach(row => {
+        tableHtml += '<tr>';
+        tableHtml += '<td>' + (row.item_code || '') + '</td>';
+        tableHtml += '<td>' + (row.item_name || '') + '</td>';
+        tableHtml += '<td>' + (row.creation || '') + '</td>';
+        tableHtml += '<td>' + (row.current_valuation_rate || 0) + '</td>';
+        tableHtml += '<td>' + (row.version_date || '') + '</td>';
+        tableHtml += '<td>' + (row.previous_valuation_rate || 0) + '</td>';
+        tableHtml += '<td>' + (row.change_amount || 0) + '</td>';
+        tableHtml += '<td>' + (row.change_percentage || 0) + '</td>';
+        tableHtml += '<td>' + (row.modified_by || '') + '</td>';
+        tableHtml += '</tr>';
+    });
+
+    tableHtml += '</tbody></table>';
+
+    console.log('Looking for #item-history-table element:', $('#item-history-table').length);
+    console.log('Element found:', $('#item-history-table')[0]);
+
+    if ($('#item-history-table').length === 0) {
+        console.log('item-history-table element not found, creating it');
+        // Create the element if it doesn't exist
+        $('body').append('<div id="item-history-table" style="padding: 20px;"></div>');
+    }
+
+    $('#item-history-table').html(tableHtml);
+    console.log('Table rendered with', data.length, 'rows');
+    console.log('Table HTML length:', tableHtml.length);
+    console.log('Element HTML after setting:', $('#item-history-table').html().length);
 }
 
 function calculateSummary(data) {
@@ -106,13 +163,45 @@ function calculateSummary(data) {
 }
 
 function updateSummaryCards(summary) {
+    console.log('Updating summary cards with:', summary);
+    console.log('Total items element:', $('#total-items').length);
+    console.log('Items with changes element:', $('#items-with-changes').length);
+
     $('#total-items').text(summary.totalItems);
     $('#items-with-changes').text(summary.itemsWithChanges);
     $('#total-changes').text(summary.totalChanges);
     $('#avg-change-percent').text(summary.avgChangePercent + '%');
+
+    console.log('Summary cards updated');
 }
 
 function renderValuationChart(data) {
+    let container = document.getElementById('valuation-chart');
+    if (!container) {
+        // Try to find or create the container
+        const chartsSection = document.querySelector('.charts-section');
+        if (chartsSection) {
+            // Create the container if it doesn't exist
+            const chartDiv = document.createElement('div');
+            chartDiv.id = 'valuation-chart';
+            chartDiv.style.height = '300px';
+            chartDiv.style.width = '100%';
+            chartsSection.querySelector('.col-md-6:first-child .card-body').appendChild(chartDiv);
+            container = chartDiv;
+        } else {
+            console.error('Charts section not found');
+            return;
+        }
+    }
+
+    // Clear previous content
+    container.innerHTML = '';
+
+    if (!data || data.length === 0) {
+        container.innerHTML = '<div class="text-center text-muted">No data for chart</div>';
+        return;
+    }
+
     // Group data by date for time series
     const chartData = {};
 
@@ -139,21 +228,57 @@ function renderValuationChart(data) {
 
     const chartDataArray = Object.values(chartData).sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    const chart = new frappe.Chart('#valuation-chart', {
-        data: {
-            labels: chartDataArray.map(d => d.date),
-            datasets: [{
-                name: 'Average Valuation Rate',
-                values: chartDataArray.map(d => d.avgRate)
-            }]
-        },
-        type: 'line',
-        height: 250,
-        colors: ['#007bff']
-    });
+    if (chartDataArray.length === 0) {
+        container.innerHTML = '<div class="text-center text-muted">No chart data available</div>';
+        return;
+    }
+
+    try {
+        const chart = new frappe.Chart(container, {
+            data: {
+                labels: chartDataArray.map(d => d.date),
+                datasets: [{
+                    name: 'Average Valuation Rate',
+                    values: chartDataArray.map(d => d.avgRate)
+                }]
+            },
+            type: 'line',
+            height: 250,
+            colors: ['#007bff']
+        });
+    } catch (error) {
+        console.error('Error rendering valuation chart:', error);
+        container.innerHTML = '<div class="text-center text-muted">Error rendering chart</div>';
+    }
 }
 
 function renderChangeDistributionChart(data) {
+    let container = document.getElementById('change-distribution-chart');
+    if (!container) {
+        // Try to find or create the container
+        const chartsSection = document.querySelector('.charts-section');
+        if (chartsSection) {
+            // Create the container if it doesn't exist
+            const chartDiv = document.createElement('div');
+            chartDiv.id = 'change-distribution-chart';
+            chartDiv.style.height = '300px';
+            chartDiv.style.width = '100%';
+            chartsSection.querySelector('.col-md-6:last-child .card-body').appendChild(chartDiv);
+            container = chartDiv;
+        } else {
+            console.error('Charts section not found');
+            return;
+        }
+    }
+
+    // Clear previous content
+    container.innerHTML = '';
+
+    if (!data || data.length === 0) {
+        container.innerHTML = '<div class="text-center text-muted">No data for chart</div>';
+        return;
+    }
+
     // Categorize changes
     const categories = {
         'Increase (>10%)': 0,
@@ -178,22 +303,34 @@ function renderChangeDistributionChart(data) {
         }
     });
 
-    const chart = new frappe.Chart('#change-distribution-chart', {
-        data: {
-            labels: Object.keys(categories),
-            datasets: [{
-                name: 'Number of Changes',
-                values: Object.values(categories)
-            }]
-        },
-        type: 'pie',
-        height: 250,
-        colors: ['#28a745', '#20c997', '#6c757d', '#fd7e14', '#dc3545']
-    });
+    try {
+        const chart = new frappe.Chart(container, {
+            data: {
+                labels: Object.keys(categories),
+                datasets: [{
+                    name: 'Number of Changes',
+                    values: Object.values(categories)
+                }]
+            },
+            type: 'pie',
+            height: 250,
+            colors: ['#28a745', '#20c997', '#6c757d', '#fd7e14', '#dc3545']
+        });
+    } catch (error) {
+        console.error('Error rendering change distribution chart:', error);
+        container.innerHTML = '<div class="text-center text-muted">Error rendering chart</div>';
+    }
 }
 
 function renderDataTable(data) {
-    if (data.length === 0) {
+    console.log('renderDataTable called with data:', data);
+    console.log('Data type:', typeof data);
+    console.log('Data length:', data ? data.length : 'undefined');
+    console.log('Is array:', Array.isArray(data));
+    console.log('Table container exists:', $('#item-history-table').length);
+
+    if (!data || !Array.isArray(data) || data.length === 0) {
+        console.log('No valid data for table');
         $('#item-history-table').html('<div class="text-center text-muted">No data found</div>');
         return;
     }
@@ -222,7 +359,10 @@ function renderDataTable(data) {
 
     const $tbody = $table.find('tbody');
 
-    data.forEach(row => {
+    console.log('About to iterate over data, length:', data.length);
+
+    data.forEach((row, index) => {
+        console.log(`Processing row ${index}:`, row);
         const changeAmount = row.change_amount || 0;
         const changePercent = row.change_percentage || 0;
         const changeClass = changeAmount > 0 ? 'positive-change' : changeAmount < 0 ? 'negative-change' : '';
@@ -245,7 +385,9 @@ function renderDataTable(data) {
         $tbody.append($tr);
     });
 
+    console.log('Setting table HTML');
     $('#item-history-table').html($table);
+    console.log('Table HTML set, length:', $('#item-history-table').html().length);
 }
 
 function exportData() {
@@ -276,4 +418,5 @@ function exportData() {
     form.submit();
     document.body.removeChild(form);
 }
+
 
