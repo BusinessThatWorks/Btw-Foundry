@@ -29,6 +29,13 @@ frappe.query_reports["Rejection Analysis Report"] = {
                     }
                 }
             }
+        },
+        {
+            fieldname: "rejection_type",
+            label: "Rejection Type",
+            fieldtype: "Select",
+            options: "\nFirst Line\nSecond Line\nBoth",
+            default: "Both"
         }
     ],
 

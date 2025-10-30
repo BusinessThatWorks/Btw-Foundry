@@ -12,6 +12,10 @@ def execute(filters=None):
 	from_date = filters.get("from_date")
 	to_date = filters.get("to_date")
 	item_filter = filters.get("item_name")
+	rejection_type = filters.get("rejection_type") or "Both"
+
+	include_first = rejection_type in ("Both", "First Line")
+	include_second = rejection_type in ("Both", "Second Line")
 
 	# Get all rejection reasons - we'll populate this dynamically from actual data
 	rejection_reasons = []
@@ -24,10 +28,14 @@ def execute(filters=None):
 	all_items = set()
 
 	# FIRST LINE REJECTIONS
-	first_line_docs = frappe.get_all(
-		"First Line Rejection",
-		filters={"docstatus": 1, "date": ["between", [from_date, to_date]]},
-		fields=["name"],
+	first_line_docs = (
+		frappe.get_all(
+			"First Line Rejection",
+			filters={"docstatus": 1, "date": ["between", [from_date, to_date]]},
+			fields=["name"],
+		)
+		if include_first
+		else []
 	)
 
 	for doc in first_line_docs:
@@ -52,10 +60,14 @@ def execute(filters=None):
 			item_rejection_data[item_name][rejection_reason] += weight
 
 	# SECOND LINE REJECTIONS
-	second_line_docs = frappe.get_all(
-		"Second Line Rejection",
-		filters={"docstatus": 1, "date": ["between", [from_date, to_date]]},
-		fields=["name"],
+	second_line_docs = (
+		frappe.get_all(
+			"Second Line Rejection",
+			filters={"docstatus": 1, "date": ["between", [from_date, to_date]]},
+			fields=["name"],
+		)
+		if include_second
+		else []
 	)
 
 	for doc in second_line_docs:
