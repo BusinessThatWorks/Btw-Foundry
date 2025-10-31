@@ -11,7 +11,7 @@
  "is_standard": "Yes",
  "letter_head": "Shree Hanuman Iron Works",
  "letterhead": null,
- "modified": "2025-10-28 17:29:00.587430",
+ "modified": "2025-10-31 11:10:04.500366",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Production Plan Report",
@@ -20,6 +20,13 @@
  "ref_doctype": "Production Plan",
  "report_name": "Production Plan Report",
  "report_type": "Script Report",
- "roles": [],
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Foundry- SHIW"
+  }
+ ],
  "timeout": 0
 }

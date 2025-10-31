@@ -4,7 +4,7 @@
  "docstatus": 0,
  "doctype": "Page",
  "idx": 0,
- "modified": "2025-10-30 18:00:23.690082",
+ "modified": "2025-10-31 10:36:32.799647",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "production-plan-page",
@@ -21,6 +21,6 @@
  "script": null,
  "standard": "Yes",
  "style": null,
- "system_page": 0,
+ "system_page": 1,
  "title": "Production Plan Dashboard"
 }
