@@ -1,0 +1,56 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-06 10:51:04.934690",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "core_name",
+  "column_break_fory",
+  "rejection_quantity",
+  "column_break_pehk",
+  "reason_for_rejection"
+ ],
+ "fields": [
+  {
+   "fieldname": "core_name",
+   "fieldtype": "Link",
+   "label": "Core Name",
+   "options": "Core Master"
+  },
+  {
+   "fieldname": "column_break_fory",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rejection_quantity",
+   "fieldtype": "Int",
+   "label": "Rejection Quantity"
+  },
+  {
+   "fieldname": "column_break_pehk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reason_for_rejection",
+   "fieldtype": "Link",
+   "label": "Reason For Rejection",
+   "options": "Rejection Reason"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-06 10:54:19.817182",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Core Rejection Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -36,6 +36,8 @@
   "liquid_metal_pig",
   "column_break_dzpp",
   "furnace_holding_time",
+  "column_break_gxby",
+  "slag_metal",
   "additional_cost_tab",
   "power_consumptionkwh",
   "slag_30",
@@ -101,6 +103,7 @@
    "label": "Details"
   },
   {
+   "default": "0",
    "fieldname": "custom_is_downtime",
    "fieldtype": "Check",
    "label": "Is Downtime"
@@ -556,13 +559,23 @@
    "label": "Shift Timing",
    "options": "\nDay Shift\nNight Shift",
    "reqd": 1
+  },
+  {
+   "fieldname": "column_break_gxby",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "slag_metal",
+   "fieldtype": "Float",
+   "label": "Slag Metal",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-09-01 17:52:15.609687",
+ "modified": "2025-11-06 11:00:13.085933",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Heat",
