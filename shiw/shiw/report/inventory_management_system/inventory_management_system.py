@@ -329,10 +329,13 @@ def get_data(filters):
 		open_transit_qty = get_open_transit_quantity(it.name)
 
 		# Determine status
-		if store_qty < min_qty:
+		# If all three values are 0, show no color (normal)
+		if store_qty == 0 and min_qty == 0 and max_qty == 0:
+			status = "Normal"
+		elif store_qty < min_qty:
 			status = "Red"
 		elif min_qty <= store_qty <= max_qty:
-			status = "Green"
+			status = "Yellow"
 		else:
 			status = "Purple"
 

@@ -412,7 +412,7 @@ frappe.query_reports["Inventory Management System"] = {
             fieldname: "color_filter",
             label: "Color",
             fieldtype: "Select",
-            options: ["", "Red", "Green", "Purple"], // matches Python "status"
+            options: ["", "Red", "Yellow", "Purple"], // matches Python "status"
             width: "120"
         }
     ],
@@ -421,9 +421,14 @@ frappe.query_reports["Inventory Management System"] = {
         value = default_formatter(value, row, column, data);
 
         if (column.fieldname === "store_qty" && data) {
+            // If status is Normal (all values are 0), show no color
+            if (data.status === "Normal") {
+                return value;
+            }
+
             let bg = "";
             if (data.status === "Red") bg = "#ff9999";       // medium-light red
-            else if (data.status === "Green") bg = "#99ff99"; // medium-light green
+            else if (data.status === "Yellow") bg = "#ffff99"; // medium-light yellow
             else if (data.status === "Purple") bg = "#cc99ff"; // medium-light purple
 
             return `<div style="background-color:${bg}; 

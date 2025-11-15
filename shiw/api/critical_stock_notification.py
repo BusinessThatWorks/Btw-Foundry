@@ -120,7 +120,7 @@ def send_all_good_notification():
 	"""
 	Send email notification when all critical items have sufficient stock
 	"""
-	recipient_email = "beetashoke.chakraborty@clapgrow.com"
+	recipient_email = "mis@shiw-india.com"
 
 	# Create email subject
 	subject = "✅ CRITICAL STOCK STATUS - All Items Have Sufficient Stock"
