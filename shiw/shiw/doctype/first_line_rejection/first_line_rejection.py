@@ -9,18 +9,14 @@ class FirstLineRejection(Document):
 	def on_submit(self):
 		"""Create and submit Stock Entry for foundry return items after submission"""
 		# ----------------------------------------------------------------------
-		# 🔁 Automatic Stock Entry on First Line Rejection Submit (Material Transfer)
+		# 🔁 Automatic Stock Entry on First Line Rejection Submit (Material Receipt)
 		# ----------------------------------------------------------------------
 
-		# 1. Get source and target warehouses
-		SOURCE_WH = "Short Blast - SHIW"
+		# 1. Get the target warehouse
 		TARGET_WH = "Estimated Foundry Return  - SHIW"
 
-		if not frappe.db.exists("Warehouse", SOURCE_WH):
-			frappe.throw(f"❌ Source Warehouse '{SOURCE_WH}' does not exist.")
-
 		if not frappe.db.exists("Warehouse", TARGET_WH):
-			frappe.throw(f"❌ Target Warehouse '{TARGET_WH}' does not exist.")
+			frappe.throw(f"❌ Warehouse '{TARGET_WH}' does not exist.")
 
 		# 2. Float utility
 		def flt(val):
@@ -78,7 +74,7 @@ class FirstLineRejection(Document):
 
 			foundry_return_map[foundry_return_item] += total_cast_weight
 
-		# 4. Build stock entry items with source warehouse
+		# 4. Build stock entry items
 		items = []
 		for foundry_return_item, total_qty in foundry_return_map.items():
 			if total_qty <= 0:
@@ -87,7 +83,6 @@ class FirstLineRejection(Document):
 			item_dict = {
 				"item_code": foundry_return_item,
 				"qty": total_qty,
-				"s_warehouse": SOURCE_WH,
 				"t_warehouse": TARGET_WH,
 			}
 			items.append(item_dict)
@@ -95,19 +90,18 @@ class FirstLineRejection(Document):
 		# 5. Create and submit Stock Entry
 		if items:
 			try:
-				# Create stock entry using new_doc (better for Material Transfer)
+				# Create stock entry using new_doc
 				stock_entry = frappe.new_doc("Stock Entry")
-				stock_entry.stock_entry_type = "Material Transfer"
-				stock_entry.remarks = f"Auto Material Transfer from First Line Rejection {self.name}"
+				stock_entry.stock_entry_type = "Material Receipt"
+				stock_entry.remarks = f"Auto Material Receipt from First Line Rejection {self.name}"
 
-				# Add items with source and target warehouses
+				# Add items with target warehouse
 				for item_data in items:
 					stock_entry.append(
 						"items",
 						{
 							"item_code": item_data["item_code"],
 							"qty": item_data["qty"],
-							"s_warehouse": item_data["s_warehouse"],
 							"t_warehouse": item_data["t_warehouse"],
 						},
 					)

@@ -9,7 +9,7 @@ class SecondLineRejection(Document):
 	def on_submit(self):
 		"""Create and submit Stock Entry for foundry return items after submission"""
 		# ----------------------------------------------------------------------
-		# 🔁 Automatic Stock Entry on Second Line Rejection Submit (Material Transfer)
+		# 🔁 Automatic Stock Entry on Second Line Rejection Submit (Material Receipt)
 		# ----------------------------------------------------------------------
 
 		# 1. Get the target warehouse
@@ -25,20 +25,7 @@ class SecondLineRejection(Document):
 			except Exception:
 				return 0.0
 
-		# 3. Get source warehouse mapping based on rejection_stage
-		def get_source_warehouse(rejection_stage):
-			"""Map rejection_stage to source warehouse"""
-			if rejection_stage == "Fettling":
-				return "Fettling - SHIW"
-			elif rejection_stage == "Finishing":
-				return "Finishing - SHIW"
-			else:
-				frappe.throw(
-					f"❌ Invalid rejection_stage '{rejection_stage}'. "
-					"Only 'Fettling' or 'Finishing' are allowed for Material Transfer."
-				)
-
-		# 4. Aggregate total_weight by foundry_return item AND rejection_stage
+		# 3. Aggregate total_weight by foundry_return item AND rejection_stage
 		# Structure: {(foundry_return_item_code, rejection_stage): total_weight}
 		# Weight = cast_weight_in_kg * rejected_qty
 		foundry_return_map = {}
@@ -113,23 +100,15 @@ class SecondLineRejection(Document):
 
 			foundry_return_map[key] += total_weight
 
-		# 5. Build stock entry items with source warehouse based on rejection_stage
+		# 5. Build stock entry items with target warehouse only
 		items = []
 		for (foundry_return_item, rejection_stage), total_qty in foundry_return_map.items():
 			if total_qty <= 0:
 				continue
 
-			# Get source warehouse based on rejection_stage
-			source_wh = get_source_warehouse(rejection_stage)
-
-			# Validate source warehouse exists
-			if not frappe.db.exists("Warehouse", source_wh):
-				frappe.throw(f"❌ Source Warehouse '{source_wh}' does not exist.")
-
 			item_dict = {
 				"item_code": foundry_return_item,
 				"qty": total_qty,
-				"s_warehouse": source_wh,
 				"t_warehouse": TARGET_WH,
 			}
 			items.append(item_dict)
@@ -137,19 +116,18 @@ class SecondLineRejection(Document):
 		# 6. Create and submit Stock Entry
 		if items:
 			try:
-				# Create stock entry using new_doc (better for Material Transfer)
+				# Create stock entry using new_doc
 				stock_entry = frappe.new_doc("Stock Entry")
-				stock_entry.stock_entry_type = "Material Transfer"
-				stock_entry.remarks = f"Auto Material Transfer from Second Line Rejection {self.name}"
+				stock_entry.stock_entry_type = "Material Receipt"
+				stock_entry.remarks = f"Auto Material Receipt from Second Line Rejection {self.name}"
 
-				# Add items with source and target warehouses
+				# Add items with target warehouse only
 				for item_data in items:
 					stock_entry.append(
 						"items",
 						{
 							"item_code": item_data["item_code"],
 							"qty": item_data["qty"],
-							"s_warehouse": item_data["s_warehouse"],
 							"t_warehouse": item_data["t_warehouse"],
 						},
 					)
