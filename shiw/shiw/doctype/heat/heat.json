@@ -136,7 +136,7 @@
    "fieldname": "pouring_person",
    "fieldtype": "Select",
    "label": "Pouring Person",
-   "options": "Kartick\nKoushick\nAmar\nUn-Skilled",
+   "options": "\nKartick\nKoushick\nAmar\nSujoy\nRahul\nGautam\nPritam\nRaju\nUn-Skilled",
    "reqd": 1
   },
   {
@@ -575,7 +575,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-11-19 15:47:14.973383",
+ "modified": "2025-11-20 11:42:05.528071",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Heat",
