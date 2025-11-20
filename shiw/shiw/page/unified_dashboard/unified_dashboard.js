@@ -231,11 +231,92 @@ function setDefaultFilters(state) {
     state.controls.batch_type.set_value('All');
 }
 
+// Debounce function to limit API calls
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
 function bindEventHandlers(state) {
+    // Create debounced refresh function for this state
+    const debouncedRefresh = debounce(() => {
+        refreshDashboard(state);
+    }, 500);
+
+    // Helper function to bind Link field events
+    function bindLinkFieldEvents(control, refreshFn) {
+        if (!control) return;
+
+        // Wait for control to be fully initialized
+        setTimeout(() => {
+            // Handle change event on input
+            if (control.$input) {
+                $(control.$input).on('change', refreshFn);
+            }
+
+            // For Frappe Link fields, find the actual input element
+            let $linkInput = null;
+            if (control.$wrapper) {
+                // Try multiple selectors to find the Link field input
+                $linkInput = control.$wrapper.find('input[data-fieldname]').first();
+                if (!$linkInput.length) {
+                    $linkInput = control.$wrapper.find('input.form-control').first();
+                }
+                if (!$linkInput.length) {
+                    $linkInput = control.$wrapper.find('input').first();
+                }
+            }
+
+            if ($linkInput && $linkInput.length) {
+                // Create a local debounced refresh for this input
+                const debouncedInputRefresh = debounce(refreshFn, 500);
+
+                $linkInput.on('change', refreshFn);
+                // Listen to blur event (when user selects from dropdown)
+                $linkInput.on('blur', function () {
+                    setTimeout(refreshFn, 150);
+                });
+                // Listen to input events for typing - use debounced version
+                $linkInput.on('input', function () {
+                    debouncedInputRefresh();
+                });
+            }
+
+            // Listen to wrapper events
+            if (control.$wrapper) {
+                control.$wrapper.on('change', refreshFn);
+            }
+
+            // Override onchange in df if it doesn't exist
+            if (control.df && control.df.onchange === undefined) {
+                control.df.onchange = function () {
+                    refreshFn();
+                };
+            }
+
+            // Also try to hook into Frappe's link field selection event
+            // This uses event delegation on the document to catch dropdown selections
+            if (control.df && control.df.fieldname) {
+                $(document).on('awesomplete-selectcomplete', `[data-fieldname="${control.df.fieldname}"]`, refreshFn);
+            }
+        }, 200);
+    }
+
     // Filter change events
     $(state.controls.from_date.$input).on('change', () => refreshDashboard(state));
     $(state.controls.to_date.$input).on('change', () => refreshDashboard(state));
-    $(state.controls.furnace_no.$input).on('change', () => refreshDashboard(state));
+
+    // Furnace filter - Link field: use helper function for proper event handling
+    bindLinkFieldEvents(state.controls.furnace_no, () => refreshDashboard(state));
+
+    // Batch type filter - Select field
     $(state.controls.batch_type.$input).on('change', () => refreshDashboard(state));
 
     // Button events
@@ -603,7 +684,7 @@ function renderDetailedTables($container, tabId, rawData) {
 }
 
 function renderHeatLossMainTable($container, heatLossData) {
-    
+
     if (!heatLossData || heatLossData.length === 0) {
         $container.append(`
             <div class="no-data-message">
@@ -1001,7 +1082,7 @@ function getPerKgCostColor(perKgCost, bomCostPerKg) {
      * Returns:
      *     string: CSS color style
      */
-    
+
     // Convert to numbers, handle null/undefined
     const perKg = Number(perKgCost) || 0;
     const bomCost = Number(bomCostPerKg) || 0;

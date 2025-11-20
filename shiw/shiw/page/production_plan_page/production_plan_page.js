@@ -63,18 +63,19 @@ function createFilterBar(state) {
     const $productionPlanWrap = $('<div style="min-width:300px;"></div>');
     const $itemWrap = $('<div style="min-width:200px;"></div>');
     const $departmentWrap = $('<div style="min-width:200px;"></div>');
+    const $statusWrap = $('<div style="min-width:180px;"></div>');
     const $btnWrap = $('<div style="display:flex;align-items:end;gap:8px;"></div>');
 
     // Assemble filter controls
-    $filterControls.append($productionPlanWrap).append($itemWrap).append($departmentWrap);
+    $filterControls.append($productionPlanWrap).append($itemWrap).append($departmentWrap).append($statusWrap);
     $filterBar.append($filterControls).append($btnWrap);
     $(state.page.main).append($filterBar);
 
     // Create filter controls
-    createFilterControls(state, $productionPlanWrap, $itemWrap, $departmentWrap, $btnWrap);
+    createFilterControls(state, $productionPlanWrap, $itemWrap, $departmentWrap, $statusWrap, $btnWrap);
 }
 
-function createFilterControls(state, $productionPlanWrap, $itemWrap, $departmentWrap, $btnWrap) {
+function createFilterControls(state, $productionPlanWrap, $itemWrap, $departmentWrap, $statusWrap, $btnWrap) {
     // Production Plan control
     state.controls.production_plan = frappe.ui.form.make_control({
         parent: $productionPlanWrap.get(0),
@@ -109,6 +110,19 @@ function createFilterControls(state, $productionPlanWrap, $itemWrap, $department
             label: 'Department',
             fieldname: 'department',
             options: '',
+            reqd: 0,
+        },
+        render_input: true,
+    });
+
+    // Status control
+    state.controls.status = frappe.ui.form.make_control({
+        parent: $statusWrap.get(0),
+        df: {
+            fieldtype: 'Select',
+            label: 'Status',
+            fieldname: 'status',
+            options: '\nSufficient\nIn Transit\nShortage',
             reqd: 0,
         },
         render_input: true,
@@ -150,6 +164,13 @@ function createFilterControls(state, $productionPlanWrap, $itemWrap, $department
             'height': '36px',
             'line-height': '1.4'
         });
+        $(state.controls.status.$input).css({
+            'border': '1px solid #000000',
+            'border-radius': '4px',
+            'padding': '8px 12px',
+            'height': '36px',
+            'line-height': '1.4'
+        });
     }, 100);
 }
 
@@ -172,11 +193,93 @@ function setDefaultFilters(state) {
     // This will be populated from URL parameters or defaults
 }
 
+// Debounce function to limit API calls
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
 function bindEventHandlers(state) {
-    // Filter change events
-    $(state.controls.production_plan.$input).on('change', () => refreshDashboard(state));
-    $(state.controls.item_code.$input).on('change', () => refreshDashboard(state));
+    // Create debounced refresh function for this state
+    const debouncedRefresh = debounce(() => {
+        refreshDashboard(state);
+    }, 500);
+
+    // Helper function to bind Link field events
+    function bindLinkFieldEvents(control, refreshFn) {
+        if (!control) return;
+
+        // Wait for control to be fully initialized
+        setTimeout(() => {
+            // Handle change event on input
+            if (control.$input) {
+                $(control.$input).on('change', refreshFn);
+            }
+
+            // For Frappe Link fields, find the actual input element
+            let $linkInput = null;
+            if (control.$wrapper) {
+                // Try multiple selectors to find the Link field input
+                $linkInput = control.$wrapper.find('input[data-fieldname]').first();
+                if (!$linkInput.length) {
+                    $linkInput = control.$wrapper.find('input.form-control').first();
+                }
+                if (!$linkInput.length) {
+                    $linkInput = control.$wrapper.find('input').first();
+                }
+            }
+
+            if ($linkInput && $linkInput.length) {
+                // Create a local debounced refresh for this input
+                const debouncedInputRefresh = debounce(refreshFn, 500);
+
+                $linkInput.on('change', refreshFn);
+                // Listen to blur event (when user selects from dropdown)
+                $linkInput.on('blur', function () {
+                    setTimeout(refreshFn, 150);
+                });
+                // Listen to input events for typing - use debounced version
+                $linkInput.on('input', function () {
+                    debouncedInputRefresh();
+                });
+            }
+
+            // Listen to wrapper events
+            if (control.$wrapper) {
+                control.$wrapper.on('change', refreshFn);
+            }
+
+            // Override onchange in df if it doesn't exist
+            if (control.df && control.df.onchange === undefined) {
+                control.df.onchange = function () {
+                    refreshFn();
+                };
+            }
+
+            // Also try to hook into Frappe's link field selection event
+            // This uses event delegation on the document to catch dropdown selections
+            $(document).on('awesomplete-selectcomplete', `[data-fieldname="${control.df.fieldname}"]`, refreshFn);
+        }, 200);
+    }
+
+    // Production Plan filter - Link field (auto-refresh)
+    bindLinkFieldEvents(state.controls.production_plan, () => refreshDashboard(state));
+
+    // Item Code filter - Link field (auto-refresh)
+    bindLinkFieldEvents(state.controls.item_code, () => refreshDashboard(state));
+
+    // Department filter - Select field
     $(state.controls.department.$input).on('change', () => refreshDashboard(state));
+
+    // Status filter - Select field
+    $(state.controls.status.$input).on('change', () => refreshDashboard(state));
 
     // Button events
     state.controls.refreshBtn.on('click', () => refreshDashboard(state));
@@ -211,7 +314,8 @@ function getFilters(state) {
     return {
         production_plan: state.controls.production_plan.get_value(),
         item_code: state.controls.item_code.get_value(),
-        department: state.controls.department.get_value()
+        department: state.controls.department.get_value(),
+        status: state.controls.status.get_value()
     };
 }
 
@@ -259,14 +363,41 @@ function fetchProductionPlanData(filters) {
 
         Promise.all([reportPromise, plannedQtyPromise])
             .then(([report, totalPlannedQty]) => {
-                const summary = calculateSummaryStats(report.data, { totalPlannedQty });
+                // Filter data based on status if provided
+                let filteredData = report.data;
+                if (filters.status) {
+                    filteredData = filterDataByStatus(report.data, filters.status);
+                }
+
+                const summary = calculateSummaryStats(filteredData, { totalPlannedQty });
                 resolve({
                     summary,
-                    raw_data: report.data,
+                    raw_data: filteredData,
                     columns: report.columns
                 });
             })
             .catch(reject);
+    });
+}
+
+function filterDataByStatus(data, status) {
+    if (!status || !data) return data;
+
+    return data.filter(row => {
+        const actual = row.actual_qty || 0;
+        const required = row.required_bom_qty || 0;
+        const combined = row.combined_stock || 0;
+
+        let rowStatus;
+        if (actual >= required) {
+            rowStatus = 'Sufficient';
+        } else if (combined >= required) {
+            rowStatus = 'In Transit';
+        } else {
+            rowStatus = 'Shortage';
+        }
+
+        return rowStatus === status;
     });
 }
 
@@ -689,15 +820,16 @@ function initializeCharts(departmentData, stockData) {
             }
 
             deptCtx.chart = new Chart(deptCtx, {
-                type: 'doughnut',
+                type: 'bar',
                 data: {
                     labels: departmentData.labels,
                     datasets: [{
+                        label: 'Items',
                         data: departmentData.data,
                         backgroundColor: departmentData.colors,
                         borderWidth: 2,
                         borderColor: '#fff',
-                        hoverOffset: 4
+                        borderRadius: 4
                     }]
                 },
                 options: {
@@ -709,20 +841,13 @@ function initializeCharts(departmentData, stockData) {
                     },
                     plugins: {
                         legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 15,
-                                usePointStyle: true,
-                                font: {
-                                    size: 11
-                                }
-                            }
+                            display: false
                         },
                         tooltip: {
                             callbacks: {
                                 label: function (context) {
                                     const label = context.label || '';
-                                    const value = context.parsed;
+                                    const value = context.parsed.y;
                                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                     const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
                                     return `${label}: ${value} (${percentage}%)`;
@@ -730,7 +855,22 @@ function initializeCharts(departmentData, stockData) {
                             }
                         }
                     },
-                    cutout: '50%'
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
                 }
             });
             console.log('Department chart created successfully');
@@ -751,15 +891,16 @@ function initializeCharts(departmentData, stockData) {
             }
 
             stockCtx.chart = new Chart(stockCtx, {
-                type: 'doughnut',
+                type: 'bar',
                 data: {
                     labels: stockData.labels,
                     datasets: [{
+                        label: 'Items',
                         data: stockData.data,
                         backgroundColor: stockData.colors,
                         borderWidth: 2,
                         borderColor: '#fff',
-                        hoverOffset: 4
+                        borderRadius: 4
                     }]
                 },
                 options: {
@@ -771,20 +912,13 @@ function initializeCharts(departmentData, stockData) {
                     },
                     plugins: {
                         legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 15,
-                                usePointStyle: true,
-                                font: {
-                                    size: 11
-                                }
-                            }
+                            display: false
                         },
                         tooltip: {
                             callbacks: {
                                 label: function (context) {
                                     const label = context.label || '';
-                                    const value = context.parsed;
+                                    const value = context.parsed.y;
                                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                     const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
                                     return `${label}: ${value} (${percentage}%)`;
@@ -792,7 +926,22 @@ function initializeCharts(departmentData, stockData) {
                             }
                         }
                     },
-                    cutout: '50%'
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
                 }
             });
             console.log('Stock chart created successfully');
@@ -998,6 +1147,7 @@ function exportAsPDF(state) {
         if (filters.production_plan) filterParts.push(`Production Plan: ${filters.production_plan}`);
         if (filters.item_code) filterParts.push(`Item: ${filters.item_code}`);
         if (filters.department) filterParts.push(`Department: ${filters.department}`);
+        if (filters.status) filterParts.push(`Status: ${filters.status}`);
         filterBarSummary.textContent = `Filters — ${filterParts.join(' | ') || 'None'}`;
         tempSummary.appendChild(filterBarSummary);
 
@@ -1013,9 +1163,20 @@ function exportAsPDF(state) {
             chartsWrapper.style.gap = '20px';
             chartsWrapper.style.marginTop = '16px';
 
+            // Get chart containers with their headings
+            const chartContainers = state.$charts[0].querySelectorAll('.chart-container');
             const sourceCanvases = state.$charts[0].querySelectorAll('canvas');
-            sourceCanvases.forEach((canvas) => {
+
+            chartContainers.forEach((container, index) => {
                 try {
+                    // Get the heading from the container
+                    const heading = container.querySelector('h4');
+                    const headingText = heading ? heading.textContent : '';
+
+                    // Get the corresponding canvas
+                    const canvas = sourceCanvases[index];
+                    if (!canvas) return;
+
                     const img = document.createElement('img');
                     img.src = canvas.toDataURL('image/png');
                     img.style.width = '100%';
@@ -1027,10 +1188,22 @@ function exportAsPDF(state) {
                     card.style.borderRadius = '8px';
                     card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
                     card.style.padding = '20px';
+
+                    // Add heading if it exists
+                    if (headingText) {
+                        const headingElement = document.createElement('div');
+                        headingElement.style.fontSize = '16px';
+                        headingElement.style.fontWeight = '600';
+                        headingElement.style.color = '#2c3e50';
+                        headingElement.style.marginBottom = '20px';
+                        headingElement.textContent = headingText;
+                        card.appendChild(headingElement);
+                    }
+
                     card.appendChild(img);
                     chartsWrapper.appendChild(card);
                 } catch (e) {
-                    // ignore
+                    console.error('Error processing chart for PDF:', e);
                 }
             });
 

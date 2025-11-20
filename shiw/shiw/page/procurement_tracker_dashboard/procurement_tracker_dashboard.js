@@ -560,24 +560,120 @@ function setDefaultFilters(state) {
     state.controls.to_date.set_value(frappe.datetime.month_end());
 }
 
+// Debounce function to limit API calls
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
 function bindEventHandlers(state) {
+    // Create debounced refresh function for this state
+    const debouncedRefresh = debounce(() => {
+        refreshDashboard(state);
+    }, 500);
+
     // Main filter change events
     $(state.controls.from_date.$input).on('change', () => refreshDashboard(state));
     $(state.controls.to_date.$input).on('change', () => refreshDashboard(state));
-    $(state.controls.supplier.$input).on('change', () => refreshDashboard(state));
+
+    // Helper function to bind Link field events
+    function bindLinkFieldEvents(control, refreshFn) {
+        if (!control) return;
+
+        // Wait for control to be fully initialized
+        setTimeout(() => {
+            // Handle change event on input
+            if (control.$input) {
+                $(control.$input).on('change', refreshFn);
+            }
+
+            // For Frappe Link fields, find the actual input element
+            let $linkInput = null;
+            if (control.$wrapper) {
+                // Try multiple selectors to find the Link field input
+                $linkInput = control.$wrapper.find('input[data-fieldname]').first();
+                if (!$linkInput.length) {
+                    $linkInput = control.$wrapper.find('input.form-control').first();
+                }
+                if (!$linkInput.length) {
+                    $linkInput = control.$wrapper.find('input').first();
+                }
+            }
+
+            if ($linkInput && $linkInput.length) {
+                // Create a local debounced refresh for this input
+                const debouncedInputRefresh = debounce(refreshFn, 500);
+
+                $linkInput.on('change', refreshFn);
+                // Listen to blur event (when user selects from dropdown)
+                $linkInput.on('blur', function () {
+                    setTimeout(refreshFn, 150);
+                });
+                // Listen to input events for typing - use debounced version
+                $linkInput.on('input', function () {
+                    debouncedInputRefresh();
+                });
+            }
+
+            // Listen to wrapper events
+            if (control.$wrapper) {
+                control.$wrapper.on('change', refreshFn);
+            }
+
+            // Override onchange in df if it doesn't exist
+            if (control.df && control.df.onchange === undefined) {
+                control.df.onchange = function () {
+                    refreshFn();
+                };
+            }
+
+            // Also try to hook into Frappe's link field selection event
+            // This uses event delegation on the document to catch dropdown selections
+            $(document).on('awesomplete-selectcomplete', `[data-fieldname="${control.df.fieldname}"]`, refreshFn);
+        }, 200);
+    }
+
+    // Supplier filter - Link field
+    bindLinkFieldEvents(state.controls.supplier, () => refreshDashboard(state));
 
     // Section filter change events
     Object.keys(state.$tabs).forEach(tabId => {
         if (tabId !== 'overview') {
             if (tabId === 'item_wise') {
-                $(state.controls[`${tabId}_po_no`].$input).on('change', () => refreshDashboard(state));
-                $(state.controls[`${tabId}_item_code`].$input).on('change', () => refreshDashboard(state));
+                // PO No filter - Data field: add both change and input events
+                const poNoControl = state.controls[`${tabId}_po_no`];
+                if (poNoControl && poNoControl.$input) {
+                    $(poNoControl.$input).on('change', () => refreshDashboard(state));
+                    $(poNoControl.$input).on('input', () => debouncedRefresh(state));
+                }
+
+                // Item code filter - Link field
+                bindLinkFieldEvents(state.controls[`${tabId}_item_code`], () => refreshDashboard(state));
                 // Bind refresh button event for item-wise tab
                 $(state.controls[`${tabId}_refresh`].$input).on('click', () => refreshDashboard(state));
             } else {
-                $(state.controls[`${tabId}_status`].$input).on('change', () => refreshDashboard(state));
-                $(state.controls[`${tabId}_id`].$input).on('change', () => refreshDashboard(state));
-                $(state.controls[`${tabId}_item_name`].$input).on('change', () => refreshDashboard(state));
+                // Status filter - Select field
+                const statusControl = state.controls[`${tabId}_status`];
+                if (statusControl && statusControl.$input) {
+                    $(statusControl.$input).on('change', () => refreshDashboard(state));
+                }
+
+                // ID filter - Data field: add both change and input events for real-time typing
+                const idControl = state.controls[`${tabId}_id`];
+                if (idControl && idControl.$input) {
+                    $(idControl.$input).on('change', () => refreshDashboard(state));
+                    $(idControl.$input).on('input', () => debouncedRefresh(state));
+                }
+
+                // Item name filter - Link field
+                bindLinkFieldEvents(state.controls[`${tabId}_item_name`], () => refreshDashboard(state));
                 // Bind refresh button event for other tabs
                 $(state.controls[`${tabId}_refresh`].$input).on('click', () => refreshDashboard(state));
             }
