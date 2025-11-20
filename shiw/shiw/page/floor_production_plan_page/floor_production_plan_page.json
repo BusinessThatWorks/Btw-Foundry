@@ -1,0 +1,30 @@
+{
+ "content": null,
+ "creation": "2025-01-27 10:00:00",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2025-10-31 10:36:32.799647",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "floor-production-plan-page",
+ "owner": "Administrator",
+ "page_name": "floor-production-plan-page",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Foundry- SHIW"
+  },
+  {
+   "role": "Production Report User"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1,
+ "title": "Floor Production Plan Dashboard"
+}
+
