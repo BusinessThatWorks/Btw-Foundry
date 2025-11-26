@@ -11,6 +11,8 @@
   "tooling_name",
   "column_break_gqru",
   "match_plate_number",
+  "column_break_jlvf",
+  "moulding_system",
   "pattern_details_section",
   "details_table",
   "section_break_gdbu",
@@ -298,13 +300,24 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "column_break_jlvf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "moulding_system",
+   "fieldtype": "Link",
+   "label": "Moulding System",
+   "options": "Mould Master"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-07 14:43:10.641747",
+ "modified": "2025-11-21 18:00:30.824075",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "New Tooling",
