@@ -21,7 +21,9 @@
   "amended_from",
   "consumption_tab",
   "table_silm",
-  "total_consumption_valuation"
+  "total_consumption_valuation",
+  "rejection_tab",
+  "table_jtek"
  ],
  "fields": [
   {
@@ -103,13 +105,23 @@
    "fieldtype": "Float",
    "label": "Total Bunch Weight",
    "precision": "2"
+  },
+  {
+   "fieldname": "rejection_tab",
+   "fieldtype": "Tab Break",
+   "label": " Rejection"
+  },
+  {
+   "fieldname": "table_jtek",
+   "fieldtype": "Table",
+   "options": "Core Rejection Table"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-25 14:27:57.394019",
+ "modified": "2025-11-26 16:03:52.735499",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Core Production",
@@ -131,6 +143,7 @@
   }
  ],
  "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
