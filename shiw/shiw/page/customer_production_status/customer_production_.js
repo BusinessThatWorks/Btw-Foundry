@@ -262,14 +262,78 @@ function renderDashboardData(state, response) {
 		return;
 	}
 
+	// Calculate in_progress_qty for each row based on operation chain
+	const dataWithInProgress = calculateInProgress(data);
+
 	// Calculate summary metrics
-	const summary = calculateSummary(data);
+	const summary = calculateSummary(dataWithInProgress);
 
 	// Render summary cards
 	renderSummaryCards(state, summary);
 
 	// Render data table
-	renderDataTable(state, columns, data);
+	renderDataTable(state, columns, dataWithInProgress);
+}
+
+function calculateInProgress(data) {
+	// Group data by work_order to process operation chains
+	// The data is already ordered by woo.idx from the SQL query, so we maintain that order
+	const groupedByWorkOrder = {};
+
+	// Group rows by work_order while maintaining order
+	data.forEach((row, index) => {
+		const workOrder = row.work_order || 'unknown';
+		if (!groupedByWorkOrder[workOrder]) {
+			groupedByWorkOrder[workOrder] = [];
+		}
+		// Store original index to maintain overall order
+		groupedByWorkOrder[workOrder].push({ ...row, originalIndex: index });
+	});
+
+	// Process each work order's operation chain
+	const processedData = [];
+
+	// Process work orders in the order they appear
+	Object.keys(groupedByWorkOrder).forEach(workOrder => {
+		const operations = groupedByWorkOrder[workOrder];
+
+		// Operations should already be in sequence order (by woo.idx from SQL)
+		// But ensure they're sorted by original index to maintain sequence
+		operations.sort((a, b) => a.originalIndex - b.originalIndex);
+
+		// Calculate in_progress for each operation in the chain
+		let previousCompletedQty = 0;
+
+		operations.forEach((row, idx) => {
+			const completedQty = parseFloat(row.completed_qty) || 0;
+
+			// In Progress calculation:
+			// - First operation: in_progress = 0 (nothing came before it)
+			// - Subsequent operations: in_progress = previous_completed_qty - current_completed_qty
+			//   This represents: quantity received from previous operation minus quantity completed in current operation
+			let inProgressQty = 0;
+			if (idx === 0) {
+				// First operation in chain: nothing came before, so in_progress = 0
+				inProgressQty = 0;
+			} else {
+				// Subsequent operations: 
+				// in_progress = what came from previous operation - what we completed in current operation
+				inProgressQty = Math.max(0, previousCompletedQty - completedQty);
+			}
+
+			// Add in_progress_qty to the row
+			row.in_progress_qty = inProgressQty;
+
+			// Update previous completed qty for next iteration
+			// The quantity that moves to next operation is what was completed in current operation
+			previousCompletedQty = completedQty;
+
+			processedData.push(row);
+		});
+	});
+
+	// Sort back to original order to maintain the display sequence
+	return processedData.sort((a, b) => a.originalIndex - b.originalIndex);
 }
 
 function calculateSummary(data) {
@@ -404,17 +468,40 @@ function renderDataTable(state, columns, data) {
 	const $thead = $table.find('thead tr');
 	const $tbody = $table.find('tbody');
 
-	// Render headers
-	columns.forEach((col) => {
+	// Find indices for planned_qty and completed_qty
+	let plannedQtyIndex = -1;
+	let completedQtyIndex = -1;
+
+	columns.forEach((col, index) => {
+		if (col.fieldname === 'planned_qty') {
+			plannedQtyIndex = index;
+		}
+		if (col.fieldname === 'completed_qty') {
+			completedQtyIndex = index;
+		}
+	});
+
+	// Render headers and insert In Progress between Planned Qty and Completed Qty
+	columns.forEach((col, index) => {
 		const $th = $(`
             <th style="padding:14px 16px;text-align:${col.fieldtype === 'Float' || col.fieldtype === 'Int' ? 'right' : 'left'};font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;white-space:nowrap;font-size:0.9rem;">
                 ${frappe.utils.escape_html(col.label || col.fieldname)}
             </th>
         `);
 		$thead.append($th);
+
+		// Insert In Progress header after Planned Qty (before Completed Qty)
+		if (index === plannedQtyIndex) {
+			const $inProgressTh = $(`
+				<th style="padding:14px 16px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;white-space:nowrap;font-size:0.9rem;">
+					${__('In Progress')}
+				</th>
+			`);
+			$thead.append($inProgressTh);
+		}
 	});
 
-	// Add Progress column header
+	// Add Progress column header at the end
 	const $progressTh = $(`
         <th style="padding:14px 16px;text-align:center;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;white-space:nowrap;font-size:0.9rem;min-width:200px;">
             ${__('Progress')}
@@ -426,7 +513,11 @@ function renderDataTable(state, columns, data) {
 	data.forEach((row) => {
 		const $tr = $('<tr style="border-bottom:1px solid #e9ecef;transition:background-color 0.2s ease;"></tr>');
 
-		columns.forEach((col) => {
+		// Get in_progress_qty for this row
+		const inProgressQty = parseFloat(row.in_progress_qty) || 0;
+		const isInProgressZero = inProgressQty === 0;
+
+		columns.forEach((col, index) => {
 			const fieldname = col.fieldname;
 			let value = row[fieldname] || '';
 
@@ -461,12 +552,25 @@ function renderDataTable(state, columns, data) {
                 </td>
             `);
 			$tr.append($td);
+
+			// Insert In Progress column after Planned Qty (before Completed Qty)
+			if (index === plannedQtyIndex) {
+				// Green color when in_progress = 0, orange otherwise
+				const inProgressColor = isInProgressZero ? '#27ae60' : '#f39c12';
+				const $inProgressTd = $(`
+					<td style="padding:12px 16px;text-align:right;font-size:0.9rem;font-weight:500;color:${inProgressColor};">
+						${format_number(inProgressQty, null, 2)}
+					</td>
+				`);
+				$tr.append($inProgressTd);
+			}
 		});
 
 		// Add Progress bar column
-		const plannedQty = parseFloat(row.planned_qty) || 0;
+		// Progress percentage = completed_qty / (completed_qty + in_progress_qty)
 		const completedQty = parseFloat(row.completed_qty) || 0;
-		const progressPercentage = plannedQty > 0 ? Math.min((completedQty / plannedQty) * 100, 100) : 0;
+		const totalQty = completedQty + inProgressQty;
+		const progressPercentage = totalQty > 0 ? Math.min((completedQty / totalQty) * 100, 100) : 0;
 
 		// Determine progress bar color based on status
 		let progressColor = '#3498db'; // default blue
