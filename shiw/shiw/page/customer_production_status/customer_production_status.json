@@ -1,0 +1,29 @@
+{
+ "content": null,
+ "creation": "2025-11-27 16:07:07.402567",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2025-11-27 16:26:05.983727",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "customer-production-status",
+ "owner": "Administrator",
+ "page_name": "customer-production-status",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Sales Manager"
+  },
+  {
+   "role": "Accounts Manager"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1,
+ "title": "Customer Production Status"
+}

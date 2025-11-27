@@ -426,7 +426,7 @@ function renderDataTable(state, columns, data) {
 
 	// Create table
 	const $table = $(`
-        <table class="customer-prod-table" style="width:100%;border-collapse:collapse;background:#fff;min-width:800px;">
+        <table class="customer-prod-table" style="width:100%;border-collapse:collapse;background:#fff;min-width:1000px;">
             <thead>
                 <tr style="background:#f8f9fa;">
                 </tr>
@@ -448,6 +448,14 @@ function renderDataTable(state, columns, data) {
         `);
 		$thead.append($th);
 	});
+
+	// Add Progress column header
+	const $progressTh = $(`
+        <th style="padding:14px 16px;text-align:center;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;white-space:nowrap;font-size:0.9rem;min-width:200px;">
+            ${__('Progress')}
+        </th>
+    `);
+	$thead.append($progressTh);
 
 	// Render rows
 	data.forEach((row) => {
@@ -489,6 +497,41 @@ function renderDataTable(state, columns, data) {
             `);
 			$tr.append($td);
 		});
+
+		// Add Progress bar column
+		const plannedQty = parseFloat(row.planned_qty) || 0;
+		const completedQty = parseFloat(row.completed_qty) || 0;
+		const progressPercentage = plannedQty > 0 ? Math.min((completedQty / plannedQty) * 100, 100) : 0;
+
+		// Determine progress bar color based on status
+		let progressColor = '#3498db'; // default blue
+		if (row.status === 'Completed') {
+			progressColor = '#27ae60'; // green
+		} else if (row.status === 'Not Started') {
+			progressColor = '#e74c3c'; // red
+		} else if (row.status === 'Pending') {
+			progressColor = '#f39c12'; // orange
+		}
+
+		const progressBar = `
+			<div style="display:flex;align-items:center;gap:8px;">
+				<div style="flex:1;background:#ecf0f1;border-radius:10px;height:24px;overflow:hidden;position:relative;box-shadow:inset 0 1px 2px rgba(0,0,0,0.1);">
+					<div style="height:100%;background:${progressColor};width:${progressPercentage}%;transition:width 0.3s ease;border-radius:10px;display:flex;align-items:center;justify-content:center;min-width:${progressPercentage > 0 ? '30px' : '0'};">
+						${progressPercentage > 10 ? `<span style="color:#fff;font-size:0.75rem;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,0.2);">${progressPercentage.toFixed(1)}%</span>` : ''}
+					</div>
+				</div>
+				<div style="min-width:50px;text-align:right;font-size:0.85rem;color:#7f8c8d;font-weight:500;">
+					${progressPercentage.toFixed(1)}%
+				</div>
+			</div>
+		`;
+
+		const $progressTd = $(`
+			<td style="padding:12px 16px;font-size:0.9rem;">
+				${progressBar}
+			</td>
+		`);
+		$tr.append($progressTd);
 
 		// Add hover effect
 		$tr.on('mouseenter', function () {
