@@ -265,6 +265,8 @@ page_js = {
 fixtures = [
 	{"doctype": "Custom Field", "filters": {"module": "shiw"}},
 	{"doctype": "Print Format", "filters": {"module": "shiw"}},
+	{"doctype": "Page", "filters": {"module": "shiw"}},
+	{"doctype": "Report", "filters": {"module": "shiw"}},
 ]
 
 # doctype_js = {
