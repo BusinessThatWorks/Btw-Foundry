@@ -2,35 +2,20 @@
 # For license information, please see license.txt
 
 import frappe
-import re
 
 
 def execute(filters=None):
 	filters = filters or {}
 
-	columns = get_columns(filters)
+	columns = get_columns()
 	data = get_data(filters)
 
 	return columns, data
 
 
-def sanitize_fieldname(name):
-	"""Convert operation name to a valid fieldname"""
-	# Replace spaces, hyphens, and special characters with underscores
-	fieldname = re.sub(r"[^a-zA-Z0-9_]", "_", str(name))
-	# Remove multiple consecutive underscores
-	fieldname = re.sub(r"_+", "_", fieldname)
-	# Remove leading/trailing underscores
-	fieldname = fieldname.strip("_")
-	# Ensure it starts with a letter or underscore
-	if fieldname and not fieldname[0].isalpha() and fieldname[0] != "_":
-		fieldname = f"op_{fieldname}"
-	return fieldname or "operation"
-
-
-def get_columns(filters):
-	"""Get columns dynamically including operation columns"""
-	columns = [
+def get_columns():
+	"""Get fixed columns for the report"""
+	return [
 		{
 			"label": "Sales Order ID",
 			"fieldname": "sales_order_id",
@@ -46,37 +31,19 @@ def get_columns(filters):
 			"width": 200,
 		},
 		{"label": "Item Name", "fieldname": "item_name", "fieldtype": "Data", "width": 200},
-		{"label": "Qty Manufactured", "fieldname": "qty_manufactured", "fieldtype": "Float", "width": 120},
+		{
+			"label": "Work Order",
+			"fieldname": "work_order",
+			"fieldtype": "Link",
+			"options": "Work Order",
+			"width": 150,
+		},
+		{"label": "Operation", "fieldname": "operation", "fieldtype": "Data", "width": 150},
+		{"label": "Planned Qty", "fieldname": "planned_qty", "fieldtype": "Float", "width": 120},
+		{"label": "Completed Qty", "fieldname": "completed_qty", "fieldtype": "Float", "width": 120},
+		{"label": "Pending Qty", "fieldname": "pending_qty", "fieldtype": "Float", "width": 120},
+		{"label": "Status", "fieldname": "status", "fieldtype": "Data", "width": 120},
 	]
-
-	# Get all unique operations to create dynamic columns
-	operations = get_all_operations(filters)
-
-	# Add operation columns
-	for operation in operations:
-		fieldname = sanitize_fieldname(operation)
-		columns.append({"label": operation, "fieldname": fieldname, "fieldtype": "Float", "width": 120})
-
-	return columns
-
-
-def get_all_operations(filters):
-	"""Get all unique operation names from Work Order Operations"""
-	conditions = get_conditions(filters)
-
-	query = f"""
-		SELECT DISTINCT woo.operation
-		FROM `tabWork Order` wo
-		INNER JOIN `tabWork Order Operation` woo ON woo.parent = wo.name
-		INNER JOIN `tabSales Order` so ON so.name = wo.sales_order
-		WHERE {conditions}
-		AND wo.docstatus != 2
-		AND woo.operation IS NOT NULL
-		ORDER BY woo.operation
-	"""
-
-	operations = frappe.db.sql(query, filters, as_list=True)
-	return [op[0] for op in operations]
 
 
 def get_conditions(filters):
@@ -89,18 +56,18 @@ def get_conditions(filters):
 	if filters.get("customer_name"):
 		conditions.append("so.customer = %(customer_name)s")
 
+	if filters.get("status"):
+		# We'll filter status after data is fetched since it's calculated
+		pass
+
 	return " AND ".join(conditions)
 
 
 def get_data(filters):
-	"""Get report data"""
+	"""Get report data - one row per Sales Order + Item + Work Order + Operation"""
 	conditions = get_conditions(filters)
 
-	# Get all unique operations
-	operations = get_all_operations(filters)
-	operation_map = {op: sanitize_fieldname(op) for op in operations}
-
-	# Main query to get Sales Order Items with Work Order data
+	# Main query to get Sales Order Items with Work Order and Operation data
 	query = f"""
 		SELECT
 			so.name AS sales_order_id,
@@ -108,90 +75,58 @@ def get_data(filters):
 			soi.item_code AS item_code,
 			soi.item_name AS item_name,
 			wo.name AS work_order,
-			wo.production_item AS production_item,
-			wo.qty AS qty_manufactured
+			wo.qty AS planned_qty,
+			woo.operation AS operation,
+			COALESCE(woo.completed_qty, 0) AS completed_qty
 		FROM
 			`tabSales Order` so
 		INNER JOIN
 			`tabSales Order Item` soi ON soi.parent = so.name
-		LEFT JOIN
+		INNER JOIN
 			`tabWork Order` wo ON wo.sales_order = so.name
 			AND wo.production_item = soi.item_code
 			AND wo.docstatus != 2
-		WHERE {conditions}
-		ORDER BY so.name, soi.item_code, wo.name
-	"""
-
-	rows = frappe.db.sql(query, filters, as_dict=True)
-
-	# Get operations data for each work order
-	work_order_operations = get_work_order_operations(filters)
-
-	# Group data by sales_order_id, item_code
-	grouped_data = {}
-
-	for row in rows:
-		key = f"{row.sales_order_id}||{row.item_code}"
-
-		if key not in grouped_data:
-			grouped_data[key] = {
-				"sales_order_id": row.sales_order_id,
-				"customer_name": row.customer_name,
-				"item_name": row.item_name,
-				"qty_manufactured": 0,
-			}
-			# Initialize all operation columns to 0
-			for op in operations:
-				grouped_data[key][operation_map[op]] = 0
-
-		# Sum up qty_manufactured
-		if row.qty_manufactured:
-			grouped_data[key]["qty_manufactured"] += row.qty_manufactured
-
-		# Add operation completed_qty if work order exists
-		if row.work_order and row.work_order in work_order_operations:
-			for op_data in work_order_operations[row.work_order]:
-				op_name = op_data.get("operation")
-				if op_name in operation_map:
-					fieldname = operation_map[op_name]
-					completed_qty = op_data.get("completed_qty", 0) or 0
-					grouped_data[key][fieldname] += completed_qty
-
-	# Convert to list
-	data = list(grouped_data.values())
-
-	return data
-
-
-def get_work_order_operations(filters):
-	"""Get all work order operations grouped by work order"""
-	conditions = get_conditions(filters)
-
-	query = f"""
-		SELECT
-			wo.name AS work_order,
-			woo.operation,
-			woo.completed_qty
-		FROM
-			`tabWork Order` wo
 		INNER JOIN
 			`tabWork Order Operation` woo ON woo.parent = wo.name
-		INNER JOIN
-			`tabSales Order` so ON so.name = wo.sales_order
 		WHERE {conditions}
-		AND wo.docstatus != 2
 		AND woo.operation IS NOT NULL
-		ORDER BY wo.name, woo.idx
+		ORDER BY so.name, soi.item_code, wo.name, woo.idx
 	"""
 
 	rows = frappe.db.sql(query, filters, as_dict=True)
 
-	# Group by work_order
-	work_order_ops = {}
+	# Process rows to calculate pending qty and status
+	data = []
 	for row in rows:
-		wo_name = row.work_order
-		if wo_name not in work_order_ops:
-			work_order_ops[wo_name] = []
-		work_order_ops[wo_name].append({"operation": row.operation, "completed_qty": row.completed_qty})
+		planned_qty = row.get("planned_qty", 0) or 0
+		completed_qty = row.get("completed_qty", 0) or 0
+		pending_qty = planned_qty - completed_qty
 
-	return work_order_ops
+		# Determine status based on pending and completed qty
+		if pending_qty == 0:
+			status = "Completed"
+		elif completed_qty == 0 and pending_qty > 0:
+			status = "Not Started"
+		else:
+			status = "Pending"
+
+		data_row = {
+			"sales_order_id": row.get("sales_order_id"),
+			"customer_name": row.get("customer_name"),
+			"item_name": row.get("item_name"),
+			"work_order": row.get("work_order"),
+			"operation": row.get("operation"),
+			"planned_qty": planned_qty,
+			"completed_qty": completed_qty,
+			"pending_qty": pending_qty,
+			"status": status,
+		}
+
+		# Apply status filter if provided
+		if filters.get("status"):
+			if data_row["status"] != filters.get("status"):
+				continue
+
+		data.append(data_row)
+
+	return data

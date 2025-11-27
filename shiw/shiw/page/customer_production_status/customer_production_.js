@@ -65,18 +65,19 @@ function createFilterBar(state) {
 	// Individual filter wrappers
 	const $salesOrderWrap = $('<div style="min-width:220px;"></div>');
 	const $customerWrap = $('<div style="min-width:220px;"></div>');
+	const $statusWrap = $('<div style="min-width:200px;"></div>');
 	const $btnWrap = $('<div style="display:flex;align-items:end;gap:8px;"></div>');
 
 	// Assemble filter controls
-	$filterControls.append($salesOrderWrap).append($customerWrap);
+	$filterControls.append($salesOrderWrap).append($customerWrap).append($statusWrap);
 	$filterBar.append($filterControls).append($btnWrap);
 	$(state.page.main).append($filterBar);
 
 	// Create filter controls
-	createFilterControls(state, $salesOrderWrap, $customerWrap, $btnWrap);
+	createFilterControls(state, $salesOrderWrap, $customerWrap, $statusWrap, $btnWrap);
 }
 
-function createFilterControls(state, $salesOrderWrap, $customerWrap, $btnWrap) {
+function createFilterControls(state, $salesOrderWrap, $customerWrap, $statusWrap, $btnWrap) {
 	// Debounce function for auto-refresh (shared across all controls)
 	const debouncedRefresh = () => {
 		if (state.refreshTimeout) {
@@ -115,6 +116,20 @@ function createFilterControls(state, $salesOrderWrap, $customerWrap, $btnWrap) {
 		render_input: true,
 	});
 
+	// Status control
+	state.controls.status = frappe.ui.form.make_control({
+		parent: $statusWrap.get(0),
+		df: {
+			fieldtype: 'Select',
+			label: __('Status'),
+			fieldname: 'status',
+			options: '\nCompleted\nPending\nNot Started',
+			reqd: 0,
+			onchange: debouncedRefresh, // Auto-refresh on change
+		},
+		render_input: true,
+	});
+
 	// Refresh button
 	const $refreshBtn = $('<button class="btn btn-primary" style="padding:10px 20px;font-weight:500;"><i class="fa fa-refresh" style="margin-right:6px;"></i>' + __('Refresh') + '</button>');
 
@@ -125,7 +140,7 @@ function createFilterControls(state, $salesOrderWrap, $customerWrap, $btnWrap) {
 }
 
 function createSummaryCards(state) {
-	const $cardsContainer = $('<div class="customer-prod-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:24px;"></div>');
+	const $cardsContainer = $('<div class="customer-prod-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:24px;"></div>');
 	$(state.page.main).append($cardsContainer);
 	state.$cards = $cardsContainer;
 }
@@ -162,6 +177,9 @@ function bindEventHandlers(state) {
 
 	$(state.controls.customer_name.$input).on('change', debouncedRefresh);
 	$(state.controls.customer_name.$input).on('blur', debouncedRefresh);
+
+	$(state.controls.status.$input).on('change', debouncedRefresh);
+	$(state.controls.status.$input).on('blur', debouncedRefresh);
 
 	// Button events (refresh button still available for manual refresh)
 	state.controls.refreshBtn.on('click', () => {
@@ -207,10 +225,18 @@ function refreshDashboard(state) {
 }
 
 function getFilters(state) {
-	return {
+	const filters = {
 		sales_order_id: state.controls.sales_order_id.get_value(),
 		customer_name: state.controls.customer_name.get_value(),
 	};
+
+	// Only add status filter if a value is selected
+	const statusValue = state.controls.status.get_value();
+	if (statusValue) {
+		filters.status = statusValue;
+	}
+
+	return filters;
 }
 
 function renderDashboardData(state, response) {
@@ -247,15 +273,28 @@ function renderDashboardData(state, response) {
 }
 
 function calculateSummary(data) {
-	let totalQtyManufactured = 0;
+	let totalPlannedQty = 0;
+	let totalCompletedQty = 0;
+	let totalPendingQty = 0;
 	const uniqueCustomers = new Set();
 	const uniqueSalesOrders = new Set();
 	const uniqueItems = new Set();
+	const uniqueWorkOrders = new Set();
+	const statusCounts = {
+		'Completed': 0,
+		'Pending': 0,
+		'Not Started': 0
+	};
 
 	data.forEach((row) => {
-		if (row.qty_manufactured) {
-			totalQtyManufactured += parseFloat(row.qty_manufactured) || 0;
-		}
+		const plannedQty = parseFloat(row.planned_qty) || 0;
+		const completedQty = parseFloat(row.completed_qty) || 0;
+		const pendingQty = parseFloat(row.pending_qty) || 0;
+
+		totalPlannedQty += plannedQty;
+		totalCompletedQty += completedQty;
+		totalPendingQty += pendingQty;
+
 		if (row.customer_name) {
 			uniqueCustomers.add(row.customer_name);
 		}
@@ -265,13 +304,28 @@ function calculateSummary(data) {
 		if (row.item_name) {
 			uniqueItems.add(row.item_name);
 		}
+		if (row.work_order) {
+			uniqueWorkOrders.add(row.work_order);
+		}
+		if (row.status && statusCounts.hasOwnProperty(row.status)) {
+			statusCounts[row.status]++;
+		}
 	});
 
+	const completionPercentage = totalPlannedQty > 0
+		? ((totalCompletedQty / totalPlannedQty) * 100).toFixed(2)
+		: 0;
+
 	return {
-		totalQtyManufactured: totalQtyManufactured,
+		totalPlannedQty: totalPlannedQty,
+		totalCompletedQty: totalCompletedQty,
+		totalPendingQty: totalPendingQty,
+		completionPercentage: completionPercentage,
 		uniqueCustomers: uniqueCustomers.size,
 		uniqueSalesOrders: uniqueSalesOrders.size,
 		uniqueItems: uniqueItems.size,
+		uniqueWorkOrders: uniqueWorkOrders.size,
+		statusCounts: statusCounts,
 	};
 }
 
@@ -285,25 +339,60 @@ function renderSummaryCards(state, summary) {
 			description: __('Number of unique sales orders'),
 		},
 		{
-			value: summary.uniqueCustomers,
-			label: __('Total Customers'),
-			icon: 'fa fa-users',
-			color: '#2ecc71',
-			description: __('Number of unique customers'),
+			value: summary.uniqueWorkOrders,
+			label: __('Total Work Orders'),
+			icon: 'fa fa-cogs',
+			color: '#16a085',
+			description: __('Number of unique work orders'),
 		},
 		{
-			value: summary.uniqueItems,
-			label: __('Total Items'),
-			icon: 'fa fa-cube',
-			color: '#9b59b6',
-			description: __('Number of unique items'),
+			value: format_number(summary.totalPlannedQty, null, 2),
+			label: __('Total Planned Qty'),
+			icon: 'fa fa-calendar-check-o',
+			color: '#34495e',
+			description: __('Total planned quantity'),
 		},
 		{
-			value: format_number(summary.totalQtyManufactured, null, 2),
-			label: __('Total Qty Manufactured'),
-			icon: 'fa fa-industry',
-			color: '#e67e22',
-			description: __('Total quantity manufactured'),
+			value: format_number(summary.totalCompletedQty, null, 2),
+			label: __('Total Completed Qty'),
+			icon: 'fa fa-check-circle',
+			color: '#27ae60',
+			description: __('Total completed quantity'),
+		},
+		{
+			value: format_number(summary.totalPendingQty, null, 2),
+			label: __('Total Pending Qty'),
+			icon: 'fa fa-clock-o',
+			color: '#f39c12',
+			description: __('Total pending quantity'),
+		},
+		{
+			value: summary.completionPercentage + '%',
+			label: __('Completion %'),
+			icon: 'fa fa-percent',
+			color: '#8e44ad',
+			description: __('Overall completion percentage'),
+		},
+		{
+			value: summary.statusCounts['Completed'],
+			label: __('Completed Operations'),
+			icon: 'fa fa-check-square-o',
+			color: '#27ae60',
+			description: __('Number of completed operations'),
+		},
+		{
+			value: summary.statusCounts['Pending'],
+			label: __('Pending Operations'),
+			icon: 'fa fa-hourglass-half',
+			color: '#f39c12',
+			description: __('Number of pending operations'),
+		},
+		{
+			value: summary.statusCounts['Not Started'],
+			label: __('Not Started Operations'),
+			icon: 'fa fa-circle-o',
+			color: '#e74c3c',
+			description: __('Number of not started operations'),
 		},
 	];
 
@@ -374,6 +463,21 @@ function renderDataTable(state, columns, data) {
 				value = `<a href="${linkUrl}" class="link-cell" style="color:#007bff;text-decoration:none;cursor:pointer;font-weight:500;">${frappe.utils.escape_html(value)}</a>`;
 			} else if (col.fieldtype === 'Float' || col.fieldtype === 'Int') {
 				value = format_number(value || 0, null, col.fieldtype === 'Int' ? 0 : 2);
+			} else if (fieldname === 'status') {
+				// Add color coding for status
+				let statusColor = '#95a5a6'; // default gray
+				let statusBg = '#ecf0f1';
+				if (value === 'Completed') {
+					statusColor = '#27ae60';
+					statusBg = '#d5f4e6';
+				} else if (value === 'Pending') {
+					statusColor = '#f39c12';
+					statusBg = '#fef5e7';
+				} else if (value === 'Not Started') {
+					statusColor = '#e74c3c';
+					statusBg = '#fadbd8';
+				}
+				value = `<span style="display:inline-block;padding:4px 12px;border-radius:12px;background:${statusBg};color:${statusColor};font-weight:500;font-size:0.85rem;">${frappe.utils.escape_html(value)}</span>`;
 			} else {
 				value = frappe.utils.escape_html(value || '');
 			}

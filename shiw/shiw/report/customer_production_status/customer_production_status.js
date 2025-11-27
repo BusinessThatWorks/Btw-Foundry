@@ -14,6 +14,12 @@ frappe.query_reports["Customer Production Status"] = {
 			"label": __("Customer Name"),
 			"fieldtype": "Link",
 			"options": "Customer"
+		},
+		{
+			"fieldname": "status",
+			"label": __("Status"),
+			"fieldtype": "Select",
+			"options": "\nCompleted\nPending\nNot Started"
 		}
 	]
 };
