@@ -48,6 +48,7 @@ app_license = "mit"
 page_js = {
 	"heat-dashboard": "shiw/page/heat_dashboard/heat_dashboard.js",
 	"mould-dashboard": "shiw/page/mould_dashboard/mould_dashboard.js",
+	"customer-production-status": "shiw/page/customer_production_status/customer_production_.js",
 }
 
 # include js in doctype views
@@ -263,7 +264,7 @@ page_js = {
 # fixtures = ["Custom Field"]
 fixtures = [
 	{"doctype": "Custom Field", "filters": {"module": "shiw"}},
-	{"doctype": "Page", "filters": {"module": "shiw"}},
+	{"doctype": "Print Format", "filters": {"module": "shiw"}},
 ]
 
 # doctype_js = {
