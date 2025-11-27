@@ -332,41 +332,6 @@ function calculateSummary(data) {
 function renderSummaryCards(state, summary) {
 	const cards = [
 		{
-			value: summary.uniqueSalesOrders,
-			label: __('Total Sales Orders'),
-			icon: 'fa fa-file-text-o',
-			color: '#3498db',
-			description: __('Number of unique sales orders'),
-		},
-		{
-			value: summary.uniqueWorkOrders,
-			label: __('Total Work Orders'),
-			icon: 'fa fa-cogs',
-			color: '#16a085',
-			description: __('Number of unique work orders'),
-		},
-		{
-			value: format_number(summary.totalPlannedQty, null, 2),
-			label: __('Total Planned Qty'),
-			icon: 'fa fa-calendar-check-o',
-			color: '#34495e',
-			description: __('Total planned quantity'),
-		},
-		{
-			value: format_number(summary.totalCompletedQty, null, 2),
-			label: __('Total Completed Qty'),
-			icon: 'fa fa-check-circle',
-			color: '#27ae60',
-			description: __('Total completed quantity'),
-		},
-		{
-			value: format_number(summary.totalPendingQty, null, 2),
-			label: __('Total Pending Qty'),
-			icon: 'fa fa-clock-o',
-			color: '#f39c12',
-			description: __('Total pending quantity'),
-		},
-		{
 			value: summary.completionPercentage + '%',
 			label: __('Completion %'),
 			icon: 'fa fa-percent',
