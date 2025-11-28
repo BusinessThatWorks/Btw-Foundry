@@ -396,32 +396,32 @@ function calculateSummary(data) {
 function renderSummaryCards(state, summary) {
 	const cards = [
 		{
-			value: summary.completionPercentage + '%',
-			label: __('Completion %'),
-			icon: 'fa fa-percent',
-			color: '#8e44ad',
-			description: __('Overall completion percentage'),
+			value: summary.uniqueSalesOrders,
+			label: __('Total Sales Orders'),
+			icon: 'fa fa-file-text-o',
+			color: '#3498db',
+			description: __('Number of unique sales orders'),
 		},
 		{
-			value: summary.statusCounts['Completed'],
-			label: __('Completed Operations'),
-			icon: 'fa fa-check-square-o',
+			value: format_number(summary.totalPlannedQty, null, 2),
+			label: __('Total Planned Qty'),
+			icon: 'fa fa-calendar-check-o',
+			color: '#34495e',
+			description: __('Total planned quantity'),
+		},
+		{
+			value: format_number(summary.totalCompletedQty, null, 2),
+			label: __('Total Completed Qty'),
+			icon: 'fa fa-check-circle',
 			color: '#27ae60',
-			description: __('Number of completed operations'),
+			description: __('Total completed quantity'),
 		},
 		{
-			value: summary.statusCounts['Pending'],
-			label: __('Pending Operations'),
-			icon: 'fa fa-hourglass-half',
+			value: format_number(summary.totalPendingQty, null, 2),
+			label: __('Total Pending Qty'),
+			icon: 'fa fa-clock-o',
 			color: '#f39c12',
-			description: __('Number of pending operations'),
-		},
-		{
-			value: summary.statusCounts['Not Started'],
-			label: __('Not Started Operations'),
-			icon: 'fa fa-circle-o',
-			color: '#e74c3c',
-			description: __('Number of not started operations'),
+			description: __('Total pending quantity'),
 		},
 	];
 
