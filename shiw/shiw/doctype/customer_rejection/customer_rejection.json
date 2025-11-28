@@ -1,44 +1,48 @@
 {
  "actions": [],
- "allow_import": 1,
  "allow_rename": 1,
- "autoname": "format:{FLR} - {date} - {shift_type}",
- "creation": "2025-11-27 10:47:10.198855",
+ "creation": "2025-11-28 10:24:35.902133",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_um9v",
   "date",
-  "column_break_cblp",
+  "column_break_vkvj",
   "shift_type",
-  "column_break_okcb",
-  "linked_stock_entry",
-  "section_break_brle",
-  "table_yncx",
-  "section_break_dchv",
-  "total_qty_rejected",
-  "total_flr_cast_weight",
-  "column_break_mbzp",
-  "rejected_qty",
-  "amended_from",
-  "total_flr_bunch_weight",
-  "section_break_whpp",
-  "rejection_table",
+  "column_break_zzch",
+  "stock_entry_id",
+  "section_break_mqwq",
+  "table_njcn",
+  "section_break_iaov",
+  "total_customer_rejected_quantity",
+  "total_customer_rejection_cast_weight",
+  "column_break_plzc",
+  "rejection_",
+  "total_customer_rejection_bunch_weight",
+  "section_break_lah8",
   "amended_from"
  ],
  "fields": [
   {
-   "fieldname": "section_break_um9v",
+   "fieldname": "section_break_lah8",
    "fieldtype": "Section Break"
   },
   {
-   "default": "Today",
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Customer Rejection",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
    "fieldname": "date",
    "fieldtype": "Date",
    "label": "Date"
   },
   {
-   "fieldname": "column_break_cblp",
+   "fieldname": "column_break_vkvj",
    "fieldtype": "Column Break"
   },
   {
@@ -48,96 +52,61 @@
    "options": "\nDay Shift\nNight Shift"
   },
   {
-   "fieldname": "column_break_okcb",
+   "fieldname": "column_break_zzch",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "linked_stock_entry",
+   "fieldname": "stock_entry_id",
    "fieldtype": "Link",
    "label": "Stock Entry ID",
-   "options": "Stock Entry",
-   "read_only": 1
+   "options": "Stock Entry"
   },
   {
-   "fieldname": "section_break_brle",
+   "fieldname": "section_break_mqwq",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "table_yncx",
+   "fieldname": "table_njcn",
    "fieldtype": "Table",
    "options": "First Line Inspection Report"
   },
   {
-   "fieldname": "section_break_dchv",
+   "fieldname": "section_break_iaov",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "total_qty_rejected",
+   "fieldname": "total_customer_rejected_quantity",
    "fieldtype": "Int",
-   "label": "Total Qty Rejected"
+   "label": "Total Customer Rejected Quantity"
   },
   {
-   "fieldname": "total_flr_cast_weight",
+   "fieldname": "total_customer_rejection_cast_weight",
    "fieldtype": "Float",
-   "label": "Total FLR Cast Weight",
-   "precision": "2"
+   "label": "Total Customer Rejection Cast Weight"
   },
   {
-   "fieldname": "column_break_mbzp",
+   "fieldname": "column_break_plzc",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "rejected_qty",
+   "fieldname": "rejection_",
    "fieldtype": "Percent",
-   "label": "Rejected Qty %",
-   "precision": "2"
+   "label": "Rejection %"
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "First Line Rejection",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
-   "fieldname": "total_flr_bunch_weight",
+   "fieldname": "total_customer_rejection_bunch_weight",
    "fieldtype": "Float",
-   "label": "Total FLR Bunch Weight",
-   "precision": "2"
-  },
-  {
-   "fieldname": "section_break_whpp",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "rejection_table",
-   "fieldtype": "Table",
-   "label": "Rejection Table",
-   "options": "Rejection Table"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Cusomer RejectionS",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
+   "label": "Total Customer Rejection Bunch Weight"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-11-27 10:47:10.198855",
+ "modified": "2025-11-28 10:33:31.611742",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Customer Rejection",
- "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -158,6 +127,5 @@
  "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": [],
- "track_changes": 1
+ "states": []
 }
