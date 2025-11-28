@@ -337,59 +337,58 @@ function calculateInProgress(data) {
 }
 
 function calculateSummary(data) {
+	// Group data by sales_order_id to get last operation for each sales order
+	const groupedBySalesOrder = {};
+
+	data.forEach((row, index) => {
+		const salesOrderId = row.sales_order_id || 'unknown';
+		if (!groupedBySalesOrder[salesOrderId]) {
+			groupedBySalesOrder[salesOrderId] = [];
+		}
+		// Store original index to maintain order
+		groupedBySalesOrder[salesOrderId].push({ ...row, originalIndex: index });
+	});
+
 	let totalPlannedQty = 0;
 	let totalCompletedQty = 0;
 	let totalPendingQty = 0;
-	const uniqueCustomers = new Set();
 	const uniqueSalesOrders = new Set();
-	const uniqueItems = new Set();
-	const uniqueWorkOrders = new Set();
-	const statusCounts = {
-		'Completed': 0,
-		'Pending': 0,
-		'Not Started': 0
-	};
 
-	data.forEach((row) => {
-		const plannedQty = parseFloat(row.planned_qty) || 0;
-		const completedQty = parseFloat(row.completed_qty) || 0;
-		const pendingQty = parseFloat(row.pending_qty) || 0;
+	// Process each sales order
+	Object.keys(groupedBySalesOrder).forEach(salesOrderId => {
+		const operations = groupedBySalesOrder[salesOrderId];
 
-		totalPlannedQty += plannedQty;
-		totalCompletedQty += completedQty;
-		totalPendingQty += pendingQty;
+		// Sort operations by original index to maintain sequence order
+		// The last operation in the chain will be the one that appears last
+		operations.sort((a, b) => a.originalIndex - b.originalIndex);
 
-		if (row.customer_name) {
-			uniqueCustomers.add(row.customer_name);
-		}
-		if (row.sales_order_id) {
-			uniqueSalesOrders.add(row.sales_order_id);
-		}
-		if (row.item_name) {
-			uniqueItems.add(row.item_name);
-		}
-		if (row.work_order) {
-			uniqueWorkOrders.add(row.work_order);
-		}
-		if (row.status && statusCounts.hasOwnProperty(row.status)) {
-			statusCounts[row.status]++;
+		// Get the last operation (final operation in the chain)
+		// This represents the final stage of production for this sales order
+		const lastOperation = operations[operations.length - 1];
+
+		if (lastOperation) {
+			// For each sales order:
+			// - Planned Qty = last operation's planned_qty (same for all operations, but we take last one)
+			// - Completed Qty = last operation's completed_qty (final stage completion)
+			// - Pending Qty = planned_qty - completed_qty
+			const plannedQty = parseFloat(lastOperation.planned_qty) || 0;
+			const completedQty = parseFloat(lastOperation.completed_qty) || 0;
+			const pendingQty = plannedQty - completedQty;
+
+			// Sum up across all sales orders
+			totalPlannedQty += plannedQty;
+			totalCompletedQty += completedQty;
+			totalPendingQty += pendingQty;
+
+			uniqueSalesOrders.add(salesOrderId);
 		}
 	});
-
-	const completionPercentage = totalPlannedQty > 0
-		? ((totalCompletedQty / totalPlannedQty) * 100).toFixed(2)
-		: 0;
 
 	return {
 		totalPlannedQty: totalPlannedQty,
 		totalCompletedQty: totalCompletedQty,
 		totalPendingQty: totalPendingQty,
-		completionPercentage: completionPercentage,
-		uniqueCustomers: uniqueCustomers.size,
 		uniqueSalesOrders: uniqueSalesOrders.size,
-		uniqueItems: uniqueItems.size,
-		uniqueWorkOrders: uniqueWorkOrders.size,
-		statusCounts: statusCounts,
 	};
 }
 
