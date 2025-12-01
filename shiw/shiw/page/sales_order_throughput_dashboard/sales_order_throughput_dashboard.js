@@ -324,6 +324,43 @@ frappe.pages['sales-order-throughput-dashboard'].on_page_load = function (wrappe
     }
 
     // Mould tab functions
+    function formatMouldTime(value) {
+        if (value === null || value === undefined || isNaN(Number(value))) {
+            return '';
+        }
+
+        // Assume mould_time is in minutes → convert to seconds
+        let totalSeconds = Math.floor(Number(value) * 60);
+
+        const days = Math.floor(totalSeconds / (24 * 60 * 60));
+        totalSeconds %= (24 * 60 * 60);
+        const hours = Math.floor(totalSeconds / (60 * 60));
+        totalSeconds %= (60 * 60);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        const parts = [];
+        if (days) {
+            parts.push(days + ' day');
+        }
+        if (hours) {
+            parts.push(hours + ' hour');
+        }
+        if (minutes) {
+            parts.push(minutes + ' min');
+        }
+        if (seconds) {
+            parts.push(seconds + ' sec');
+        }
+
+        // If everything was zero, show "0 days"
+        if (!parts.length) {
+            return '0 days';
+        }
+
+        return parts.join(' ');
+    }
+
     async function load_mould_data() {
         try {
             const filters = {
@@ -395,8 +432,14 @@ frappe.pages['sales-order-throughput-dashboard'].on_page_load = function (wrappe
 
                 if (value === null || value === undefined) {
                     $td.text('');
+                } else if (fieldname === 'mould_no' && typeof value === 'number') {
+                    // Show mould no as integer
+                    $td.text(Math.round(value));
+                } else if (fieldname === 'mould_time' && typeof value === 'number') {
+                    // Show mould time as Day Hour Min Sec
+                    $td.text(formatMouldTime(value));
                 } else if (typeof value === 'number') {
-                    // Format numbers to 2 decimal places
+                    // Default numeric formatting
                     $td.text(Number(value).toFixed(2));
                 } else {
                     $td.text(String(value));
@@ -447,8 +490,15 @@ frappe.pages['sales-order-throughput-dashboard'].on_page_load = function (wrappe
                 const value = row[fieldname];
                 const isNumber = typeof value === 'number';
                 const $td = $('<td style="padding: 8px; border: 1px solid #dee2e6;' + (isNumber ? ' text-align:right;' : '') + '"></td>').appendTo($tr);
+
                 if (value === null || value === undefined) {
                     $td.text('');
+                } else if (fieldname === 'mould_no' && isNumber) {
+                    // Show mould no as integer in totals
+                    $td.text(Math.round(value));
+                } else if (fieldname === 'mould_time' && isNumber) {
+                    // Show mould time as Day Hour Min Sec in totals
+                    $td.text(formatMouldTime(value));
                 } else if (isNumber) {
                     $td.text(Number(value).toFixed(2));
                 } else {
