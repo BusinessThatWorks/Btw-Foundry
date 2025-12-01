@@ -199,6 +199,42 @@ frappe.pages['sales-order-throughput-dashboard'].on_page_load = function (wrappe
     let last_result = null;
 
     // ========== MOULD TAB CONTENT ==========
+    // Mould number cards (3 cards)
+    const $mould_cards_section = $('<div class="row mb-4"></div>').appendTo($mould_main_tab);
+
+    const $mould_card1 = $('<div class="col-md-4 mb-3"></div>').appendTo($mould_cards_section);
+    const $mould_card2 = $('<div class="col-md-4 mb-3"></div>').appendTo($mould_cards_section);
+    const $mould_card3 = $('<div class="col-md-4 mb-3"></div>').appendTo($mould_cards_section);
+
+    const $mould_total_qty_card = $('<div class="card text-center" style="' + baseCardStyle + '"></div>').appendTo($mould_card1);
+    const $mould_total_mould_no_card = $('<div class="card text-center" style="' + baseCardStyle + '"></div>').appendTo($mould_card2);
+    const $mould_total_time_card = $('<div class="card text-center" style="' + baseCardStyle + '"></div>').appendTo($mould_card3);
+
+    // Mould card contents
+    $mould_total_qty_card.html(`
+		<div class="card-body" style="` + bodyStyle + `">
+			<h5 class="card-title" style="` + titleStyle + `">Total Mould Quantity</h5>
+			<h2 class="card-text" style="` + valueStyle + `" id="mould-total-qty-value">0.00</h2>
+			<small style="` + subStyle + `"></small>
+		</div>
+	`);
+
+    $mould_total_mould_no_card.html(`
+		<div class="card-body" style="` + bodyStyle + `">
+			<h5 class="card-title" style="` + titleStyle + `">Total Mould No</h5>
+			<h2 class="card-text" style="` + valueStyle + `" id="mould-total-mould-no-value">0</h2>
+			<small style="` + subStyle + `"></small>
+		</div>
+	`);
+
+    $mould_total_time_card.html(`
+		<div class="card-body" style="` + bodyStyle + `">
+			<h5 class="card-title" style="` + titleStyle + `">Total Mould Time</h5>
+			<h2 class="card-text" style="` + valueStyle + `" id="mould-total-time-value">0 days</h2>
+			<small style="` + subStyle + `"></small>
+		</div>
+	`);
+
     // Create filter section for Mould tab
     const $mould_filters = $('<div class="form-section" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;"></div>').appendTo($mould_main_tab);
     $('<div class="section-head" style="font-weight: bold; margin-bottom: 15px; color: #333;">Filters</div>').appendTo($mould_filters);
@@ -361,6 +397,37 @@ frappe.pages['sales-order-throughput-dashboard'].on_page_load = function (wrappe
         return parts.join(' ');
     }
 
+    function update_mould_number_cards(data) {
+        if (!data || !data.result || !data.result.length) {
+            $('#mould-total-qty-value').text('0.00');
+            $('#mould-total-mould-no-value').text('0');
+            $('#mould-total-time-value').text('0 days');
+            return;
+        }
+
+        const total_rows = data.result.filter(row => row && row.bold);
+
+        let total_qty = 0;
+        let total_mould_no = 0;
+        let total_mould_time = 0;
+
+        total_rows.forEach(row => {
+            if (row.qty && typeof row.qty === 'number') {
+                total_qty += row.qty;
+            }
+            if (row.mould_no && typeof row.mould_no === 'number') {
+                total_mould_no += row.mould_no;
+            }
+            if (row.mould_time && typeof row.mould_time === 'number') {
+                total_mould_time += row.mould_time;
+            }
+        });
+
+        $('#mould-total-qty-value').text(total_qty.toFixed(2));
+        $('#mould-total-mould-no-value').text(Math.round(total_mould_no));
+        $('#mould-total-time-value').text(formatMouldTime(total_mould_time));
+    }
+
     async function load_mould_data() {
         try {
             const filters = {
@@ -382,6 +449,7 @@ frappe.pages['sales-order-throughput-dashboard'].on_page_load = function (wrappe
             last_mould_result = result.message;
             render_mould_table(last_mould_result);
             render_mould_totals(last_mould_result);
+            update_mould_number_cards(last_mould_result);
 
         } catch (error) {
             console.error('Error loading mould data:', error);
