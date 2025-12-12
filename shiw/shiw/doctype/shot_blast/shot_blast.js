@@ -58,10 +58,12 @@ frappe.ui.form.on("Shot Blast", {
 
         // Initial sum calculation
         update_totals_and_sums(frm);
+        update_total_consumption_valuation(frm);
     },
 
     refresh: function (frm) {
         update_totals_and_sums(frm); // Update sums on refresh
+        update_total_consumption_valuation(frm);
     }
 });
 
@@ -184,6 +186,25 @@ frappe.ui.form.on("Shakeout Table", {
     }
 });
 
+// ---------------- Consumption (table_ffte / Consumption-Mould) ----------------
+
+frappe.ui.form.on("Consumption-Mould", {
+    rate: function (frm, cdt, cdn) {
+        update_consumption_amount_and_total(frm, cdt, cdn);
+    },
+
+    weight_in_kg: function (frm, cdt, cdn) {
+        update_consumption_amount_and_total(frm, cdt, cdn);
+    },
+
+    used_in_kg: function (frm, cdt, cdn) {
+        // If you prefer amount based on used_in_kg instead,
+        // you can adjust the helper below. For now we keep it
+        // consistent and just recompute totals when this changes.
+        update_consumption_amount_and_total(frm, cdt, cdn);
+    }
+});
+
 function clear_row_fields(frm, cdt, cdn) {
     if (!locals[cdt] || !locals[cdt][cdn]) return;
     let row = locals[cdt][cdn];
@@ -288,4 +309,35 @@ function update_totals_and_sums(frm) {
 
     frappe.model.set_value(frm.doc.doctype, frm.doc.name, 'total_shot_blast_cast_weight', flt(total_shot_blast_cast_weight));
     frappe.model.set_value(frm.doc.doctype, frm.doc.name, 'total_shot_blast_bunch_weight', flt(total_shot_blast_bunch_weight));
+}
+
+// ---------------- Helpers for Consumption valuation ----------------
+
+function update_consumption_amount_and_total(frm, cdt, cdn) {
+    let row = locals[cdt][cdn];
+    if (!row) return;
+
+    // Calculate row amount = rate * weight_in_kg
+    let rate = flt(row.rate || 0);
+    let qty = flt(row.weight_in_kg || 0);
+    let amount = rate * qty;
+
+    frappe.model.set_value(cdt, cdn, "amount", amount);
+
+    // Update parent total
+    update_total_consumption_valuation(frm);
+}
+
+function update_total_consumption_valuation(frm) {
+    if (!frm || !frm.doc) return;
+
+    let total = 0;
+
+    if (frm.doc.table_ffte && Array.isArray(frm.doc.table_ffte)) {
+        frm.doc.table_ffte.forEach(row => {
+            total += flt(row.amount || 0);
+        });
+    }
+
+    frm.set_value("total_consumption_valuation", flt(total));
 }

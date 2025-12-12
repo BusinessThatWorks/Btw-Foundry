@@ -60,16 +60,16 @@
   "total_cost",
   "column_break_dblz",
   "core_cost_per_kg",
-  "shortblast_section",
-  "shortblast_weight",
+  "shotblast_section",
+  "shotblast_weight",
   "column_break_ygpp",
-  "shortblast_cost",
+  "shotblast_cost",
   "column_break_kccy",
-  "shortblast_labour_cost",
+  "shotblast_labour_cost",
   "column_break_pekx",
-  "total_shortblast__cost",
+  "total_shotblast__cost",
   "column_break_yqix",
-  "shortblast_cost_per_kg",
+  "shotblast_cost_per_kg",
   "fettling_section",
   "fettling_weight",
   "column_break_irma",
@@ -83,13 +83,13 @@
   "fininshing_section",
   "finishing_weight",
   "column_break_butx",
-  "fininshing_cost",
+  "finishing_cost",
   "column_break_mdat",
   "finishing_labour_cost",
   "column_break_bhlu",
   "total_finishing_cost",
   "column_break_fgpv",
-  "fininshing_cost_per_kg",
+  "finishing_cost_per_kg",
   "repairing_section",
   "repairing_weight",
   "column_break_xplk",
@@ -409,50 +409,20 @@
    "label": "Core Cost Per Kg"
   },
   {
-   "fieldname": "shortblast_section",
-   "fieldtype": "Section Break",
-   "label": "ShortBlast "
-  },
-  {
-   "fieldname": "shortblast_weight",
-   "fieldtype": "Float",
-   "label": "ShortBlast Weight"
-  },
-  {
    "fieldname": "column_break_ygpp",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "shortblast_cost",
-   "fieldtype": "Float",
-   "label": "ShortBlast Cost"
   },
   {
    "fieldname": "column_break_kccy",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "shortblast_labour_cost",
-   "fieldtype": "Float",
-   "label": "ShortBlast Labour Cost"
-  },
-  {
    "fieldname": "column_break_pekx",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "total_shortblast__cost",
-   "fieldtype": "Float",
-   "label": "Total ShortBlast  Cost"
-  },
-  {
    "fieldname": "column_break_yqix",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "shortblast_cost_per_kg",
-   "fieldtype": "Float",
-   "label": "ShortBlast Cost Per Kg"
   },
   {
    "fieldname": "fettling_section",
@@ -515,11 +485,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "fininshing_cost",
-   "fieldtype": "Float",
-   "label": "Fininshing Cost"
-  },
-  {
    "fieldname": "column_break_mdat",
    "fieldtype": "Column Break"
   },
@@ -540,11 +505,6 @@
   {
    "fieldname": "column_break_fgpv",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "fininshing_cost_per_kg",
-   "fieldtype": "Float",
-   "label": "Fininshing Cost Per Kg"
   },
   {
    "fieldname": "repairing_section",
@@ -656,13 +616,53 @@
    "fieldname": "extra_per_kg",
    "fieldtype": "Float",
    "label": "Extra per Kg"
+  },
+  {
+   "fieldname": "shotblast_section",
+   "fieldtype": "Section Break",
+   "label": "ShotBlast "
+  },
+  {
+   "fieldname": "shotblast_weight",
+   "fieldtype": "Float",
+   "label": "ShotBlast Weight"
+  },
+  {
+   "fieldname": "shotblast_cost",
+   "fieldtype": "Float",
+   "label": "ShotBlast Cost"
+  },
+  {
+   "fieldname": "shotblast_labour_cost",
+   "fieldtype": "Float",
+   "label": "ShotBlast Labour Cost"
+  },
+  {
+   "fieldname": "total_shotblast__cost",
+   "fieldtype": "Float",
+   "label": "Total ShotBlast  Cost"
+  },
+  {
+   "fieldname": "shotblast_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "ShotBlast Cost Per Kg"
+  },
+  {
+   "fieldname": "finishing_cost",
+   "fieldtype": "Float",
+   "label": "Finishing Cost"
+  },
+  {
+   "fieldname": "finishing_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "Finishing Cost Per Kg"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-11-28 12:06:03.228489",
+ "modified": "2025-12-12 10:42:48.685792",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Daily Costing",
@@ -682,9 +682,7 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "row_format": "Dynamic",
- "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
