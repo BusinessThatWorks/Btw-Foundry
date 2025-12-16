@@ -1,0 +1,400 @@
+{
+ "charts": [
+  {
+   "chart_name": "Furnace Wise Heat Count",
+   "label": "Furnace Wise Heat Count"
+  }
+ ],
+ "content": "[{\"id\":\"BCthw0mirY\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Furnace Wise Heat Count\",\"col\":12}},{\"id\":\"4xBi-ssMD4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Weight Tracker\",\"col\":6}},{\"id\":\"qHAB6m1nQM\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Pattern &amp; Tooling</b></span>\",\"col\":12}},{\"id\":\"7rt-QHgNHM\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Pattern Manufacturing Details\",\"col\":6}},{\"id\":\"WDUoDnmavT\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tooling\",\"col\":6}},{\"id\":\"WiaJLDCdLK\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"xswhUIOsSf\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Core</b></span>\",\"col\":12}},{\"id\":\"6AMX_Gd2Jo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Core Master\",\"col\":6}},{\"id\":\"uzpwYHfNwg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Core Box\",\"col\":6}},{\"id\":\"Pz2AmvD83G\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Core Production\",\"col\":3}},{\"id\":\"DI86AsWIDD\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"cWV28o9s1O\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Melting</b></span>\",\"col\":12}},{\"id\":\"T1fo56kJ8c\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Heat\",\"col\":6}},{\"id\":\"j6RrCvVOAC\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Heat Loss\",\"col\":6}},{\"id\":\"aIyumuLDw0\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"y1DvkeGU2p\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Moulding</b></span>\",\"col\":12}},{\"id\":\"7iN__rRK63\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sand Plant Log\",\"col\":6}},{\"id\":\"ytb5Z9QcR2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Co2 Mould Batch\",\"col\":6}},{\"id\":\"gCxGbJpGgI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Jolt Squeeze Mould Batch\",\"col\":6}},{\"id\":\"xdnEUOWiD2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"No-Bake Mould Batch\",\"col\":6}},{\"id\":\"3N-mHImZZ6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"HPML Mould Batch\",\"col\":6}},{\"id\":\"KsPkdwdnis\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Green Sand Hand Mould Batch\",\"col\":6}},{\"id\":\"jm73jiKi2G\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Reason For Mould Loss\",\"col\":6}},{\"id\":\"XZVi7o0CJk\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Pouring</b></span>\",\"col\":12}},{\"id\":\"ITU10EdJUx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Pouring\",\"col\":3}},{\"id\":\"-CJur1SuDC\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"aaFktCwVnd\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Shake Out &amp; Shot Bast</b></span>\",\"col\":12}},{\"id\":\"_MX2l4rhV1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shake Out\",\"col\":6}},{\"id\":\"BPCzxqB_gz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shot Blast\",\"col\":6}},{\"id\":\"bp4Sio6U1O\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"First Line Rejection\",\"col\":6}},{\"id\":\"1VU7jzyHUz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"First Line Deviation\",\"col\":6}},{\"id\":\"BMGl7vJKui\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"9ptL0xZpb8\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Finishing &amp; Second Line Rejection</b></span>\",\"col\":12}},{\"id\":\"QyRYG1Ocwn\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fettling\",\"col\":6}},{\"id\":\"Z8oSc3Cck9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Finishing\",\"col\":6}},{\"id\":\"hr95XkZNCx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Heat Treatment\",\"col\":6}},{\"id\":\"iEDEwzD0gg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Second Line Rejection\",\"col\":6}},{\"id\":\"Iv6Epd0XCC\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Repair/Rework\",\"col\":6}},{\"id\":\"l-UaK9tz-j\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Paint\",\"col\":6}},{\"id\":\"m1pCOkMYqN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"FInal Inspection\",\"col\":6}},{\"id\":\"8regoLMVQB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer Rejection\",\"col\":6}},{\"id\":\"LwMEC9Qx4o\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"wbGxplIy33\",\"type\":\"card\",\"data\":{\"card_name\":\"Masters\",\"col\":3}},{\"id\":\"lrVE89alXO\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"1OW8UVWQzu\",\"type\":\"card\",\"data\":{\"card_name\":\"Dashboard\",\"col\":4}}]",
+ "creation": "2025-03-17 17:28:57.222614",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "tool",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "Foundry",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Masters",
+   "link_count": 6,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Grade Type",
+   "link_count": 0,
+   "link_to": "Grade Master",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Ladle - Master",
+   "link_count": 0,
+   "link_to": "Ladle - Master",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Furnace - Master",
+   "link_count": 0,
+   "link_to": "Furnace - Master",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Foundry Match Plate Size",
+   "link_count": 0,
+   "link_to": "Foundry Match Plate Size",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Core Type",
+   "link_count": 0,
+   "link_to": "Mould Core Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Mould Box Size",
+   "link_count": 0,
+   "link_to": "Mould Box Size",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reports",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Total Charge MIx Item Wise Weight",
+   "link_count": 0,
+   "link_to": "Total Charge MIx Item Wise Weight",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Heat",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Heat Report",
+   "link_count": 0,
+   "link_to": "Heat Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Heat",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Grade Wise Heat Costing",
+   "link_count": 0,
+   "link_to": "Grade Wise Heat Costing",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Heat",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Heat Costing Report",
+   "link_count": 0,
+   "link_to": "Burning Loss And Power Consumption report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Dashboard",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Production Dashboard",
+   "link_count": 0,
+   "link_to": "unified-dashboard",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2025-12-16 15:55:17.734918",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Foundry",
+ "number_cards": [],
+ "owner": "subhangee@clapgrow.com",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 2.0,
+ "shortcuts": [
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "Heat",
+   "link_to": "Heat",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Daily Weight Tracker",
+   "link_to": "Daily Weight Tracker",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "FInal Inspection",
+   "link_to": "Final Inspections",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Customer Rejection",
+   "link_to": "Customer Rejection",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Blue",
+   "doc_view": "List",
+   "label": "First Line Deviation",
+   "link_to": "First Line Deviation",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Second Line Rejection",
+   "link_to": "Second Line Rejection",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Fettling",
+   "link_to": "Fettling",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Paint",
+   "link_to": "Paint",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Finishing",
+   "link_to": "Finishing",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "Daily Heat Loss",
+   "link_to": "Daily Heat Loss",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Heat Treatment",
+   "link_to": "Heat Treatment",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Repair/Rework",
+   "link_to": "Repair",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Pattern Manufacturing Details",
+   "link_to": "New Pattern Manufacturing Details",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Tooling",
+   "link_to": "New Tooling",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Core Master",
+   "link_to": "Core Master",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Core Box",
+   "link_to": "Core Box",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Core Production",
+   "link_to": "Core Production",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "Sand Plant Log",
+   "link_to": "Sand Plant Log",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "Co2 Mould Batch",
+   "link_to": "Co2 Mould Batch",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "Jolt Squeeze Mould Batch",
+   "link_to": "Jolt Squeeze Mould Batch",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "No-Bake Mould Batch",
+   "link_to": "No-Bake Mould Batch",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "HPML Mould Batch",
+   "link_to": "HPML Mould Batch",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "Green Sand Hand Mould Batch",
+   "link_to": "Green Sand Hand Mould Batch",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "Reason For Mould Loss",
+   "link_to": "Reason For Mould Loss",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Blue",
+   "doc_view": "List",
+   "label": "Pouring",
+   "link_to": "Pouring",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Cyan",
+   "doc_view": "List",
+   "label": "Shake Out",
+   "link_to": "Shake Out",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Cyan",
+   "doc_view": "List",
+   "label": "Shot Blast",
+   "link_to": "Shot Blast",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Cyan",
+   "doc_view": "List",
+   "label": "First Line Rejection",
+   "link_to": "First Line Rejection",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Foundry"
+}
