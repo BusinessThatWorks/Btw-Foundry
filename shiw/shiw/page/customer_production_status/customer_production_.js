@@ -192,25 +192,42 @@ function refreshDashboard(state) {
 	console.log('Refreshing customer production dashboard...');
 
 	const filters = getFilters(state);
+	const statusFilter = filters.status; // Store status filter separately
 
 	// Show loading state
 	state.page.set_indicator(__('Loading production data...'), 'blue');
+
+	// First, fetch ALL data without status filter to calculate in_progress correctly
+	const filtersWithoutStatus = { ...filters };
+	delete filtersWithoutStatus.status; // Remove status filter for calculation
 
 	// Fetch data using report API (consistent with other dashboards)
 	frappe.call({
 		method: 'frappe.desk.query_report.run',
 		args: {
 			report_name: 'Customer Production Status',
-			filters: filters,
+			filters: filtersWithoutStatus, // Fetch all data for correct calculation
 			ignore_prepared_report: 1,
 		},
 		callback: (r) => {
 			state.page.clear_indicator();
 
 			if (r.message) {
+				let data = r.message.result || [];
+
+				// Calculate in_progress using ALL data (without status filter)
+				const dataWithInProgress = calculateInProgress(data);
+
+				// Now apply status filter if it was selected (for display only)
+				if (statusFilter) {
+					data = dataWithInProgress.filter(row => row.status === statusFilter);
+				} else {
+					data = dataWithInProgress;
+				}
+
 				renderDashboardData(state, {
 					columns: r.message.columns || [],
-					data: r.message.result || [],
+					data: data,
 				});
 			} else {
 				showError(state, __('An error occurred while loading data'));
@@ -262,17 +279,15 @@ function renderDashboardData(state, response) {
 		return;
 	}
 
-	// Calculate in_progress_qty for each row based on operation chain
-	const dataWithInProgress = calculateInProgress(data);
-
+	// Data already has in_progress calculated (done before status filter was applied)
 	// Calculate summary metrics
-	const summary = calculateSummary(dataWithInProgress);
+	const summary = calculateSummary(data);
 
 	// Render summary cards
 	renderSummaryCards(state, summary);
 
 	// Render data table
-	renderDataTable(state, columns, dataWithInProgress);
+	renderDataTable(state, columns, data);
 }
 
 function calculateInProgress(data) {
