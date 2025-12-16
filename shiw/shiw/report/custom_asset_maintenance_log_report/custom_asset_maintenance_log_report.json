@@ -1,0 +1,88 @@
+{
+    "add_total_row": 0,
+    "add_translate_data": 0,
+    "columns": [],
+    "creation": "2025-01-27 10:00:00",
+    "disabled": 0,
+    "docstatus": 0,
+    "doctype": "Report",
+    "filters": [
+        {
+            "fieldname": "from_date",
+            "fieldtype": "Date",
+            "label": "From Date",
+            "mandatory_depends_on": "",
+            "options": "",
+            "width": "80"
+        },
+        {
+            "fieldname": "to_date",
+            "fieldtype": "Date",
+            "label": "To Date",
+            "mandatory_depends_on": "",
+            "options": "",
+            "width": "80"
+        },
+        {
+            "fieldname": "asset_name",
+            "fieldtype": "Link",
+            "label": "Asset Name",
+            "mandatory_depends_on": "",
+            "options": "Asset",
+            "width": "80"
+        },
+        {
+            "fieldname": "item_code",
+            "fieldtype": "Link",
+            "label": "Item Code",
+            "mandatory_depends_on": "",
+            "options": "Item",
+            "width": "80"
+        },
+        {
+            "fieldname": "maintenance_type",
+            "fieldtype": "Select",
+            "label": "Maintenance Type",
+            "mandatory_depends_on": "",
+            "options": "Preventive\nCorrective\nBreakdown",
+            "width": "80"
+        },
+        {
+            "fieldname": "maintenance_status",
+            "fieldtype": "Select",
+            "label": "Maintenance Status",
+            "mandatory_depends_on": "",
+            "options": "Pending\nCompleted\nOverdue\nCancelled",
+            "width": "80"
+        },
+        {
+            "fieldname": "assign_to_name",
+            "fieldtype": "Data",
+            "label": "Assign To Name",
+            "mandatory_depends_on": "",
+            "options": "",
+            "width": "80"
+        }
+    ],
+    "idx": 0,
+    "is_standard": "Yes",
+    "letterhead": null,
+    "modified": "2025-01-27 10:00:00",
+    "modified_by": "Administrator",
+    "module": "shiw",
+    "name": "Custom Asset Maintenance Log Report",
+    "owner": "Administrator",
+    "prepared_report": 0,
+    "ref_doctype": "Asset Maintenance Log",
+    "report_name": "Custom Asset Maintenance Log Report",
+    "report_type": "Script Report",
+    "roles": [
+        {
+            "role": "System Manager"
+        },
+        {
+            "role": "Maintenance User"
+        }
+    ],
+    "timeout": 0
+}

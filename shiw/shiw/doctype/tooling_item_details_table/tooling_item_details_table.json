@@ -1,142 +1,142 @@
 {
- "actions": [],
- "allow_rename": 1,
- "creation": "2025-04-03 14:51:27.819311",
- "doctype": "DocType",
- "editable_grid": 1,
- "engine": "InnoDB",
- "field_order": [
-  "item",
-  "column_break_ntbz",
-  "customer",
-  "column_break_keyj",
-  "drawing",
-  "column_break_yssl",
-  "match_plate_size",
-  "column_break_uhlr",
-  "image",
-  "column_break_uqlt",
-  "pattern_id_options",
-  "section_break_ywcj",
-  "cavity",
-  "column_break_nvsg",
-  "pattern_id",
-  "column_break_htjm",
-  "casting_weight",
-  "bunch_weight_in_kg"
- ],
- "fields": [
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "in_global_search": 1,
-   "label": "Item",
-   "options": "New Pattern Manufacturing Details"
-  },
-  {
-   "fieldname": "column_break_ntbz",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "customer",
-   "fieldtype": "Link",
-   "in_filter": 1,
-   "in_global_search": 1,
-   "in_list_view": 1,
-   "in_preview": 1,
-   "in_standard_filter": 1,
-   "label": "Customer",
-   "options": "Customer"
-  },
-  {
-   "fieldname": "column_break_keyj",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "drawing",
-   "fieldtype": "Data",
-   "label": "Drawing"
-  },
-  {
-   "fieldname": "column_break_yssl",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "cavity",
-   "fieldtype": "Select",
-   "label": "Cavity",
-   "options": "\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10"
-  },
-  {
-   "fieldname": "column_break_uhlr",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "item.cast_weight",
-   "fieldname": "casting_weight",
-   "fieldtype": "Float",
-   "label": "Casting Weight (in Kg)",
-   "precision": "2"
-  },
-  {
-   "fieldname": "column_break_uqlt",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "pattern_id",
-   "fieldtype": "Select",
-   "label": "Pattern ID",
-   "reqd": 1
-  },
-  {
-   "fieldname": "match_plate_size",
-   "fieldtype": "Data",
-   "label": "Match Plate Size"
-  },
-  {
-   "fieldname": "image",
-   "fieldtype": "Attach Image",
-   "label": "Image"
-  },
-  {
-   "fieldname": "pattern_id_options",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Pattern id options"
-  },
-  {
-   "fieldname": "section_break_ywcj",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_nvsg",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "column_break_htjm",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "item.bunch_weight",
-   "fieldname": "bunch_weight_in_kg",
-   "fieldtype": "Float",
-   "label": "Bunch Weight (in Kg)",
-   "precision": "2"
-  }
- ],
- "grid_page_length": 50,
- "index_web_pages_for_search": 1,
- "istable": 1,
- "links": [],
- "modified": "2025-08-26 14:56:50.218390",
- "modified_by": "Administrator",
- "module": "shiw",
- "name": "Tooling Item Details table",
- "owner": "subhangee@clapgrow.com",
- "permissions": [],
- "row_format": "Dynamic",
- "sort_field": "modified",
- "sort_order": "DESC",
- "states": [],
- "track_changes": 1
+   "actions": [],
+   "allow_rename": 1,
+   "creation": "2025-04-03 14:51:27.819311",
+   "doctype": "DocType",
+   "editable_grid": 1,
+   "engine": "InnoDB",
+   "field_order": [
+      "item",
+      "column_break_ntbz",
+      "customer",
+      "column_break_keyj",
+      "drawing",
+      "column_break_yssl",
+      "match_plate_size",
+      "column_break_uhlr",
+      "image",
+      "column_break_uqlt",
+      "pattern_id_options",
+      "section_break_ywcj",
+      "cavity",
+      "column_break_nvsg",
+      "pattern_id",
+      "column_break_htjm",
+      "casting_weight",
+      "bunch_weight_in_kg"
+   ],
+   "fields": [
+      {
+         "fieldname": "item",
+         "fieldtype": "Link",
+         "in_global_search": 1,
+         "label": "Item",
+         "options": "New Pattern Manufacturing Details"
+      },
+      {
+         "fieldname": "column_break_ntbz",
+         "fieldtype": "Column Break"
+      },
+      {
+         "fieldname": "customer",
+         "fieldtype": "Link",
+         "in_filter": 1,
+         "in_global_search": 1,
+         "in_list_view": 1,
+         "in_preview": 1,
+         "in_standard_filter": 1,
+         "label": "Customer",
+         "options": "Customer"
+      },
+      {
+         "fieldname": "column_break_keyj",
+         "fieldtype": "Column Break"
+      },
+      {
+         "fieldname": "drawing",
+         "fieldtype": "Data",
+         "label": "Drawing"
+      },
+      {
+         "fieldname": "column_break_yssl",
+         "fieldtype": "Column Break"
+      },
+      {
+         "fieldname": "cavity",
+         "fieldtype": "Select",
+         "label": "Cavity",
+         "options": "\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n64"
+      },
+      {
+         "fieldname": "column_break_uhlr",
+         "fieldtype": "Column Break"
+      },
+      {
+         "fetch_from": "item.cast_weight",
+         "fieldname": "casting_weight",
+         "fieldtype": "Float",
+         "label": "Casting Weight (in Kg)",
+         "precision": "2"
+      },
+      {
+         "fieldname": "column_break_uqlt",
+         "fieldtype": "Column Break"
+      },
+      {
+         "fieldname": "pattern_id",
+         "fieldtype": "Select",
+         "label": "Pattern ID",
+         "reqd": 1
+      },
+      {
+         "fieldname": "match_plate_size",
+         "fieldtype": "Data",
+         "label": "Match Plate Size"
+      },
+      {
+         "fieldname": "image",
+         "fieldtype": "Attach Image",
+         "label": "Image"
+      },
+      {
+         "fieldname": "pattern_id_options",
+         "fieldtype": "Data",
+         "hidden": 1,
+         "label": "Pattern id options"
+      },
+      {
+         "fieldname": "section_break_ywcj",
+         "fieldtype": "Section Break"
+      },
+      {
+         "fieldname": "column_break_nvsg",
+         "fieldtype": "Column Break"
+      },
+      {
+         "fieldname": "column_break_htjm",
+         "fieldtype": "Column Break"
+      },
+      {
+         "fetch_from": "item.bunch_weight",
+         "fieldname": "bunch_weight_in_kg",
+         "fieldtype": "Float",
+         "label": "Bunch Weight (in Kg)",
+         "precision": "2"
+      }
+   ],
+   "grid_page_length": 50,
+   "index_web_pages_for_search": 1,
+   "istable": 1,
+   "links": [],
+   "modified": "2025-11-19 11:18:37.171858",
+   "modified_by": "Administrator",
+   "module": "shiw",
+   "name": "Tooling Item Details table",
+   "owner": "subhangee@clapgrow.com",
+   "permissions": [],
+   "row_format": "Dynamic",
+   "sort_field": "modified",
+   "sort_order": "DESC",
+   "states": [],
+   "track_changes": 1
 }

@@ -1,10 +1,10 @@
 {
-    "creation": "2025-01-27 10:00:00.000000",
+    "content": null,
+    "creation": "2025-09-10 16:15:26.767854",
+    "docstatus": 0,
     "doctype": "Page",
-    "engine": "InnoDB",
-    "field_order": [],
-    "fields": [],
-    "modified": "2025-01-27 10:00:00.000000",
+    "idx": 0,
+    "modified": "2025-09-10 17:33:10.040406",
     "modified_by": "Administrator",
     "module": "shiw",
     "name": "unified-dashboard",
@@ -21,5 +21,6 @@
     "script": null,
     "standard": "Yes",
     "style": null,
+    "system_page": 1,
     "title": "Unified Foundry Dashboard"
 }

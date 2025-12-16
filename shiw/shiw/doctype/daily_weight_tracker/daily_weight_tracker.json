@@ -1,0 +1,80 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:DWT - {date}",
+ "creation": "2025-06-12 13:42:57.398016",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "column_break_kqco",
+  "section_break_yjyl",
+  "table_btjs",
+  "section_break_bexd",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "column_break_kqco",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_yjyl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_btjs",
+   "fieldtype": "Table",
+   "options": "Daily Weight Tracker Table"
+  },
+  {
+   "fieldname": "section_break_bexd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Daily Weight Tracker",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-10-07 15:00:44.981218",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Daily Weight Tracker",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -1,85 +1,195 @@
 {
- "actions": [],
- "allow_import": 1,
- "allow_rename": 1,
- "autoname": "field:furnace_name",
- "creation": "2025-03-17 13:06:54.665936",
- "doctype": "DocType",
- "engine": "InnoDB",
- "field_order": [
-  "company",
-  "furnace_name",
-  "furnace_type",
-  "average_heat_time",
-  "furnace_capacity__in_kg",
-  "exceed_limit"
- ],
- "fields": [
-  {
-   "fieldname": "company",
-   "fieldtype": "Link",
-   "label": "Company",
-   "options": "Company",
-   "reqd": 1
-  },
-  {
-   "fieldname": "furnace_name",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Furnace Name",
-   "reqd": 1,
-   "unique": 1
-  },
-  {
-   "fieldname": "furnace_type",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Furnace type"
-  },
-  {
-   "fieldname": "average_heat_time",
-   "fieldtype": "Duration",
-   "in_list_view": 1,
-   "label": "Average Heat Time"
-  },
-  {
-   "fieldname": "furnace_capacity__in_kg",
-   "fieldtype": "Float",
-   "label": "Furnace Capacity ( in KG)"
-  },
-  {
-   "description": "Please enter limit in Percentage for Exceed limit of \"Furnace Capacity\"",
-   "fieldname": "exceed_limit",
-   "fieldtype": "Float",
-   "label": "Charge Mix Exceed Limit"
-  }
- ],
- "grid_page_length": 50,
- "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2025-07-19 17:20:52.867625",
- "modified_by": "Administrator",
- "module": "shiw",
- "name": "Furnace - Master",
- "naming_rule": "By fieldname",
- "owner": "Administrator",
- "permissions": [
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
-  }
- ],
- "row_format": "Dynamic",
- "sort_field": "modified",
- "sort_order": "DESC",
- "states": [],
- "track_changes": 1
+  "actions": [],
+  "allow_import": 1,
+  "allow_rename": 1,
+  "autoname": "field:furnace_name",
+  "creation": "2025-03-17 13:06:54.665936",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "company",
+    "furnace_type",
+    "furnace_capacity__in_kg",
+    "column_break_imsf",
+    "furnace_name",
+    "exceed_limit",
+    "section_break_vzqv",
+    "average_heat_time",
+    "custom_patching",
+    "custom_lining_heat_in_min",
+    "custom_lining_repair_time",
+    "column_break_fcml",
+    "custom_max_heats",
+    "custom_patching_time_in_min",
+    "custom_lining_time_in_min",
+    "custom_patching_cycle",
+    "section_break_qrmx",
+    "custom_shift_availability",
+    "custom_throughput",
+    "column_break_rqpw",
+    "section_break_vozg",
+    "custom_total_heats_completed",
+    "custom_next_planned_lining_date",
+    "column_break_wund",
+    "custom_last_lining_date"
+  ],
+  "fields": [
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company",
+      "reqd": 1
+    },
+    {
+      "fieldname": "furnace_name",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Furnace Name",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "furnace_type",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Furnace type"
+    },
+    {
+      "fieldname": "average_heat_time",
+      "fieldtype": "Duration",
+      "in_list_view": 1,
+      "label": "Average Heat Time"
+    },
+    {
+      "fieldname": "furnace_capacity__in_kg",
+      "fieldtype": "Float",
+      "label": "Furnace Capacity ( in KG)"
+    },
+    {
+      "description": "Please enter limit in Percentage for Exceed limit of \"Furnace Capacity\"",
+      "fieldname": "exceed_limit",
+      "fieldtype": "Float",
+      "label": "Charge Mix Exceed Limit"
+    },
+    {
+      "fieldname": "column_break_imsf",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "section_break_vzqv",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "column_break_fcml",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "section_break_qrmx",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "column_break_rqpw",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "section_break_vozg",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "column_break_wund",
+      "fieldtype": "Column Break"
+    },
+    {
+      "description": "No. of heats possible before patching",
+      "fieldname": "custom_patching",
+      "fieldtype": "Int",
+      "label": "Patching"
+    },
+    {
+      "fieldname": "custom_lining_heat_in_min",
+      "fieldtype": "Int",
+      "label": "Lining Heat (In Min)"
+    },
+    {
+      "fieldname": "custom_lining_repair_time",
+      "fieldtype": "Int",
+      "label": "Lining Repair Time"
+    },
+    {
+      "description": "No. of heats possible before relining.",
+      "fieldname": "custom_max_heats",
+      "fieldtype": "Float",
+      "label": "Max Heats"
+    },
+    {
+      "fieldname": "custom_patching_time_in_min",
+      "fieldtype": "Int",
+      "label": "Patching Time (In Min)"
+    },
+    {
+      "fieldname": "custom_lining_time_in_min",
+      "fieldtype": "Int",
+      "label": "Lining Time (In Min)"
+    },
+    {
+      "fieldname": "custom_patching_cycle",
+      "fieldtype": "Int",
+      "label": "Patching Cycle"
+    },
+    {
+      "description": "Available production hours per day",
+      "fieldname": "custom_shift_availability",
+      "fieldtype": "Float",
+      "label": "Shift Availability"
+    },
+    {
+      "fieldname": "custom_throughput",
+      "fieldtype": "Float",
+      "label": "Throughput"
+    },
+    {
+      "fieldname": "custom_total_heats_completed",
+      "fieldtype": "Int",
+      "label": "Total Heats Completed"
+    },
+    {
+      "fieldname": "custom_next_planned_lining_date",
+      "fieldtype": "Date",
+      "label": "Next Planned Lining Date"
+    },
+    {
+      "fieldname": "custom_last_lining_date",
+      "fieldtype": "Date",
+      "label": "Last Lining Date"
+    }
+  ],
+  "grid_page_length": 50,
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2025-10-07 12:32:00.693506",
+  "modified_by": "Administrator",
+  "module": "shiw",
+  "name": "Furnace - Master",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "row_format": "Dynamic",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "track_changes": 1
 }

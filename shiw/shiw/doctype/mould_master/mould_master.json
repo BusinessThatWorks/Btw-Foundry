@@ -1,0 +1,85 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-21 17:48:25.701250",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "moulding_system",
+  "column_break_uobr",
+  "capacity",
+  "cycle_time_to_create_1_mould",
+  "max_moulds_per_shift",
+  "column_break_dajp",
+  "moulds_per_hour",
+  "daily_capacity"
+ ],
+ "fields": [
+  {
+   "fieldname": "moulding_system",
+   "fieldtype": "Data",
+   "label": "Moulding System"
+  },
+  {
+   "fieldname": "column_break_uobr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "capacity",
+   "fieldtype": "Section Break",
+   "label": "Capacity & Cycle TIme"
+  },
+  {
+   "description": "In Min",
+   "fieldname": "cycle_time_to_create_1_mould",
+   "fieldtype": "Float",
+   "label": "Cycle Time To Create 1 Mould",
+   "precision": "2"
+  },
+  {
+   "fieldname": "max_moulds_per_shift",
+   "fieldtype": "Int",
+   "label": "Max Moulds Per Shift"
+  },
+  {
+   "fieldname": "column_break_dajp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "moulds_per_hour",
+   "fieldtype": "Float",
+   "label": "Moulds Per Hour"
+  },
+  {
+   "fieldname": "daily_capacity",
+   "fieldtype": "Int",
+   "label": "Daily Capacity"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-21 17:54:35.661813",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Mould Master",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

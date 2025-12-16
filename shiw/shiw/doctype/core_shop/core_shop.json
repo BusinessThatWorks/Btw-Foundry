@@ -1,0 +1,114 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-06 10:45:14.951353",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "column_break_kdzp",
+  "shift_type",
+  "section_break_awox",
+  "table_ejmy",
+  "section_break_i3kz",
+  "amended_from",
+  "rejection_reason_tab",
+  "table_uizm",
+  "consumption_tab",
+  "consumption_section",
+  "table_kpor"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_i3kz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Core Shop",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "column_break_kdzp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "label": "Shift Type",
+   "options": "\nDay Shift\nNight Shift"
+  },
+  {
+   "fieldname": "section_break_awox",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_ejmy",
+   "fieldtype": "Table",
+   "options": "Core Shop Table"
+  },
+  {
+   "fieldname": "rejection_reason_tab",
+   "fieldtype": "Tab Break",
+   "label": "Rejection Reason"
+  },
+  {
+   "fieldname": "consumption_tab",
+   "fieldtype": "Tab Break",
+   "label": "Consumption"
+  },
+  {
+   "fieldname": "consumption_section",
+   "fieldtype": "Section Break",
+   "label": "Consumption"
+  },
+  {
+   "fieldname": "table_kpor",
+   "fieldtype": "Table",
+   "options": "Core Consumption Table"
+  },
+  {
+   "fieldname": "table_uizm",
+   "fieldtype": "Table",
+   "options": "Core Rejection Table"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-11-06 10:54:44.895039",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Core Shop",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

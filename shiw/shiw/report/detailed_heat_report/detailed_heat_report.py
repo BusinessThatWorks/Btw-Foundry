@@ -154,61 +154,94 @@
 # 	return columns, data
 
 
-
-
-
-
-
 import frappe
+
 
 # Helper functions
 def flt(val):
-    try:
-        return float(val) if val not in [None, "", 0] else 0.0
-    except Exception:
-        return 0.0
+	try:
+		return float(val) if val not in [None, "", 0] else 0.0
+	except Exception:
+		return 0.0
+
 
 def flt_blank(val):
-    try:
-        f = float(val)
-        if f == 0:
-            return None
-        return f
-    except Exception:
-        return None
+	try:
+		f = float(val)
+		if f == 0:
+			return None
+		return f
+	except Exception:
+		return None
+
 
 def execute(filters=None):
-    columns = get_columns()
-    data = get_data(filters)
-    return columns, data
+	columns = get_columns()
+	data = get_data(filters)
+	return columns, data
+
 
 def get_columns():
-    return [
-        {"label": "Parent ID", "fieldname": "parent_id", "fieldtype": "Link", "options": "Pouring", "width": 140},
-        {"label": "Moulding System", "fieldname": "moulding_system", "fieldtype": "Data", "width": 180},
-        {"label": "Mould Batch No", "fieldname": "mould_batch_no", "fieldtype": "Data", "width": 180},
-        {"label": "Tooling ID", "fieldname": "tooling_id", "fieldtype": "Link", "options": "New Tooling", "width": 180},
-        {"label": "Heat", "fieldname": "heat_no", "fieldtype": "Link", "options": "Heat", "width": 110},
-        {"label": "Charge Mix Valuation", "fieldname": "charge_mix_value", "fieldtype": "Currency", "width": 150},
-        {"label": "Charge Mix Item", "fieldname": "charge_item", "fieldtype": "Link", "options": "Item", "width": 200},
-        {"label": "Charge Mix Weight", "fieldname": "charge_weight", "fieldtype": "Float", "width": 120},
-        {"label": "Charge Mix Rate", "fieldname": "charge_item_rate", "fieldtype": "Currency", "width": 130},
-        {"label": "Charge Mix Amount", "fieldname": "charge_amount", "fieldtype": "Currency", "width": 130},
-        {"label": "Consumption Item", "fieldname": "cons_item", "fieldtype": "Link", "options": "Item", "width": 200},
-        {"label": "UOM", "fieldname": "uom", "fieldtype": "Data", "width": 70},
-        {"label": "Consumption Weight (kg)", "fieldname": "cons_weight", "fieldtype": "Float", "width": 140},
-        {"label": "Consumption Rate", "fieldname": "cons_rate", "fieldtype": "Currency", "width": 130},
-        {"label": "Consumption Amount", "fieldname": "cons_amount", "fieldtype": "Currency", "width": 130},
-        {"label": "Total Consumption Valuation", "fieldname": "total_consumption", "fieldtype": "Currency", "width": 180},
-    ]
+	return [
+		{
+			"label": "Parent ID",
+			"fieldname": "parent_id",
+			"fieldtype": "Link",
+			"options": "Pouring",
+			"width": 140,
+		},
+		{"label": "Moulding System", "fieldname": "moulding_system", "fieldtype": "Data", "width": 180},
+		{"label": "Mould Batch No", "fieldname": "mould_batch_no", "fieldtype": "Data", "width": 180},
+		{
+			"label": "Tooling ID",
+			"fieldname": "tooling_id",
+			"fieldtype": "Link",
+			"options": "New Tooling",
+			"width": 180,
+		},
+		{"label": "Heat", "fieldname": "heat_no", "fieldtype": "Link", "options": "Heat", "width": 110},
+		{
+			"label": "Charge Mix Valuation",
+			"fieldname": "charge_mix_value",
+			"fieldtype": "Currency",
+			"width": 150,
+		},
+		{
+			"label": "Charge Mix Item",
+			"fieldname": "charge_item",
+			"fieldtype": "Link",
+			"options": "Item",
+			"width": 200,
+		},
+		{"label": "Charge Mix Weight", "fieldname": "charge_weight", "fieldtype": "Float", "width": 120},
+		{"label": "Charge Mix Rate", "fieldname": "charge_item_rate", "fieldtype": "Currency", "width": 130},
+		{"label": "Charge Mix Amount", "fieldname": "charge_amount", "fieldtype": "Currency", "width": 130},
+		{
+			"label": "Consumption Item",
+			"fieldname": "cons_item",
+			"fieldtype": "Link",
+			"options": "Item",
+			"width": 200,
+		},
+		{"label": "UOM", "fieldname": "uom", "fieldtype": "Data", "width": 70},
+		{"label": "Consumption Weight (kg)", "fieldname": "cons_weight", "fieldtype": "Float", "width": 140},
+		{"label": "Consumption Rate", "fieldname": "cons_rate", "fieldtype": "Currency", "width": 130},
+		{"label": "Consumption Amount", "fieldname": "cons_amount", "fieldtype": "Currency", "width": 130},
+		{
+			"label": "Total Consumption Valuation",
+			"fieldname": "total_consumption",
+			"fieldtype": "Currency",
+			"width": 180,
+		},
+	]
+
 
 def get_data(filters):
-    data = []
-    try:
-        frappe.log_error("Start get_data", "Pouring Debug")
-
-        # Fetch Charge Mix rows
-        charge_rows = frappe.db.sql("""
+	data = []
+	try:
+		# Fetch Charge Mix rows
+		charge_rows = frappe.db.sql(
+			"""
             SELECT
                 p.name AS parent_id,
                 mb.mould_no AS mb_no,
@@ -225,10 +258,13 @@ def get_data(filters):
             JOIN `tabHeat` h ON h.name = mb.heat_no
             JOIN `tabCharge mix component table` cm ON cm.parent = h.name
             ORDER BY p.name, mb.idx, h.name, cm.idx
-        """, as_dict=True)
+        """,
+			as_dict=True,
+		)
 
-        # Fetch Consumption rows
-        consumption_rows = frappe.db.sql("""
+		# Fetch Consumption rows
+		consumption_rows = frappe.db.sql(
+			"""
             SELECT
                 p.name AS parent_id,
                 mb.mould_no AS mb_no,
@@ -244,111 +280,123 @@ def get_data(filters):
             JOIN `tabMould Batch` mb ON mb.parent = p.name
             JOIN `tabConsumption-Mould` cm ON cm.parent = mb.mould_no
             ORDER BY p.name, mb.idx, cm.idx
-        """, as_dict=True)
+        """,
+			as_dict=True,
+		)
 
-        # Group rows by parent_id -> (mould_no, heat_no)
-        grouped = {}
-        for r in charge_rows:
-            parent = r["parent_id"]
-            key = (r["mb_no"], r["heat_no"])
-            grouped.setdefault(parent, {"parent_info": r, "rows": {}})
-            grouped[parent]["rows"].setdefault(key, {"charge": [], "consumption": []})
-            grouped[parent]["rows"][key]["charge"].append(r)
+		# Group rows by parent_id -> (mould_no, heat_no)
+		grouped = {}
+		for r in charge_rows:
+			parent = r["parent_id"]
+			key = (r["mb_no"], r["heat_no"])
+			grouped.setdefault(parent, {"parent_info": r, "rows": {}})
+			grouped[parent]["rows"].setdefault(key, {"charge": [], "consumption": []})
+			grouped[parent]["rows"][key]["charge"].append(r)
 
-        for r in consumption_rows:
-            parent = r["parent_id"]
-            key = (r["mb_no"], r.get("heat_no") or "")
-            grouped.setdefault(parent, {"parent_info": r, "rows": {}})
-            grouped[parent]["rows"].setdefault(key, {"charge": [], "consumption": []})
-            grouped[parent]["rows"][key]["consumption"].append(r)
+		for r in consumption_rows:
+			parent = r["parent_id"]
+			key = (r["mb_no"], r.get("heat_no") or "")
+			grouped.setdefault(parent, {"parent_info": r, "rows": {}})
+			grouped[parent]["rows"].setdefault(key, {"charge": [], "consumption": []})
+			grouped[parent]["rows"][key]["consumption"].append(r)
 
-        # Build final rows with smart display
-        for parent_id, parent_grp in grouped.items():
-            parent_info = parent_grp["parent_info"]
-            rows = parent_grp["rows"]
-            first_row = True
+		# Sort grouped data by parent_id
+		sorted_groups = sorted(grouped.items())
 
-            # Track last displayed values for smart display
-            last_parent = None
-            last_moulding_system = None
-            last_mould_no = None
-            last_tooling_id = None
-            last_heat_no = None
+		# Build final rows with smart display + expand/collapse functionality
+		for parent_id, parent_grp in sorted_groups:
+			parent_info = parent_grp["parent_info"]
+			rows = parent_grp["rows"]
+			first_row = True
 
-            # Total consumption valuation once per parent
-            total_consumption = 0.0
-            try:
-                if parent_info.get("moulding_system") and parent_info.get("mb_no"):
-                    total_consumption = flt(frappe.db.get_value(
-                        parent_info.get("moulding_system"),
-                        parent_info.get("mb_no"),
-                        "total_consumption_valuation"
-                    ) or 0.0)
-            except Exception:
-                total_consumption = 0.0
+			# Track last displayed values for smart display
+			last_parent = None
+			last_moulding_system = None
+			last_mould_no = None
+			last_tooling_id = None
+			last_heat_no = None
 
-            for (mb_no, heat_no), rgrp in rows.items():
-                charge_list = rgrp.get("charge") or []
-                cons_list = rgrp.get("consumption") or []
+			# Total consumption valuation once per parent
+			total_consumption = 0.0
+			try:
+				if parent_info.get("moulding_system") and parent_info.get("mb_no"):
+					total_consumption = flt(
+						frappe.db.get_value(
+							parent_info.get("moulding_system"),
+							parent_info.get("mb_no"),
+							"total_consumption_valuation",
+						)
+						or 0.0
+					)
+			except Exception:
+				total_consumption = 0.0
 
-                max_len = max(len(charge_list), len(cons_list), 1)
-                charge_mix_value = flt(charge_list[0].get("charge_mix_value") or 0.0) if charge_list else None
+			for (mb_no, heat_no), rgrp in rows.items():
+				charge_list = rgrp.get("charge") or []
+				cons_list = rgrp.get("consumption") or []
 
-                for i in range(max_len):
-                    ch = charge_list[i] if i < len(charge_list) else {}
-                    co = cons_list[i] if i < len(cons_list) else {}
+				max_len = max(len(charge_list), len(cons_list), 1)
+				charge_mix_value = flt(charge_list[0].get("charge_mix_value") or 0.0) if charge_list else None
 
-                    # Smart display: show only if changed from previous row
-                    parent_val = parent_id if first_row else ""
-                    moulding_system_val = ch.get("moulding_system") or co.get("moulding_system") or parent_info.get("moulding_system")
-                    if moulding_system_val == last_moulding_system:
-                        moulding_system_val = ""
-                    else:
-                        last_moulding_system = moulding_system_val
+				for i in range(max_len):
+					ch = charge_list[i] if i < len(charge_list) else {}
+					co = cons_list[i] if i < len(cons_list) else {}
 
-                    mould_no_val = ch.get("mb_no") or co.get("mb_no")
-                    if mould_no_val == last_mould_no:
-                        mould_no_val = ""
-                    else:
-                        last_mould_no = mould_no_val
+					# Smart display: show only if changed from previous row
+					parent_val = parent_id if first_row else ""
+					moulding_system_val = (
+						ch.get("moulding_system")
+						or co.get("moulding_system")
+						or parent_info.get("moulding_system")
+					)
+					if moulding_system_val == last_moulding_system:
+						moulding_system_val = ""
+					else:
+						last_moulding_system = moulding_system_val
 
-                    tooling_val = ch.get("tooling_id") or co.get("tooling_id")
-                    if tooling_val == last_tooling_id:
-                        tooling_val = ""
-                    else:
-                        last_tooling_id = tooling_val
+					mould_no_val = ch.get("mb_no") or co.get("mb_no")
+					if mould_no_val == last_mould_no:
+						mould_no_val = ""
+					else:
+						last_mould_no = mould_no_val
 
-                    heat_val = ch.get("heat_no") or heat_no
-                    if heat_val == last_heat_no:
-                        heat_val = ""
-                    else:
-                        last_heat_no = heat_val
+					tooling_val = ch.get("tooling_id") or co.get("tooling_id")
+					if tooling_val == last_tooling_id:
+						tooling_val = ""
+					else:
+						last_tooling_id = tooling_val
 
-                    row = {
-                        "parent_id": parent_val,
-                        "moulding_system": moulding_system_val,
-                        "mould_batch_no": mould_no_val,
-                        "tooling_id": tooling_val,
-                        "heat_no": heat_val,
-                        "charge_mix_value": charge_mix_value if first_row else None,
-                        "charge_item": ch.get("charge_item"),
-                        "charge_weight": flt_blank(ch.get("charge_weight")),
-                        "charge_item_rate": flt_blank(ch.get("charge_item_rate")),
-                        "charge_amount": flt_blank(ch.get("charge_amount")),
-                        "cons_item": co.get("cons_item"),
-                        "uom": co.get("uom"),
-                        "cons_weight": flt_blank(co.get("cons_weight")),
-                        "cons_rate": flt_blank(co.get("cons_rate")),
-                        "cons_amount": flt_blank(co.get("cons_amount")),
-                        "total_consumption": total_consumption if first_row else None,
-                    }
+					heat_val = ch.get("heat_no") or heat_no
+					if heat_val == last_heat_no:
+						heat_val = ""
+					else:
+						last_heat_no = heat_val
 
-                    data.append(row)
-                    first_row = False
+					row = {
+						"parent_id": parent_val,
+						"moulding_system": moulding_system_val,
+						"mould_batch_no": mould_no_val,
+						"tooling_id": tooling_val,
+						"heat_no": heat_val,
+						"charge_mix_value": charge_mix_value if first_row else None,
+						"charge_item": ch.get("charge_item"),
+						"charge_weight": flt_blank(ch.get("charge_weight")),
+						"charge_item_rate": flt_blank(ch.get("charge_item_rate")),
+						"charge_amount": flt_blank(ch.get("charge_amount")),
+						"cons_item": co.get("cons_item"),
+						"uom": co.get("uom"),
+						"cons_weight": flt_blank(co.get("cons_weight")),
+						"cons_rate": flt_blank(co.get("cons_rate")),
+						"cons_amount": flt_blank(co.get("cons_amount")),
+						"total_consumption": total_consumption if first_row else None,
+						"indent": 0 if first_row else 1,  # First row is parent, others are children
+					}
 
-        frappe.log_error(f"Final rows prepared: {len(data)}", "Pouring Done")
-        return data
+					data.append(row)
+					first_row = False
 
-    except Exception as e:
-        frappe.log_error(f"Exception in get_data: {str(e)}", "Pouring Error")
-        return data
+		return data
+
+	except Exception as e:
+		frappe.log_error(f"Exception in get_data: {str(e)}", "Pouring Error")
+		return data

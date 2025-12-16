@@ -1,6 +1,6 @@
 # Copyright (c) 2025, beetashoke chakraborty and contributors
 # For license information, please see license.txt
-
+# will deploy tomorrow
 import frappe
 
 
@@ -36,9 +36,16 @@ def execute(filters=None):
 			"width": 150,
 		},
 		{"label": "Item", "fieldname": "item_code", "fieldtype": "Link", "options": "Item", "width": 150},
+		{
+			"label": "Item Group",
+			"fieldname": "item_group",
+			"fieldtype": "Link",
+			"options": "Item Group",
+			"width": 130,
+		},
 		{"label": "Accepted Quantity", "fieldname": "accepted_qty", "fieldtype": "Float", "width": 130},
-		{"label": "Rejected Quantity", "fieldname": "rejected_qty", "fieldtype": "Float", "width": 130},
 		{"label": "Amount", "fieldname": "amount", "fieldtype": "Currency", "width": 100},
+		{"label": "Rejected Quantity", "fieldname": "rejected_qty", "fieldtype": "Float", "width": 130},
 	]
 
 	conditions = ""
@@ -64,6 +71,10 @@ def execute(filters=None):
 		conditions += " AND pri.item_code = %(item_code)s"
 		values["item_code"] = filters["item_code"]
 
+	if filters.get("item_group"):
+		conditions += " AND i.item_group = %(item_group)s"
+		values["item_group"] = filters["item_group"]
+
 	data = frappe.db.sql(
 		f"""
         SELECT
@@ -71,6 +82,7 @@ def execute(filters=None):
             pri.purchase_order AS purchase_order,
             pr.supplier AS supplier,
             pri.item_code AS item_code,
+            i.item_group AS item_group,
             pri.qty AS accepted_qty,
             pri.rejected_qty AS rejected_qty,
             pri.amount AS amount
@@ -81,7 +93,7 @@ def execute(filters=None):
         JOIN
             `tabItem` i ON pri.item_code = i.name
         WHERE
-            i.item_group = 'Raw Material'
+            pri.qty >= 0
             {conditions}
         ORDER BY
             pr.posting_date DESC

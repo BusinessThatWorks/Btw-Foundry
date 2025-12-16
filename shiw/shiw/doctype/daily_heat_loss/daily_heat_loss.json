@@ -1,0 +1,163 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{date} - {###}",
+ "creation": "2025-04-09 15:32:20.662512",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_hnb7",
+  "date",
+  "column_break_mwnf",
+  "column_break_soqg",
+  "column_break_nrof",
+  "shift_type",
+  "heat_loss_section",
+  "target_liquid_metal",
+  "column_break_iunf",
+  "achieved_liquid_metal",
+  "column_break_qxei",
+  "achieved",
+  "column_break_pgbv",
+  "loss_liquid_metal",
+  "column_break_saax",
+  "loss",
+  "reason_for_heat_loss_section",
+  "table_heat_loss",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_hnb7",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_mwnf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_soqg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_nrof",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Shift Type",
+   "options": "\nDay Shift\nNight Shift",
+   "reqd": 1
+  },
+  {
+   "fieldname": "heat_loss_section",
+   "fieldtype": "Section Break",
+   "label": "Heat Loss"
+  },
+  {
+   "fieldname": "target_liquid_metal",
+   "fieldtype": "Float",
+   "label": "Target Liquid Metal",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_iunf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "achieved_liquid_metal",
+   "fieldtype": "Float",
+   "label": "Achieved Liquid Metal",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_qxei",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "achieved",
+   "fieldtype": "Percent",
+   "label": "% Achieved",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_pgbv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "loss_liquid_metal",
+   "fieldtype": "Float",
+   "label": "Loss Liquid Metal",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_saax",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "loss",
+   "fieldtype": "Percent",
+   "label": "% Loss",
+   "precision": "2"
+  },
+  {
+   "fieldname": "reason_for_heat_loss_section",
+   "fieldtype": "Section Break",
+   "label": "Reason For Heat Loss"
+  },
+  {
+   "fieldname": "table_heat_loss",
+   "fieldtype": "Table",
+   "options": "Reason For Heat Loss Table",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Daily Heat Loss",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-09-25 11:01:02.827998",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Daily Heat Loss",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -48,7 +48,7 @@ app_license = "mit"
 page_js = {
 	"heat-dashboard": "shiw/page/heat_dashboard/heat_dashboard.js",
 	"mould-dashboard": "shiw/page/mould_dashboard/mould_dashboard.js",
-	"customer-production-status": "shiw/page/customer_production_status/customer_production_.js",
+	"custom-asset-repair-dashboard": "shiw/page/custom_asset_repair_dashboard/custom_asset_repair_dashboard.js",
 }
 
 # include js in doctype views
@@ -157,23 +157,16 @@ page_js = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"shiw.tasks.all"
-# 	],
-# 	"daily": [
-# 		"shiw.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"shiw.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"shiw.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"shiw.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"all": ["shiw.tasks.all"],
+	"daily": ["shiw.tasks.daily"],
+	"hourly": ["shiw.tasks.hourly"],
+	"weekly": ["shiw.tasks.weekly"],
+	"monthly": ["shiw.tasks.monthly"],
+	"cron": {
+		"59 11 * * *": ["shiw.api.simple_daily_email.send_daily_critical_stock_email"],  # 11:59 AM daily
+	},
+}
 
 # Testing
 # -------
@@ -261,25 +254,26 @@ page_js = {
 # 	{"dt": "DocType", "filters": [["module", "=", "Foundry-SHIW"]]},  # <-- Keep this as "Foundry-SHIW"
 # ]
 
-# fixtures = ["Custom Field"]
 fixtures = [
 	{"doctype": "Custom Field", "filters": {"module": "shiw"}},
-	{"doctype": "Print Format", "filters": {"module": "shiw"}},
-	{"doctype": "Page", "filters": {"module": "shiw"}},
-	{"doctype": "Report", "filters": {"module": "shiw"}},
 ]
 
 # doctype_js = {
 #   "BOM": "public/js/bom.js"
 # }
 
+doctype_js = {
+	"Production Plan": "public/js/Production_Plan.js",
+	"Salary Structure": "public/js/salary_structure_formula.js",  # Re-enabled
+}
 
-# doc_events = {
-#     "BOM": {
-#       "before_save": "shiw.override.bom.apply_custom_rates_on_save",
-#         "on_submit": "shiw.override.bom.enqueue_post_submit_rate_fix"
-#     }
-# }
+
+doc_events = {
+	"Salary Structure": {
+		"before_save": "shiw.override.salary_structure_override.validate_salary_structure_formulas",
+		"on_save": "shiw.override.salary_structure_override.calculate_salary_structure_deductions",
+	}
+}
 # override_doctype_class = {
 #     "BOM": "shiw.override.bom_override.CustomBOM"
 # }

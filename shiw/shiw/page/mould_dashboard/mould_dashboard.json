@@ -1,25 +1,23 @@
 {
-    "name": "mould-dashboard",
-    "page_name": "mould_dashboard",
-    "title": "Mould Dashboard",
-    "route": "mould-dashboard",
     "content": null,
-    "script": "shiw.page.mould_dashboard.mould_dashboard.get_context",
-    "page_js": "shiw.page.mould_dashboard.mould_dashboard",
-    "module": "shiw",
-    "doctype": "Page",
-    "modified": "2025-01-01 00:00:00.000000",
-    "owner": "Administrator",
-    "creation": "2025-01-01 00:00:00.000000",
-    "modified_by": "Administrator",
+    "creation": "2025-09-10 16:15:26.739914",
     "docstatus": 0,
+    "doctype": "Page",
     "idx": 0,
-    "is_standard": "No",
+    "modified": "2025-09-10 17:33:17.743042",
+    "modified_by": "Administrator",
+    "module": "shiw",
+    "name": "mould-dashboard",
+    "owner": "Administrator",
+    "page_name": "mould-dashboard",
     "roles": [
         {
             "role": "System Manager"
         }
-    ]
+    ],
+    "script": null,
+    "standard": "Yes",
+    "style": null,
+    "system_page": 1,
+    "title": "Mould Dashboard"
 }
-
-

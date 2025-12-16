@@ -1,0 +1,28 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ _("Custom Asset Repair Dashboard") }}{% endblock %}
+
+{% block page_content %}
+<div class="custom-asset-repair-dashboard">
+    <div class="dashboard-header">
+        <h1>{{ _("Custom Asset Repair Dashboard") }}</h1>
+        <p class="text-muted">{{ _("Interactive view of Asset Repair data with analytics and insights") }}</p>
+    </div>
+
+    <div class="dashboard-body">
+        <!-- Embed the query report so filters and grid remain identical -->
+        <iframe id="report-frame" src="/app/query-report/Custom%20Asset%20Repair%20report"
+            style="width: 100%; height: 80vh; border: none;"></iframe>
+    </div>
+</div>
+
+<style>
+    .custom-asset-repair-dashboard {
+        padding: 20px;
+    }
+
+    .dashboard-header {
+        margin-bottom: 16px;
+    }
+</style>
+{% endblock %}

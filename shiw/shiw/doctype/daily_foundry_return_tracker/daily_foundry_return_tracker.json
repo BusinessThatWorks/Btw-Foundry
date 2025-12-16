@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-06 11:09:45.469381",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_ehpi",
+  "date",
+  "column_break_higw",
+  "amended_from",
+  "section_break_yhnu",
+  "table_xxur"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_ehpi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Daily Foundry Return Tracker",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "column_break_higw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_yhnu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "table_xxur",
+   "fieldtype": "Table",
+   "options": "Daily Foundry Return Tracker Table"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-11-06 11:10:22.466768",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Daily Foundry Return Tracker",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,66 +1,73 @@
 {
- "actions": [],
- "allow_rename": 1,
- "creation": "2025-06-12 13:44:15.374118",
- "doctype": "DocType",
- "editable_grid": 1,
- "engine": "InnoDB",
- "field_order": [
-  "item_name",
-  "quantity",
-  "weight",
-  "total_weight_in_kg",
-  "book_weight",
-  "difference"
- ],
- "fields": [
-  {
-   "fieldname": "item_name",
-   "fieldtype": "Link",
-   "label": "Item Name",
-   "options": "Item"
-  },
-  {
-   "fieldname": "quantity",
-   "fieldtype": "Int",
-   "label": "Quantity"
-  },
-  {
-   "fieldname": "weight",
-   "fieldtype": "Float",
-   "label": "Average Weight"
-  },
-  {
-   "fieldname": "total_weight_in_kg",
-   "fieldtype": "Float",
-   "label": "Total Wight (In Kg)"
-  },
-  {
-   "fetch_from": "item_name.custom_cast_weight_per_pc",
-   "fieldname": "book_weight",
-   "fieldtype": "Data",
-   "label": "Cast Weight"
-  },
-  {
-   "fieldname": "difference",
-   "fieldtype": "Float",
-   "label": "Difference",
-   "precision": "2"
-  }
- ],
- "grid_page_length": 50,
- "index_web_pages_for_search": 1,
- "istable": 1,
- "links": [],
- "modified": "2025-07-19 17:18:43.523145",
- "modified_by": "Administrator",
- "module": "shiw",
- "name": "Daily Weight Tracker Table",
- "owner": "subhangee@clapgrow.com",
- "permissions": [],
- "row_format": "Dynamic",
- "sort_field": "modified",
- "sort_order": "DESC",
- "states": [],
- "track_changes": 1
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2025-06-12 13:44:15.374118",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "item_name",
+    "quantity",
+    "weight",
+    "total_weight_in_kg",
+    "book_weight",
+    "difference",
+    "difference_percent"
+  ],
+  "fields": [
+    {
+      "fieldname": "item_name",
+      "fieldtype": "Link",
+      "label": "Item Name",
+      "options": "Item"
+    },
+    {
+      "fieldname": "quantity",
+      "fieldtype": "Int",
+      "label": "Quantity"
+    },
+    {
+      "fieldname": "weight",
+      "fieldtype": "Float",
+      "label": "Average Weight"
+    },
+    {
+      "fieldname": "total_weight_in_kg",
+      "fieldtype": "Float",
+      "label": "Total Wight (In Kg)"
+    },
+    {
+      "fetch_from": "item_name.custom_cast_weight_per_pc",
+      "fieldname": "book_weight",
+      "fieldtype": "Data",
+      "label": "Cast Weight"
+    },
+    {
+      "fieldname": "difference",
+      "fieldtype": "Float",
+      "label": "Difference",
+      "precision": "2"
+    },
+    {
+      "fieldname": "difference_percent",
+      "fieldtype": "Percent",
+      "label": "Difference Percent",
+      "precision": "2"
+    }
+  ],
+  "grid_page_length": 50,
+  "index_web_pages_for_search": 1,
+  "istable": 1,
+  "links": [],
+  "modified": "2025-10-07 14:58:01.685444",
+  "modified_by": "Administrator",
+  "module": "shiw",
+  "name": "Daily Weight Tracker Table",
+  "owner": "subhangee@clapgrow.com",
+  "permissions": [],
+  "row_format": "Dynamic",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "track_changes": 1
 }

@@ -54,6 +54,13 @@ function initializeDashboard(state) {
     // Bind event handlers
     bindEventHandlers(state);
 
+    // Set initial refresh button visibility (show for overview tab by default)
+    if (state.currentTab === 'overview') {
+        state.controls.refreshBtn.show();
+    } else {
+        state.controls.refreshBtn.hide();
+    }
+
     // Load initial data
     refreshDashboard(state);
 }
@@ -117,15 +124,39 @@ function createFilterControls(state, $fromWrap, $toWrap, $supplierWrap, $btnWrap
         render_input: true,
     });
 
+
     // Buttons
     const $refreshBtn = $('<button class="btn btn-primary">' + __('Refresh') + '</button>');
-    const $exportBtn = $('<button class="btn btn-secondary">' + __('Export') + '</button>');
 
-    $btnWrap.append($refreshBtn).append($exportBtn);
+    $btnWrap.append($refreshBtn);
 
     // Store button references
     state.controls.refreshBtn = $refreshBtn;
-    state.controls.exportBtn = $exportBtn;
+
+    // Apply black outline borders to main filter fields
+    setTimeout(() => {
+        $(state.controls.from_date.$input).css({
+            'border': '1px solid #000000',
+            'border-radius': '4px',
+            'padding': '8px 12px',
+            'height': '36px',
+            'line-height': '1.4'
+        });
+        $(state.controls.to_date.$input).css({
+            'border': '1px solid #000000',
+            'border-radius': '4px',
+            'padding': '8px 12px',
+            'height': '36px',
+            'line-height': '1.4'
+        });
+        $(state.controls.supplier.$input).css({
+            'border': '1px solid #000000',
+            'border-radius': '4px',
+            'padding': '8px 12px',
+            'height': '36px',
+            'line-height': '1.4'
+        });
+    }, 100);
 }
 
 function createTabbedInterface(state) {
@@ -142,7 +173,8 @@ function createTabbedInterface(state) {
         { id: 'material_request', label: __('Material Request'), icon: 'fa fa-file-text' },
         { id: 'purchase_order', label: __('Purchase Order'), icon: 'fa fa-shopping-cart' },
         { id: 'purchase_receipt', label: __('Purchase Receipt'), icon: 'fa fa-truck' },
-        { id: 'purchase_invoice', label: __('Purchase Invoice'), icon: 'fa fa-file-invoice' }
+        { id: 'purchase_invoice', label: __('Purchase Invoice'), icon: 'fa fa-file-invoice' },
+        { id: 'item_wise', label: __('Item Wise Tracker'), icon: 'fa fa-list' }
     ];
 
     tabs.forEach((tab, index) => {
@@ -206,12 +238,27 @@ function createContentContainers(state) {
 }
 
 function createSectionFilters(state, tabId) {
+    let inner = '';
+    if (tabId === 'item_wise') {
+        // Item-wise tracker: only PO No and Item filters with refresh button
+        inner = `
+            <div id="${tabId}-po-filter" style="min-width:200px;"></div>
+            <div id="${tabId}-item-filter" style="min-width:220px;"></div>
+            <div id="${tabId}-refresh-btn" style="min-width:120px;display:flex;flex-direction:column;justify-content:end;"></div>
+        `;
+    } else {
+        inner = `
+            <div id="${tabId}-status-filter" style="min-width:180px;"></div>
+            <div id="${tabId}-id-filter" style="min-width:180px;"></div>
+            <div id="${tabId}-item-filter" style="min-width:200px;"></div>
+            <div id="${tabId}-refresh-btn" style="min-width:120px;display:flex;flex-direction:column;justify-content:end;"></div>
+        `;
+    }
+
     const $sectionFilters = $(`
         <div class="section-filters" style="background:#f1f3f4;padding:12px;border-radius:6px;margin-bottom:16px;">
             <div style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
-                <div id="${tabId}-status-filter" style="min-width:180px;"></div>
-                <div id="${tabId}-id-filter" style="min-width:180px;"></div>
-                <div id="${tabId}-item-filter" style="min-width:200px;"></div>
+                ${inner}
             </div>
         </div>
     `);
@@ -224,46 +271,163 @@ function createSectionFilters(state, tabId) {
 }
 
 function createSectionFilterControls(state, tabId) {
-    // Status filter
-    const statusField = getStatusFieldName(tabId);
-    const statusOptions = getStatusOptions(tabId);
-    state.controls[`${tabId}_status`] = frappe.ui.form.make_control({
-        parent: $(`#${tabId}-status-filter`).get(0),
-        df: {
-            fieldtype: 'Select',
-            label: __('Status'),
-            fieldname: `${tabId}_status`,
-            options: statusOptions,
-            reqd: 0,
-        },
-        render_input: true,
-    });
+    if (tabId === 'item_wise') {
+        // PO No filter
+        state.controls[`${tabId}_po_no`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-po-filter`).get(0),
+            df: {
+                fieldtype: 'Data',
+                label: __('PO No'),
+                fieldname: `${tabId}_po_no`,
+                reqd: 0,
+            },
+            render_input: true,
+        });
 
-    // ID filter
-    const idField = getIdFieldName(tabId);
-    state.controls[`${tabId}_id`] = frappe.ui.form.make_control({
-        parent: $(`#${tabId}-id-filter`).get(0),
-        df: {
-            fieldtype: 'Data',
-            label: __('ID'),
-            fieldname: `${tabId}_id`,
-            reqd: 0,
-        },
-        render_input: true,
-    });
+        // Item code filter
+        state.controls[`${tabId}_item_code`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-item-filter`).get(0),
+            df: {
+                fieldtype: 'Link',
+                options: 'Item',
+                label: __('Item'),
+                fieldname: `${tabId}_item_code`,
+                reqd: 0,
+            },
+            render_input: true,
+        });
 
-    // Item name filter
-    state.controls[`${tabId}_item_name`] = frappe.ui.form.make_control({
-        parent: $(`#${tabId}-item-filter`).get(0),
-        df: {
-            fieldtype: 'Link',
-            options: 'Item',
-            label: __('Item'),
-            fieldname: `${tabId}_item_name`,
-            reqd: 0,
-        },
-        render_input: true,
-    });
+        // Refresh button for item-wise tab - create as a proper input field
+        state.controls[`${tabId}_refresh`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-refresh-btn`).get(0),
+            df: {
+                fieldtype: 'Button',
+                label: __('Action'),
+                fieldname: `${tabId}_refresh`,
+                reqd: 0,
+            },
+            render_input: true,
+        });
+
+        // Customize the button after creation
+        setTimeout(() => {
+            // Find all possible button elements
+            const $formControl = $(`#${tabId}-refresh-btn .form-control`);
+            const $button = $(`#${tabId}-refresh-btn button`);
+            const $input = $(`#${tabId}-refresh-btn input`);
+
+            // Try to find the actual button element
+            let $targetElement = $button.length ? $button : $formControl.length ? $formControl : $input;
+
+            if ($targetElement.length) {
+                console.log('Found button element:', $targetElement[0]);
+                $targetElement.removeClass('form-control').addClass('btn btn-primary');
+                $targetElement.attr('style', `
+                    background-color: #007bff !important;
+                    border-color: #007bff !important;
+                    color: white !important;
+                    height: 36px !important;
+                    padding: 8px 12px !important;
+                    width: 100% !important;
+                    border: 1px solid #007bff !important;
+                    border-radius: 4px !important;
+                `);
+                $targetElement.html(__('Refresh'));
+            } else {
+                console.log('No button element found in:', $(`#${tabId}-refresh-btn`).html());
+            }
+        }, 300);
+
+        setTimeout(() => {
+            $(`#${tabId}-po-filter .form-control, #${tabId}-item-filter .form-control`).css({
+                'border': '1px solid #000000',
+                'border-radius': '4px',
+                'padding': '8px 12px',
+                'height': '36px',
+                'line-height': '1.4'
+            });
+        }, 100);
+    } else {
+        // Status filter
+        const statusField = getStatusFieldName(tabId);
+        const statusOptions = getStatusOptions(tabId);
+        state.controls[`${tabId}_status`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-status-filter`).get(0),
+            df: {
+                fieldtype: 'Select',
+                label: __('Workflow Status'),
+                fieldname: `${tabId}_status`,
+                options: statusOptions, reqd: 0,
+            },
+            render_input: true,
+        });
+
+        // ID filter
+        const idField = getIdFieldName(tabId);
+        state.controls[`${tabId}_id`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-id-filter`).get(0),
+            df: { fieldtype: 'Data', label: __('ID'), fieldname: `${tabId}_id`, reqd: 0 },
+            render_input: true,
+        });
+
+        // Item name filter
+        state.controls[`${tabId}_item_name`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-item-filter`).get(0),
+            df: { fieldtype: 'Link', options: 'Item', label: __('Item'), fieldname: `${tabId}_item_name`, reqd: 0 },
+            render_input: true,
+        });
+
+        // Refresh button for other tabs - create as a proper input field
+        state.controls[`${tabId}_refresh`] = frappe.ui.form.make_control({
+            parent: $(`#${tabId}-refresh-btn`).get(0),
+            df: {
+                fieldtype: 'Button',
+                label: __('Action'),
+                fieldname: `${tabId}_refresh`,
+                reqd: 0,
+            },
+            render_input: true,
+        });
+
+        // Customize the button after creation
+        setTimeout(() => {
+            // Find all possible button elements
+            const $formControl = $(`#${tabId}-refresh-btn .form-control`);
+            const $button = $(`#${tabId}-refresh-btn button`);
+            const $input = $(`#${tabId}-refresh-btn input`);
+
+            // Try to find the actual button element
+            let $targetElement = $button.length ? $button : $formControl.length ? $formControl : $input;
+
+            if ($targetElement.length) {
+                console.log('Found button element:', $targetElement[0]);
+                $targetElement.removeClass('form-control').addClass('btn btn-primary');
+                $targetElement.attr('style', `
+                    background-color: #007bff !important;
+                    border-color: #007bff !important;
+                    color: white !important;
+                    height: 36px !important;
+                    padding: 8px 12px !important;
+                    width: 100% !important;
+                    border: 1px solid #007bff !important;
+                    border-radius: 4px !important;
+                `);
+                $targetElement.html(__('Refresh'));
+            } else {
+                console.log('No button element found in:', $(`#${tabId}-refresh-btn`).html());
+            }
+        }, 300);
+
+        setTimeout(() => {
+            $(`#${tabId}-status-filter .form-control, #${tabId}-id-filter .form-control, #${tabId}-item-filter .form-control`).css({
+                'border': '1px solid #000000',
+                'border-radius': '4px',
+                'padding': '8px 12px',
+                'height': '36px',
+                'line-height': '1.4'
+            });
+        }, 100);
+    }
 }
 
 function getStatusFieldName(tabId) {
@@ -286,15 +450,108 @@ function getIdFieldName(tabId) {
     return idFields[tabId] || 'id';
 }
 
+function getItemFieldName(tabId) {
+    const itemFields = {
+        'material_request': 'mr_item_name',
+        'purchase_order': 'po_item_name',
+        'purchase_receipt': 'pr_item_name',
+        'purchase_invoice': 'pi_item_name'
+    };
+    return itemFields[tabId] || 'item_name';
+}
+
 function getSectionTitle(tabId) {
     const titles = {
         'overview': __('Procurement Overview'),
         'material_request': __('Material Request Details'),
         'purchase_order': __('Purchase Order Details'),
         'purchase_receipt': __('Purchase Receipt Details'),
-        'purchase_invoice': __('Purchase Invoice Details')
+        'purchase_invoice': __('Purchase Invoice Details'),
+        'item_wise': __('Item Wise Tracker')
     };
     return titles[tabId] || __('Details');
+}
+
+function fetchItemWiseTrackerData(filters) {
+    return new Promise((resolve, reject) => {
+        frappe.call({
+            method: 'frappe.desk.query_report.run',
+            args: {
+                report_name: 'Item Wise Procurement Tracker',
+                filters: {
+                    from_date: filters.from_date,
+                    to_date: filters.to_date,
+                    supplier: filters.supplier || '',
+                    item_code: filters.item_code || '',
+                    po_no: filters.po_no || ''
+                },
+                ignore_prepared_report: 1,
+            },
+            callback: (r) => {
+                if (r.message && r.message.result) {
+                    resolve({
+                        summary: [{ value: r.message.result.length, label: __('Tracked Items'), datatype: 'Int', indicator: 'Blue' }],
+                        raw_data: r.message.result
+                    });
+                } else {
+                    resolve({ summary: [], raw_data: [] });
+                }
+            },
+            error: reject
+        });
+    });
+}
+
+function renderItemWiseTable($container, data) {
+    if (!data || data.length === 0) {
+        $container.append(`
+            <div class="no-data-message">
+                <div>${__('No item-wise data available for selected criteria')}</div>
+            </div>
+        `);
+        return;
+    }
+
+    const $table = $(`
+        <div class="data-table" style="width: 100%; margin-bottom: 30px;">
+            <h4>${__('Item Wise Tracker')}</h4>
+            <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                <thead>
+                    <tr>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('PO No')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Item Name')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Due Date')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Qty')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('UOM')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Received Qty')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Received %')}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    `);
+
+    const $tbody = $table.find('tbody');
+
+    data.forEach((row) => {
+        const receivedPct = row.received_pct || 0;
+        const $tr = $(`
+            <tr style="border-bottom: 1px solid #e9ecef;">
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/purchase-order/${row.po_no}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.po_no}</a></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.item_name || ''}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${frappe.format(row.required_by, { fieldtype: 'Date' })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.qty || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.uom || ''}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.received_qty || 0, { fieldtype: 'Float', precision: 2 })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right; white-space: nowrap;">${frappe.format(receivedPct, { fieldtype: 'Percent', precision: 2 })}</td>
+            </tr>
+        `);
+        $tbody.append($tr);
+    });
+
+    $container.append($table);
 }
 
 function setDefaultFilters(state) {
@@ -303,24 +560,128 @@ function setDefaultFilters(state) {
     state.controls.to_date.set_value(frappe.datetime.month_end());
 }
 
+// Debounce function to limit API calls
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
 function bindEventHandlers(state) {
+    // Create debounced refresh function for this state
+    const debouncedRefresh = debounce(() => {
+        refreshDashboard(state);
+    }, 500);
+
     // Main filter change events
     $(state.controls.from_date.$input).on('change', () => refreshDashboard(state));
     $(state.controls.to_date.$input).on('change', () => refreshDashboard(state));
-    $(state.controls.supplier.$input).on('change', () => refreshDashboard(state));
+
+    // Helper function to bind Link field events
+    function bindLinkFieldEvents(control, refreshFn) {
+        if (!control) return;
+
+        // Wait for control to be fully initialized
+        setTimeout(() => {
+            // Handle change event on input
+            if (control.$input) {
+                $(control.$input).on('change', refreshFn);
+            }
+
+            // For Frappe Link fields, find the actual input element
+            let $linkInput = null;
+            if (control.$wrapper) {
+                // Try multiple selectors to find the Link field input
+                $linkInput = control.$wrapper.find('input[data-fieldname]').first();
+                if (!$linkInput.length) {
+                    $linkInput = control.$wrapper.find('input.form-control').first();
+                }
+                if (!$linkInput.length) {
+                    $linkInput = control.$wrapper.find('input').first();
+                }
+            }
+
+            if ($linkInput && $linkInput.length) {
+                // Create a local debounced refresh for this input
+                const debouncedInputRefresh = debounce(refreshFn, 500);
+
+                $linkInput.on('change', refreshFn);
+                // Listen to blur event (when user selects from dropdown)
+                $linkInput.on('blur', function () {
+                    setTimeout(refreshFn, 150);
+                });
+                // Listen to input events for typing - use debounced version
+                $linkInput.on('input', function () {
+                    debouncedInputRefresh();
+                });
+            }
+
+            // Listen to wrapper events
+            if (control.$wrapper) {
+                control.$wrapper.on('change', refreshFn);
+            }
+
+            // Override onchange in df if it doesn't exist
+            if (control.df && control.df.onchange === undefined) {
+                control.df.onchange = function () {
+                    refreshFn();
+                };
+            }
+
+            // Also try to hook into Frappe's link field selection event
+            // This uses event delegation on the document to catch dropdown selections
+            $(document).on('awesomplete-selectcomplete', `[data-fieldname="${control.df.fieldname}"]`, refreshFn);
+        }, 200);
+    }
+
+    // Supplier filter - Link field
+    bindLinkFieldEvents(state.controls.supplier, () => refreshDashboard(state));
 
     // Section filter change events
     Object.keys(state.$tabs).forEach(tabId => {
         if (tabId !== 'overview') {
-            $(state.controls[`${tabId}_status`].$input).on('change', () => refreshDashboard(state));
-            $(state.controls[`${tabId}_id`].$input).on('change', () => refreshDashboard(state));
-            $(state.controls[`${tabId}_item_name`].$input).on('change', () => refreshDashboard(state));
+            if (tabId === 'item_wise') {
+                // PO No filter - Data field: add both change and input events
+                const poNoControl = state.controls[`${tabId}_po_no`];
+                if (poNoControl && poNoControl.$input) {
+                    $(poNoControl.$input).on('change', () => refreshDashboard(state));
+                    $(poNoControl.$input).on('input', () => debouncedRefresh(state));
+                }
+
+                // Item code filter - Link field
+                bindLinkFieldEvents(state.controls[`${tabId}_item_code`], () => refreshDashboard(state));
+                // Bind refresh button event for item-wise tab
+                $(state.controls[`${tabId}_refresh`].$input).on('click', () => refreshDashboard(state));
+            } else {
+                // Status filter - Select field
+                const statusControl = state.controls[`${tabId}_status`];
+                if (statusControl && statusControl.$input) {
+                    $(statusControl.$input).on('change', () => refreshDashboard(state));
+                }
+
+                // ID filter - Data field: add both change and input events for real-time typing
+                const idControl = state.controls[`${tabId}_id`];
+                if (idControl && idControl.$input) {
+                    $(idControl.$input).on('change', () => refreshDashboard(state));
+                    $(idControl.$input).on('input', () => debouncedRefresh(state));
+                }
+
+                // Item name filter - Link field
+                bindLinkFieldEvents(state.controls[`${tabId}_item_name`], () => refreshDashboard(state));
+                // Bind refresh button event for other tabs
+                $(state.controls[`${tabId}_refresh`].$input).on('click', () => refreshDashboard(state));
+            }
         }
     });
 
     // Button events
     state.controls.refreshBtn.on('click', () => refreshDashboard(state));
-    state.controls.exportBtn.on('click', () => exportDashboardData(state));
 
     // Tab change events
     Object.keys(state.$tabs).forEach(tabId => {
@@ -335,6 +696,13 @@ function bindEventHandlers(state) {
             // Update tab buttons
             $('.nav-link').removeClass('active');
             $(`#${tabId}-tab`).addClass('active');
+
+            // Show/hide main refresh button based on current tab
+            if (tabId === 'overview') {
+                state.controls.refreshBtn.show();
+            } else {
+                state.controls.refreshBtn.hide();
+            }
 
             // Trigger refresh for the current tab
             refreshDashboard(state);
@@ -379,8 +747,9 @@ function refreshDashboard(state) {
         fetchMaterialRequestData(filters, state),
         fetchPurchaseOrderData(filters, state),
         fetchPurchaseReceiptData(filters, state),
-        fetchPurchaseInvoiceData(filters, state)
-    ]).then(([procurementData, mrData, poData, prData, piData]) => {
+        fetchPurchaseInvoiceData(filters, state),
+        fetchItemWiseTrackerData(filters)
+    ]).then(([procurementData, mrData, poData, prData, piData, itemWiseData]) => {
         state.page.clear_indicator();
 
         // Create overview data
@@ -392,7 +761,8 @@ function refreshDashboard(state) {
             material_request: mrData,
             purchase_order: poData,
             purchase_receipt: prData,
-            purchase_invoice: piData
+            purchase_invoice: piData,
+            item_wise: itemWiseData
         });
     }).catch((error) => {
         state.page.clear_indicator();
@@ -436,7 +806,7 @@ function fetchMaterialRequestData(filters, state) {
                 filters: {
                     from_date: filters.from_date,
                     to_date: filters.to_date,
-                    item_code: filters.item_name || ''
+                    item_code: filters.mr_item_name || ''
                 },
                 ignore_prepared_report: 1,
             },
@@ -463,12 +833,13 @@ function fetchMaterialRequestData(filters, state) {
                     // Apply additional filters
                     let filteredData = materialRequests;
 
-                    // Apply status filter if specified
+                    // Apply status filter
                     if (filters.mr_status) {
                         filteredData = filteredData.filter(mr => mr.workflow_state === filters.mr_status);
                     }
 
-                    // Apply ID filter if specified
+
+                    // Apply ID filter
                     if (filters.mr_id) {
                         filteredData = filteredData.filter(mr => mr.name.toLowerCase().includes(filters.mr_id.toLowerCase()));
                     }
@@ -499,16 +870,6 @@ function fetchMaterialRequestData(filters, state) {
                         filteredData = itemFilteredMRs;
                     }
 
-                    // Apply status filter
-                    if (filters.mr_status) {
-                        filteredData = filteredData.filter(mr => mr.workflow_state === filters.mr_status);
-                    }
-
-                    // Apply ID filter
-                    if (filters.mr_id) {
-                        filteredData = filteredData.filter(mr => mr.name.toLowerCase().includes(filters.mr_id.toLowerCase()));
-                    }
-
                     // Create status summary based on workflow_state
                     const statusCounts = {};
                     filteredData.forEach(item => {
@@ -525,7 +886,7 @@ function fetchMaterialRequestData(filters, state) {
                     }));
 
                     // Update status options based on actual data
-                    updateStatusOptions('material_request', procurementData, state);
+                    updateStatusOptions('material_request', filteredData, state);
 
                     resolve({
                         summary: summary,
@@ -720,7 +1081,7 @@ function fetchPurchaseOrderData(filters, state) {
                 filters: {
                     from_date: filters.from_date,
                     to_date: filters.to_date,
-                    item_code: filters.item_name || ''
+                    item_code: filters.po_item_name || ''
                 },
                 ignore_prepared_report: 1,
             },
@@ -739,7 +1100,7 @@ function fetchPurchaseOrderData(filters, state) {
                                 name: row.purchase_order,
                                 transaction_date: row.po_date,
                                 workflow_state: row.po_status,
-                                status: row.po_status, // Use workflow_state as status for display
+                                status: row.po_doc_status || '',
                                 supplier: row.supplier,
                                 grand_total: row.po_grand_total
                             });
@@ -749,12 +1110,13 @@ function fetchPurchaseOrderData(filters, state) {
                     // Apply additional filters
                     let filteredData = purchaseOrders;
 
-                    // Apply status filter if specified
+                    // Apply status filter
                     if (filters.po_status) {
                         filteredData = filteredData.filter(po => po.workflow_state === filters.po_status);
                     }
 
-                    // Apply ID filter if specified
+
+                    // Apply ID filter
                     if (filters.po_id) {
                         filteredData = filteredData.filter(po => po.name.toLowerCase().includes(filters.po_id.toLowerCase()));
                     }
@@ -765,9 +1127,9 @@ function fetchPurchaseOrderData(filters, state) {
                     }
 
                     // Apply item filter if specified - filter the original procurement data first
-                    if (filters.item_name) {
+                    if (filters.po_item_name) {
                         const itemFilteredProcurementData = procurementData.filter(row =>
-                            row.item_code === filters.item_name
+                            row.item_code === filters.po_item_name
                         );
 
                         // Extract unique Purchase Orders from item-filtered data
@@ -781,7 +1143,7 @@ function fetchPurchaseOrderData(filters, state) {
                                     name: row.purchase_order,
                                     transaction_date: row.po_date,
                                     workflow_state: row.po_status,
-                                    status: row.po_status,
+                                    status: row.po_doc_status || '',
                                     supplier: row.supplier,
                                     grand_total: row.po_grand_total
                                 });
@@ -848,7 +1210,7 @@ function fetchPurchaseReceiptData(filters, state) {
                 filters: {
                     from_date: filters.from_date,
                     to_date: filters.to_date,
-                    item_code: filters.item_name || ''
+                    item_code: filters.pr_item_name || ''
                 },
                 ignore_prepared_report: 1,
             },
@@ -869,7 +1231,7 @@ function fetchPurchaseReceiptData(filters, state) {
                                 workflow_state: 'Completed', // Purchase Receipts are typically completed when created
                                 status: 'Completed', // Use workflow_state as status for display
                                 supplier: row.supplier,
-                                grand_total: 0 // Not available in procurement tracker
+                                grand_total: row.pr_grand_total || 0
                             });
                         }
                     });
@@ -877,12 +1239,13 @@ function fetchPurchaseReceiptData(filters, state) {
                     // Apply additional filters
                     let filteredData = purchaseReceipts;
 
-                    // Apply status filter if specified
+                    // Apply status filter
                     if (filters.pr_status) {
                         filteredData = filteredData.filter(pr => pr.workflow_state === filters.pr_status);
                     }
 
-                    // Apply ID filter if specified
+
+                    // Apply ID filter
                     if (filters.pr_id) {
                         filteredData = filteredData.filter(pr => pr.name.toLowerCase().includes(filters.pr_id.toLowerCase()));
                     }
@@ -893,9 +1256,9 @@ function fetchPurchaseReceiptData(filters, state) {
                     }
 
                     // Apply item filter if specified - filter the original procurement data first
-                    if (filters.item_name) {
+                    if (filters.pr_item_name) {
                         const itemFilteredProcurementData = procurementData.filter(row =>
-                            row.item_code === filters.item_name
+                            row.item_code === filters.pr_item_name
                         );
 
                         // Extract unique Purchase Receipts from item-filtered data
@@ -911,7 +1274,7 @@ function fetchPurchaseReceiptData(filters, state) {
                                     workflow_state: 'Completed',
                                     status: 'Completed',
                                     supplier: row.supplier,
-                                    grand_total: 0
+                                    grand_total: row.pr_grand_total || 0
                                 });
                             }
                         });
@@ -937,9 +1300,12 @@ function fetchPurchaseReceiptData(filters, state) {
 
                     // Create status summary based on workflow_state
                     const statusCounts = {};
+                    let filteredTotalGrandTotal = 0;
+
                     filteredData.forEach(item => {
                         const status = item.workflow_state || 'Draft';
                         statusCounts[status] = (statusCounts[status] || 0) + 1;
+                        filteredTotalGrandTotal += parseFloat(item.grand_total || 0);
                     });
 
                     const summary = Object.keys(statusCounts).map(status => ({
@@ -949,6 +1315,16 @@ function fetchPurchaseReceiptData(filters, state) {
                         indicator: getStatusIndicator(status),
                         description: `Purchase receipts with ${status} status`
                     }));
+
+                    // Add total grand total card
+                    summary.push({
+                        value: filteredTotalGrandTotal,
+                        label: __('Total Receipt Value'),
+                        datatype: 'Currency',
+                        indicator: 'Orange',
+                        description: __('Sum of grand total for selected date range'),
+                        prefix: '₹'
+                    });
 
                     // Update status options based on actual data
                     updateStatusOptions('purchase_receipt', procurementData, state);
@@ -968,123 +1344,186 @@ function fetchPurchaseReceiptData(filters, state) {
 
 function fetchPurchaseInvoiceData(filters, state) {
     return new Promise((resolve, reject) => {
-        // Use the procurement tracker report to get data with workflow_state
+        // Use the new Purchase Invoice Tracker report
         frappe.call({
             method: 'frappe.desk.query_report.run',
             args: {
-                report_name: 'New Procurement Tracker',
+                report_name: 'Purchase Invoice Tracker',
                 filters: {
                     from_date: filters.from_date,
                     to_date: filters.to_date,
-                    item_code: filters.item_name || ''
+                    supplier: filters.supplier || '',
+                    workflow_status: filters.pi_status || ''
                 },
                 ignore_prepared_report: 1,
             },
             callback: (r) => {
                 if (r.message && r.message.result) {
-                    let procurementData = r.message.result;
+                    let piData = r.message.result;
 
-                    // Extract unique Purchase Invoices from procurement data
+                    // Transform data to match expected format
                     const purchaseInvoices = [];
                     const seenPIs = new Set();
+                    let totalGrandTotal = 0; // Calculate sum of grand total
 
-                    procurementData.forEach(row => {
-                        if (row.purchase_invoice && !seenPIs.has(row.purchase_invoice)) {
-                            seenPIs.add(row.purchase_invoice);
+                    piData.forEach(row => {
+                        if (row.purchase_invoice_id && !seenPIs.has(row.purchase_invoice_id)) {
+                            seenPIs.add(row.purchase_invoice_id);
+                            const grandTotal = parseFloat(row.grand_total || 0);
+                            totalGrandTotal += grandTotal;
+
                             purchaseInvoices.push({
-                                name: row.purchase_invoice,
-                                posting_date: row.invoice_date,
-                                workflow_state: 'Completed', // Purchase Invoices are typically completed when created
-                                status: 'Completed', // Use workflow_state as status for display
+                                name: row.purchase_invoice_id,
+                                posting_date: row.date,
+                                due_date: row.due_date || null, // Will be fetched separately
+                                custom_grn_date: row.custom_grn_date || null, // Will be fetched separately
+                                workflow_state: row.status,
+                                status: row.status,
                                 supplier: row.supplier,
-                                grand_total: 0 // Not available in procurement tracker
+                                grand_total: grandTotal
                             });
                         }
                     });
 
-                    // Apply additional filters
-                    let filteredData = purchaseInvoices;
+                    // Fetch due_date and custom_grn_date from Purchase Invoice documents
+                    if (purchaseInvoices.length > 0) {
+                        const invoiceNames = purchaseInvoices.map(pi => pi.name);
 
-                    // Apply status filter if specified
-                    if (filters.pi_status) {
-                        filteredData = filteredData.filter(pi => pi.workflow_state === filters.pi_status);
-                    }
+                        frappe.call({
+                            method: 'frappe.client.get_list',
+                            args: {
+                                doctype: 'Purchase Invoice',
+                                filters: [['Purchase Invoice', 'name', 'in', invoiceNames]],
+                                fields: ['name', 'due_date', 'custom_grn_date'],
+                                limit_page_length: 1000
+                            },
+                            callback: (piDetails) => {
+                                if (piDetails.message) {
+                                    // Create a map for quick lookup
+                                    const piDetailsMap = {};
+                                    piDetails.message.forEach(pi => {
+                                        piDetailsMap[pi.name] = {
+                                            due_date: pi.due_date,
+                                            custom_grn_date: pi.custom_grn_date
+                                        };
+                                    });
 
-                    // Apply ID filter if specified
-                    if (filters.pi_id) {
-                        filteredData = filteredData.filter(pi => pi.name.toLowerCase().includes(filters.pi_id.toLowerCase()));
-                    }
+                                    // Update purchase invoices with the fetched data
+                                    purchaseInvoices.forEach(pi => {
+                                        const details = piDetailsMap[pi.name];
+                                        if (details) {
+                                            pi.due_date = details.due_date;
+                                            pi.custom_grn_date = details.custom_grn_date;
+                                        }
+                                    });
+                                }
 
-                    // Apply supplier filter if specified
-                    if (filters.supplier) {
-                        filteredData = filteredData.filter(pi => pi.supplier === filters.supplier);
-                    }
-
-                    // Apply item filter if specified - filter the original procurement data first
-                    if (filters.item_name) {
-                        const itemFilteredProcurementData = procurementData.filter(row =>
-                            row.item_code === filters.item_name
-                        );
-
-                        // Extract unique Purchase Invoices from item-filtered data
-                        const itemFilteredPIs = [];
-                        const seenItemFilteredPIs = new Set();
-
-                        itemFilteredProcurementData.forEach(row => {
-                            if (row.purchase_invoice && !seenItemFilteredPIs.has(row.purchase_invoice)) {
-                                seenItemFilteredPIs.add(row.purchase_invoice);
-                                itemFilteredPIs.push({
-                                    name: row.purchase_invoice,
-                                    posting_date: row.invoice_date,
-                                    workflow_state: 'Completed',
-                                    status: 'Completed',
-                                    supplier: row.supplier,
-                                    grand_total: 0
-                                });
+                                // Continue with the rest of the processing
+                                processPurchaseInvoiceData();
+                            },
+                            error: (error) => {
+                                console.warn('Could not fetch Purchase Invoice details:', error);
+                                // Continue with the rest of the processing even if this fails
+                                processPurchaseInvoiceData();
                             }
                         });
-
-                        // Apply other filters to item-filtered data
-                        filteredData = itemFilteredPIs;
+                    } else {
+                        processPurchaseInvoiceData();
                     }
 
-                    // Apply status filter
-                    if (filters.pi_status) {
-                        filteredData = filteredData.filter(pi => pi.workflow_state === filters.pi_status);
+                    function processPurchaseInvoiceData() {
+                        // Apply additional filters
+                        let filteredData = purchaseInvoices;
+
+                        // Apply ID filter
+                        if (filters.pi_id) {
+                            filteredData = filteredData.filter(pi => pi.name.toLowerCase().includes(filters.pi_id.toLowerCase()));
+                        }
+
+                        // Apply supplier filter if specified
+                        if (filters.supplier) {
+                            filteredData = filteredData.filter(pi => pi.supplier === filters.supplier);
+                        }
+
+                        // Apply item filter if specified - filter the original procurement data first
+                        if (filters.pi_item_name) {
+                            const itemFilteredProcurementData = procurementData.filter(row =>
+                                row.item_code === filters.pi_item_name
+                            );
+
+                            // Extract unique Purchase Invoices from item-filtered data
+                            const itemFilteredPIs = [];
+                            const seenItemFilteredPIs = new Set();
+
+                            itemFilteredProcurementData.forEach(row => {
+                                if (row.purchase_invoice && !seenItemFilteredPIs.has(row.purchase_invoice)) {
+                                    seenItemFilteredPIs.add(row.purchase_invoice);
+                                    itemFilteredPIs.push({
+                                        name: row.purchase_invoice,
+                                        posting_date: row.invoice_date,
+                                        workflow_state: row.pi_status,
+                                        status: row.pi_status,
+                                        supplier: row.supplier,
+                                        grand_total: 0
+                                    });
+                                }
+                            });
+
+                            // Apply other filters to item-filtered data
+                            filteredData = itemFilteredPIs;
+                        }
+
+                        // Apply status filter
+                        if (filters.pi_status) {
+                            filteredData = filteredData.filter(pi => pi.workflow_state === filters.pi_status);
+                        }
+
+                        // Apply ID filter
+                        if (filters.pi_id) {
+                            filteredData = filteredData.filter(pi => pi.name.toLowerCase().includes(filters.pi_id.toLowerCase()));
+                        }
+
+                        // Apply supplier filter
+                        if (filters.supplier) {
+                            filteredData = filteredData.filter(pi => pi.supplier === filters.supplier);
+                        }
+
+                        // Create status summary based on workflow_state
+                        const statusCounts = {};
+                        let filteredTotalGrandTotal = 0;
+
+                        filteredData.forEach(item => {
+                            const status = item.workflow_state || 'Draft';
+                            statusCounts[status] = (statusCounts[status] || 0) + 1;
+                            filteredTotalGrandTotal += parseFloat(item.grand_total || 0);
+                        });
+
+                        const summary = Object.keys(statusCounts).map(status => ({
+                            value: statusCounts[status],
+                            label: `${status} Purchase Invoices`,
+                            datatype: 'Int',
+                            indicator: getStatusIndicator(status),
+                            description: `Purchase invoices with ${status} status`
+                        }));
+
+                        // Add total grand total card (keep existing workflow state cards)
+                        summary.push({
+                            value: filteredTotalGrandTotal,
+                            label: __('Total Invoice Value'),
+                            datatype: 'Currency',
+                            indicator: 'Teal',
+                            description: __('Sum of grand total for selected date range'),
+                            prefix: '₹'
+                        });
+
+                        // Update status options based on actual data
+                        updateStatusOptions('purchase_invoice', piData, state);
+
+                        resolve({
+                            summary: summary,
+                            raw_data: filteredData
+                        });
                     }
-
-                    // Apply ID filter
-                    if (filters.pi_id) {
-                        filteredData = filteredData.filter(pi => pi.name.toLowerCase().includes(filters.pi_id.toLowerCase()));
-                    }
-
-                    // Apply supplier filter
-                    if (filters.supplier) {
-                        filteredData = filteredData.filter(pi => pi.supplier === filters.supplier);
-                    }
-
-                    // Create status summary based on workflow_state
-                    const statusCounts = {};
-                    filteredData.forEach(item => {
-                        const status = item.workflow_state || 'Draft';
-                        statusCounts[status] = (statusCounts[status] || 0) + 1;
-                    });
-
-                    const summary = Object.keys(statusCounts).map(status => ({
-                        value: statusCounts[status],
-                        label: `${status} Purchase Invoices`,
-                        datatype: 'Int',
-                        indicator: getStatusIndicator(status),
-                        description: `Purchase invoices with ${status} status`
-                    }));
-
-                    // Update status options based on actual data
-                    updateStatusOptions('purchase_invoice', procurementData, state);
-
-                    resolve({
-                        summary: summary,
-                        raw_data: filteredData
-                    });
                 } else {
                     resolve({ summary: [], raw_data: [] });
                 }
@@ -1095,11 +1534,15 @@ function fetchPurchaseInvoiceData(filters, state) {
 }
 
 function createProcurementOverviewData(procurementData, mrData, poData, prData, piData) {
-    // Calculate totals
+    // Calculate totals - only count cards, exclude currency cards
     const totalMr = mrData.summary.reduce((sum, card) => sum + (card.value || 0), 0);
     const totalPo = poData.summary.reduce((sum, card) => sum + (card.value || 0), 0);
-    const totalPr = prData.summary.reduce((sum, card) => sum + (card.value || 0), 0);
-    const totalPi = piData.summary.reduce((sum, card) => sum + (card.value || 0), 0);
+    const totalPr = prData.summary
+        .filter(card => card.datatype === 'Int') // Only count cards, exclude currency cards
+        .reduce((sum, card) => sum + (card.value || 0), 0);
+    const totalPi = piData.summary
+        .filter(card => card.datatype === 'Int') // Only count cards, exclude currency cards
+        .reduce((sum, card) => sum + (card.value || 0), 0);
 
     return {
         summary: [
@@ -1137,16 +1580,8 @@ function createProcurementOverviewData(procurementData, mrData, poData, prData, 
 }
 
 function getStatusOptions(tabId) {
-    // Return the workflow states from the images
-    const workflowStates = [
-        'Draft',
-        'Waiting For Review',
-        'Waiting For Approval',
-        'Approved',
-        'Rejected'
-    ];
-
-    return ['', ...workflowStates];
+    // Start empty; options will be updated dynamically from data for all tabs
+    return [''];
 }
 
 function updateStatusOptions(tabId, data, state) {
@@ -1154,8 +1589,8 @@ function updateStatusOptions(tabId, data, state) {
 
     if (tabId === 'material_request') {
         data.forEach(row => {
-            if (row.mr_status) {
-                statusSet.add(row.mr_status);
+            if (row.workflow_state) {
+                statusSet.add(row.workflow_state);
             }
         });
     } else if (tabId === 'purchase_order') {
@@ -1172,8 +1607,8 @@ function updateStatusOptions(tabId, data, state) {
         });
     } else if (tabId === 'purchase_invoice') {
         data.forEach(row => {
-            if (row.purchase_invoice) {
-                statusSet.add('Completed'); // Purchase Invoices are typically completed
+            if (row.status) {
+                statusSet.add(row.status);
             }
         });
     }
@@ -1227,18 +1662,19 @@ function getFilters(state) {
         supplier: state.controls.supplier.get_value()
     };
 
-    // Add section-specific filters
+    // Add section-specific filters for all tabs
     Object.keys(state.$tabs).forEach(tabId => {
         if (tabId !== 'overview') {
-            const statusField = getStatusFieldName(tabId);
-            const idField = getIdFieldName(tabId);
-
-            filters[statusField] = state.controls[`${tabId}_status`].get_value();
-            filters[idField] = state.controls[`${tabId}_id`].get_value();
-
-            // Get item_name from the current active tab only
-            if (state.currentTab === tabId) {
-                filters.item_name = state.controls[`${tabId}_item_name`].get_value();
+            if (tabId === 'item_wise') {
+                filters.item_code = state.controls[`${tabId}_item_code`].get_value();
+                filters.po_no = state.controls[`${tabId}_po_no`].get_value();
+            } else {
+                const statusField = getStatusFieldName(tabId);
+                const idField = getIdFieldName(tabId);
+                const itemField = getItemFieldName(tabId);
+                filters[statusField] = state.controls[`${tabId}_status`].get_value();
+                filters[idField] = state.controls[`${tabId}_id`].get_value();
+                filters[itemField] = state.controls[`${tabId}_item_name`].get_value();
             }
         }
     });
@@ -1253,6 +1689,7 @@ function renderDashboardData(state, data) {
     renderTabData(state, 'purchase_order', data.purchase_order);
     renderTabData(state, 'purchase_receipt', data.purchase_receipt);
     renderTabData(state, 'purchase_invoice', data.purchase_invoice);
+    renderTabData(state, 'item_wise', data.item_wise);
 }
 
 function renderTabData(state, tabId, tabData) {
@@ -1294,6 +1731,8 @@ function renderDetailedTables($container, tabId, rawData) {
         renderPurchaseReceiptTable($container, rawData);
     } else if (tabId === 'purchase_invoice') {
         renderPurchaseInvoiceTable($container, rawData);
+    } else if (tabId === 'item_wise') {
+        renderItemWiseTable($container, rawData);
     } else if (tabId === 'overview') {
         renderOverviewTables($container, rawData);
     }
@@ -1317,7 +1756,7 @@ function renderMaterialRequestTable($container, data) {
                     <tr>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Material Request')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Date')}</th>
-                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Status')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Workflow Status')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1360,6 +1799,7 @@ function renderPurchaseOrderTable($container, data) {
                     <tr>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Purchase Order')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Date')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Workflow Status')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Status')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Supplier')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Grand Total')}</th>
@@ -1374,11 +1814,13 @@ function renderPurchaseOrderTable($container, data) {
     const $tbody = $table.find('tbody');
 
     data.forEach((row) => {
+        const rowColor = getPurchaseOrderRowColor(row.workflow_state, row.status);
         const $tr = $(`
-            <tr style="border-bottom: 1px solid #e9ecef;">
+            <tr style="border-bottom: 1px solid #e9ecef; background:${rowColor};">
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/purchase-order/${row.name}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.name}</a></td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${frappe.format(row.transaction_date, { fieldtype: 'Date' })}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><span class="badge badge-${getStatusClass(row.status)}">${row.status || 'Draft'}</span></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.status || ''}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.supplier || ''}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.grand_total || 0, { fieldtype: 'Currency' })}</td>
             </tr>
@@ -1407,7 +1849,7 @@ function renderPurchaseReceiptTable($container, data) {
                     <tr>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Purchase Receipt')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Date')}</th>
-                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Status')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Workflow Status')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Supplier')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Grand Total')}</th>
                     </tr>
@@ -1454,7 +1896,9 @@ function renderPurchaseInvoiceTable($container, data) {
                     <tr>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Purchase Invoice')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Date')}</th>
-                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Status')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Due Date')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('GRN Date')}</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Workflow Status')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Supplier')}</th>
                         <th style="background: #f8f9fa; padding: 12px; text-align: right; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">${__('Grand Total')}</th>
                     </tr>
@@ -1472,7 +1916,9 @@ function renderPurchaseInvoiceTable($container, data) {
             <tr style="border-bottom: 1px solid #e9ecef;">
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><a href="/app/purchase-invoice/${row.name}" class="link-cell" style="color: #007bff; text-decoration: none; cursor: pointer;">${row.name}</a></td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${frappe.format(row.posting_date, { fieldtype: 'Date' })}</td>
-                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><span class="badge badge-${getStatusClass(row.status)}">${row.status || 'Draft'}</span></td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${frappe.format(row.due_date, { fieldtype: 'Date' })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${frappe.format(row.custom_grn_date, { fieldtype: 'Date' })}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;"><span class="badge badge-${getStatusClass(row.workflow_state)}">${row.workflow_state || 'Draft'}</span></td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: left;">${row.supplier || ''}</td>
                 <td style="padding: 12px; border-bottom: 1px solid #e9ecef; color: #495057; text-align: right;">${frappe.format(row.grand_total || 0, { fieldtype: 'Currency' })}</td>
             </tr>
@@ -1510,6 +1956,29 @@ function getStatusClass(status) {
     return statusClasses[status] || 'secondary';
 }
 
+function getPurchaseOrderRowColor(workflowState, status) {
+    // Default no background
+    const green = '#eaf7ec';
+    const orange = '#fff4e5';
+    const red = '#fdecea';
+
+    const ws = (workflowState || '').toLowerCase();
+    const st = (status || '').toLowerCase();
+
+    // Rules provided:
+    // if status=to bill and workflow_state = approaved -> green
+    if (st === 'to bill' && ws === 'approved') return green;
+
+    // if status=to receive and bill and workflow_state = approaved -> orange
+    if (st === 'to receive and bill' && ws === 'approved') return orange;
+
+    // if status = to received and bill and workflow_state = waiting for approval -> red
+    // Allow minor spelling variants (received/receive)
+    if ((st === 'to received and bill' || st === 'to receive and bill') && ws === 'waiting for approval') return red;
+
+    return 'transparent';
+}
+
 function createCard(card) {
     const indicator = (card.indicator || 'blue').toString().toLowerCase();
 
@@ -1524,6 +1993,11 @@ function createCard(card) {
         value = format_number(card.value || 0, null, 2);
     } else {
         value = format_number(card.value || 0);
+    }
+
+    // Add prefix if specified
+    if (card.prefix) {
+        value = card.prefix + value;
     }
 
     const description = card.description ? `<div class="card-description" style="font-size:0.85rem;color:#95a5a6;margin-top:4px;">${frappe.utils.escape_html(card.description)}</div>` : '';
@@ -1566,22 +2040,3 @@ function showError(state, message) {
     `);
 }
 
-function exportDashboardData(state) {
-    const filters = getFilters(state);
-
-    // Create a simple export by opening the procurement tracker report in a new tab
-    const params = new URLSearchParams({
-        report_name: 'New Procurement Tracker',
-        filters: JSON.stringify({
-            from_date: filters.from_date,
-            to_date: filters.to_date,
-            item_code: filters.item_name || ''
-        })
-    });
-
-    // Open report in new tab
-    window.open(`/app/query-report/New%20Procurement%20Tracker?${params.toString()}`, '_blank');
-
-    // Show success message
-    frappe.show_alert(__('Procurement report opened in new tab for export'), 'success');
-}

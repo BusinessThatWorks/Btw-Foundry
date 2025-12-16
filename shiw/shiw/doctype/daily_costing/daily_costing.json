@@ -1,0 +1,692 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-28 10:34:06.865972",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "column_break_bcho",
+  "shift_type",
+  "melting_section",
+  "liquid_metal",
+  "liquid_metal_cost",
+  "labour_cost",
+  "column_break_rveh",
+  "ladle_cost",
+  "ladle_labour_cost",
+  "ladle_cost_per_kg",
+  "column_break_fvmv",
+  "total_labour_cost",
+  "liquid_metal_cost_per_kg",
+  "moulding_system_section",
+  "hpml_column",
+  "hpml_weight",
+  "hpml_cost",
+  "hpml_labour_cost",
+  "total_hpml_cost",
+  "hpml_cost_per_kg",
+  "js_column",
+  "js_weight",
+  "js_cost",
+  "js_labour_cost",
+  "total_js_cost",
+  "js_cost_per_kg",
+  "no_bake_column",
+  "no_bake_weight",
+  "no_bake_cost",
+  "no_bake_labour_cost",
+  "total_no_bake_cost",
+  "no_bake_cost_per_kg",
+  "co2_column",
+  "co2_weight",
+  "co2_cost",
+  "co2_labour_cost",
+  "total_co2_cost",
+  "co2_cost_per_kg",
+  "green_sand_column",
+  "green_sand_weight",
+  "green_sand_cost",
+  "green_sand_labour_cost",
+  "total_green_sand_cost",
+  "green_sand_cost_per_kg",
+  "core_section",
+  "core_weight",
+  "column_break_ovjk",
+  "core_cost",
+  "column_break_vnad",
+  "core_labour_cost",
+  "column_break_vdsx",
+  "total_cost",
+  "column_break_dblz",
+  "core_cost_per_kg",
+  "shotblast_section",
+  "shotblast_weight",
+  "column_break_ygpp",
+  "shotblast_cost",
+  "column_break_kccy",
+  "shotblast_labour_cost",
+  "column_break_pekx",
+  "total_shotblast__cost",
+  "column_break_yqix",
+  "shotblast_cost_per_kg",
+  "fettling_section",
+  "fettling_weight",
+  "column_break_irma",
+  "fettling_cost",
+  "column_break_uhjp",
+  "fettling_labour_cost",
+  "column_break_ymhs",
+  "total_fettling_cost",
+  "column_break_uebb",
+  "fettling_cost_per_kg",
+  "fininshing_section",
+  "finishing_weight",
+  "column_break_butx",
+  "finishing_cost",
+  "column_break_mdat",
+  "finishing_labour_cost",
+  "column_break_bhlu",
+  "total_finishing_cost",
+  "column_break_fgpv",
+  "finishing_cost_per_kg",
+  "repairing_section",
+  "repairing_weight",
+  "column_break_xplk",
+  "repairing_cost",
+  "column_break_gqos",
+  "repairing_labour_cost",
+  "column_break_ndrt",
+  "total_repairng_cost",
+  "column_break_yfjc",
+  "repairing_cost_per_kg",
+  "paint_section",
+  "paint_weight",
+  "column_break_wvvg",
+  "paint_cost",
+  "column_break_psyc",
+  "paint_labour_cost",
+  "column_break_rwkl",
+  "total_paint_cost",
+  "column_break_yifr",
+  "paint_cost_per_kg",
+  "section_break_tdpq",
+  "extra_labour_cost",
+  "column_break_trgw",
+  "extra_per_kg",
+  "section_break_iftd",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_iftd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Daily Costing",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_bcho",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "shift_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Shift Type",
+   "options": "\nDay Shift\nNight Shift",
+   "reqd": 1
+  },
+  {
+   "columns": 7,
+   "fieldname": "melting_section",
+   "fieldtype": "Section Break",
+   "label": "Melting"
+  },
+  {
+   "fieldname": "liquid_metal",
+   "fieldtype": "Float",
+   "label": "Liquid Metal"
+  },
+  {
+   "fieldname": "column_break_rveh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "liquid_metal_cost",
+   "fieldtype": "Float",
+   "label": "Liquid Metal Cost"
+  },
+  {
+   "fieldname": "column_break_fvmv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "labour_cost",
+   "fieldtype": "Float",
+   "label": "Labour Cost"
+  },
+  {
+   "fieldname": "liquid_metal_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "Liquid Metal Cost per Kg"
+  },
+  {
+   "fieldname": "ladle_cost",
+   "fieldtype": "Float",
+   "label": "Ladle Cost"
+  },
+  {
+   "fieldname": "ladle_labour_cost",
+   "fieldtype": "Float",
+   "label": "Ladle Labour Cost"
+  },
+  {
+   "fieldname": "total_labour_cost",
+   "fieldtype": "Float",
+   "label": "Total Labour Cost"
+  },
+  {
+   "fieldname": "ladle_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "Ladle Cost Per Kg"
+  },
+  {
+   "fieldname": "moulding_system_section",
+   "fieldtype": "Section Break",
+   "label": "Moulding System"
+  },
+  {
+   "fieldname": "hpml_column",
+   "fieldtype": "Column Break",
+   "label": "HPML"
+  },
+  {
+   "fieldname": "hpml_weight",
+   "fieldtype": "Float",
+   "label": "HPML Weight"
+  },
+  {
+   "fieldname": "hpml_cost",
+   "fieldtype": "Float",
+   "label": "HPML Cost"
+  },
+  {
+   "fieldname": "hpml_labour_cost",
+   "fieldtype": "Float",
+   "label": "HPML Labour Cost "
+  },
+  {
+   "fieldname": "total_hpml_cost",
+   "fieldtype": "Float",
+   "label": "Total HPML Cost"
+  },
+  {
+   "fieldname": "js_column",
+   "fieldtype": "Column Break",
+   "label": "JS"
+  },
+  {
+   "fieldname": "js_weight",
+   "fieldtype": "Float",
+   "label": "JS Weight"
+  },
+  {
+   "fieldname": "js_cost",
+   "fieldtype": "Float",
+   "label": "JS Cost"
+  },
+  {
+   "fieldname": "js_labour_cost",
+   "fieldtype": "Float",
+   "label": "JS Labour Cost"
+  },
+  {
+   "fieldname": "total_js_cost",
+   "fieldtype": "Float",
+   "label": "Total JS Cost"
+  },
+  {
+   "fieldname": "no_bake_column",
+   "fieldtype": "Column Break",
+   "label": "No Bake"
+  },
+  {
+   "fieldname": "no_bake_weight",
+   "fieldtype": "Float",
+   "label": "No Bake Weight"
+  },
+  {
+   "fieldname": "no_bake_cost",
+   "fieldtype": "Float",
+   "label": "No Bake Cost"
+  },
+  {
+   "fieldname": "no_bake_labour_cost",
+   "fieldtype": "Float",
+   "label": "No Bake Labour Cost"
+  },
+  {
+   "fieldname": "total_no_bake_cost",
+   "fieldtype": "Float",
+   "label": "Total No Bake Cost"
+  },
+  {
+   "fieldname": "co2_column",
+   "fieldtype": "Column Break",
+   "label": "Co2"
+  },
+  {
+   "fieldname": "co2_weight",
+   "fieldtype": "Float",
+   "label": "Co2 Weight"
+  },
+  {
+   "fieldname": "co2_cost",
+   "fieldtype": "Float",
+   "label": "Co2 Cost"
+  },
+  {
+   "fieldname": "co2_labour_cost",
+   "fieldtype": "Float",
+   "label": "Co2 Labour Cost"
+  },
+  {
+   "fieldname": "total_co2_cost",
+   "fieldtype": "Float",
+   "label": "Total Co2 Cost"
+  },
+  {
+   "fieldname": "green_sand_column",
+   "fieldtype": "Column Break",
+   "label": "Green Sand"
+  },
+  {
+   "fieldname": "green_sand_weight",
+   "fieldtype": "Float",
+   "label": "Green Sand Weight"
+  },
+  {
+   "fieldname": "green_sand_cost",
+   "fieldtype": "Float",
+   "label": "Green Sand Cost"
+  },
+  {
+   "fieldname": "green_sand_labour_cost",
+   "fieldtype": "Float",
+   "label": "Green Sand Labour Cost"
+  },
+  {
+   "fieldname": "total_green_sand_cost",
+   "fieldtype": "Float",
+   "label": "Total Green Sand Cost"
+  },
+  {
+   "fieldname": "hpml_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "HPML Cost Per Kg"
+  },
+  {
+   "fieldname": "js_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "JS Cost Per Kg"
+  },
+  {
+   "fieldname": "no_bake_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "No Bake Cost Per Kg"
+  },
+  {
+   "fieldname": "co2_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "Co2 Cost Per Kg"
+  },
+  {
+   "fieldname": "green_sand_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "Green Sand Cost Per Kg"
+  },
+  {
+   "fieldname": "core_section",
+   "fieldtype": "Section Break",
+   "label": "Core"
+  },
+  {
+   "fieldname": "core_weight",
+   "fieldtype": "Float",
+   "label": "Core Weight"
+  },
+  {
+   "fieldname": "column_break_ovjk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "core_cost",
+   "fieldtype": "Float",
+   "label": "Core Cost"
+  },
+  {
+   "fieldname": "column_break_vnad",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "core_labour_cost",
+   "fieldtype": "Float",
+   "label": "Labour Cost"
+  },
+  {
+   "fieldname": "column_break_vdsx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_cost",
+   "fieldtype": "Float",
+   "label": "Total Cost"
+  },
+  {
+   "fieldname": "column_break_dblz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "core_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "Core Cost Per Kg"
+  },
+  {
+   "fieldname": "column_break_ygpp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_kccy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_pekx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_yqix",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fettling_section",
+   "fieldtype": "Section Break",
+   "label": "Fettling"
+  },
+  {
+   "fieldname": "fettling_weight",
+   "fieldtype": "Float",
+   "label": "Fettling Weight"
+  },
+  {
+   "fieldname": "column_break_irma",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fettling_cost",
+   "fieldtype": "Float",
+   "label": "Fettling Cost"
+  },
+  {
+   "fieldname": "column_break_uhjp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fettling_labour_cost",
+   "fieldtype": "Float",
+   "label": "Fettling Labour Cost"
+  },
+  {
+   "fieldname": "column_break_ymhs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_fettling_cost",
+   "fieldtype": "Float",
+   "label": "Total Fettling Cost"
+  },
+  {
+   "fieldname": "column_break_uebb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fettling_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "Fettling Cost Per Kg"
+  },
+  {
+   "fieldname": "fininshing_section",
+   "fieldtype": "Section Break",
+   "label": "Fininshing"
+  },
+  {
+   "fieldname": "finishing_weight",
+   "fieldtype": "Float",
+   "label": "Finishing Weight"
+  },
+  {
+   "fieldname": "column_break_butx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_mdat",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "finishing_labour_cost",
+   "fieldtype": "Float",
+   "label": "Finishing Labour Cost"
+  },
+  {
+   "fieldname": "column_break_bhlu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_finishing_cost",
+   "fieldtype": "Float",
+   "label": "Total Finishing Cost"
+  },
+  {
+   "fieldname": "column_break_fgpv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "repairing_section",
+   "fieldtype": "Section Break",
+   "label": "Repairing"
+  },
+  {
+   "fieldname": "repairing_weight",
+   "fieldtype": "Float",
+   "label": "Repairing Weight"
+  },
+  {
+   "fieldname": "column_break_xplk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "repairing_cost",
+   "fieldtype": "Float",
+   "label": "Repairing Cost"
+  },
+  {
+   "fieldname": "column_break_gqos",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "repairing_labour_cost",
+   "fieldtype": "Float",
+   "label": "Repairing Labour Cost"
+  },
+  {
+   "fieldname": "column_break_ndrt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_repairng_cost",
+   "fieldtype": "Float",
+   "label": "Total Repairng Cost"
+  },
+  {
+   "fieldname": "column_break_yfjc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "repairing_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "Repairing Cost Per Kg"
+  },
+  {
+   "fieldname": "paint_section",
+   "fieldtype": "Section Break",
+   "label": "Paint"
+  },
+  {
+   "fieldname": "paint_weight",
+   "fieldtype": "Float",
+   "label": "Paint Weight"
+  },
+  {
+   "fieldname": "column_break_wvvg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "paint_cost",
+   "fieldtype": "Float",
+   "label": "Paint Cost"
+  },
+  {
+   "fieldname": "column_break_psyc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "paint_labour_cost",
+   "fieldtype": "Float",
+   "label": "Paint Labour Cost"
+  },
+  {
+   "fieldname": "column_break_rwkl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_paint_cost",
+   "fieldtype": "Float",
+   "label": "Total Paint Cost"
+  },
+  {
+   "fieldname": "column_break_yifr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "paint_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "Paint Cost Per Kg"
+  },
+  {
+   "fieldname": "section_break_tdpq",
+   "fieldtype": "Section Break",
+   "label": "Extra"
+  },
+  {
+   "fieldname": "extra_labour_cost",
+   "fieldtype": "Float",
+   "label": "Extra Labour Cost"
+  },
+  {
+   "fieldname": "column_break_trgw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "extra_per_kg",
+   "fieldtype": "Float",
+   "label": "Extra per Kg"
+  },
+  {
+   "fieldname": "shotblast_section",
+   "fieldtype": "Section Break",
+   "label": "ShotBlast "
+  },
+  {
+   "fieldname": "shotblast_weight",
+   "fieldtype": "Float",
+   "label": "ShotBlast Weight"
+  },
+  {
+   "fieldname": "shotblast_cost",
+   "fieldtype": "Float",
+   "label": "ShotBlast Cost"
+  },
+  {
+   "fieldname": "shotblast_labour_cost",
+   "fieldtype": "Float",
+   "label": "ShotBlast Labour Cost"
+  },
+  {
+   "fieldname": "total_shotblast__cost",
+   "fieldtype": "Float",
+   "label": "Total ShotBlast  Cost"
+  },
+  {
+   "fieldname": "shotblast_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "ShotBlast Cost Per Kg"
+  },
+  {
+   "fieldname": "finishing_cost",
+   "fieldtype": "Float",
+   "label": "Finishing Cost"
+  },
+  {
+   "fieldname": "finishing_cost_per_kg",
+   "fieldtype": "Float",
+   "label": "Finishing Cost Per Kg"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-12-12 10:42:48.685792",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Daily Costing",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}
