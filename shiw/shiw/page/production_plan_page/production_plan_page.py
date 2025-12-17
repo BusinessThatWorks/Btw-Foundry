@@ -21,19 +21,13 @@ def get_context(context):
 	# Set default values
 	context.production_plan = frappe.form_dict.get("production_plan") or ""
 	context.item_code = frappe.form_dict.get("item_code") or ""
-	context.department = frappe.form_dict.get("department") or ""
 
 	# Get production plans for dropdown
 	context.production_plans = get_production_plans()
 
-	# Get departments for filtering
-	context.departments = get_departments()
-
 	# Get report data if production plan is selected
 	if context.production_plan:
-		context.report_data = get_production_plan_data(
-			context.production_plan, context.item_code, context.department
-		)
+		context.report_data = get_production_plan_data(context.production_plan, context.item_code)
 	else:
 		context.report_data = {"columns": [], "data": [], "summary": []}
 
@@ -59,25 +53,7 @@ def get_production_plans():
 		return []
 
 
-def get_departments():
-	"""Get list of departments from Item custom field."""
-	try:
-		departments = frappe.db.sql(
-			"""
-			SELECT DISTINCT custom_department
-			FROM `tabItem`
-			WHERE custom_department IS NOT NULL AND custom_department != ''
-			ORDER BY custom_department
-		""",
-			as_dict=True,
-		)
-		return [d.custom_department for d in departments if d.custom_department]
-	except Exception as e:
-		frappe.log_error(f"Error getting departments: {str(e)}")
-		return []
-
-
-def get_production_plan_data(production_plan, item_code=None, department=None):
+def get_production_plan_data(production_plan, item_code=None):
 	"""Get production plan report data."""
 	try:
 		# Import the report module
@@ -87,8 +63,6 @@ def get_production_plan_data(production_plan, item_code=None, department=None):
 		filters = {"production_plan": production_plan}
 		if item_code:
 			filters["item_code"] = item_code
-		if department:
-			filters["department"] = department
 
 		# Execute the report
 		result = execute(filters)
@@ -103,7 +77,6 @@ def get_production_plan_data(production_plan, item_code=None, department=None):
 			"summary": summary,
 			"production_plan": production_plan,
 			"item_code": item_code,
-			"department": department,
 		}
 
 	except Exception as e:
@@ -134,16 +107,6 @@ def calculate_summary_stats(data):
 		row for row in data if (row.get("actual_qty", 0) or 0) < (row.get("required_bom_qty", 0) or 0)
 	]
 	shortage_count = len(shortage_items)
-
-	# Calculate surplus items (where actual > required)
-	surplus_items = [
-		row for row in data if (row.get("actual_qty", 0) or 0) > (row.get("required_bom_qty", 0) or 0)
-	]
-	surplus_count = len(surplus_items)
-
-	# Calculate departments
-	departments = list(set(row.get("custom_department", "") for row in data if row.get("custom_department")))
-	department_count = len(departments)
 
 	return [
 		{
@@ -200,13 +163,4 @@ def calculate_summary_stats(data):
 			"description": _("Total available stock (actual + open indent + open PO)"),
 			"precision": 2,
 		},
-		{
-			"value": department_count,
-			"label": _("Departments"),
-			"datatype": "Int",
-			"indicator": "Brown",
-			"description": _("Number of departments involved"),
-		},
 	]
-
-

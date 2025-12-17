@@ -25,9 +25,9 @@ frappe.pages['production-plan-page'].on_page_load = function (wrapper) {
 frappe.pages['production-plan-page'].on_page_show = function () {
     console.log('Production Plan Dashboard shown');
     // Initialize charts when page is shown
-    if (document.getElementById('departmentChart')) {
+    if (document.getElementById('stockChart')) {
         loadChartJS().then(() => {
-            initializeCharts();
+            // Charts will be initialized when data is loaded
         });
     }
 };
@@ -62,20 +62,19 @@ function createFilterBar(state) {
     // Individual filter wrappers
     const $productionPlanWrap = $('<div style="min-width:300px;"></div>');
     const $itemWrap = $('<div style="min-width:200px;"></div>');
-    const $departmentWrap = $('<div style="min-width:200px;"></div>');
     const $statusWrap = $('<div style="min-width:180px;"></div>');
     const $btnWrap = $('<div style="display:flex;align-items:end;gap:8px;"></div>');
 
     // Assemble filter controls
-    $filterControls.append($productionPlanWrap).append($itemWrap).append($departmentWrap).append($statusWrap);
+    $filterControls.append($productionPlanWrap).append($itemWrap).append($statusWrap);
     $filterBar.append($filterControls).append($btnWrap);
     $(state.page.main).append($filterBar);
 
     // Create filter controls
-    createFilterControls(state, $productionPlanWrap, $itemWrap, $departmentWrap, $statusWrap, $btnWrap);
+    createFilterControls(state, $productionPlanWrap, $itemWrap, $statusWrap, $btnWrap);
 }
 
-function createFilterControls(state, $productionPlanWrap, $itemWrap, $departmentWrap, $statusWrap, $btnWrap) {
+function createFilterControls(state, $productionPlanWrap, $itemWrap, $statusWrap, $btnWrap) {
     // Production Plan control
     state.controls.production_plan = frappe.ui.form.make_control({
         parent: $productionPlanWrap.get(0),
@@ -102,19 +101,6 @@ function createFilterControls(state, $productionPlanWrap, $itemWrap, $department
         render_input: true,
     });
 
-    // Department control
-    state.controls.department = frappe.ui.form.make_control({
-        parent: $departmentWrap.get(0),
-        df: {
-            fieldtype: 'Select',
-            label: 'Department',
-            fieldname: 'department',
-            options: '',
-            reqd: 0,
-        },
-        render_input: true,
-    });
-
     // Status control
     state.controls.status = frappe.ui.form.make_control({
         parent: $statusWrap.get(0),
@@ -127,9 +113,6 @@ function createFilterControls(state, $productionPlanWrap, $itemWrap, $department
         },
         render_input: true,
     });
-
-    // Load department options
-    loadDepartmentOptions(state);
 
     // Buttons
     const $refreshBtn = $('<button class="btn btn-primary">Refresh</button>');
@@ -157,13 +140,6 @@ function createFilterControls(state, $productionPlanWrap, $itemWrap, $department
             'height': '36px',
             'line-height': '1.4'
         });
-        $(state.controls.department.$input).css({
-            'border': '1px solid #000000',
-            'border-radius': '4px',
-            'padding': '8px 12px',
-            'height': '36px',
-            'line-height': '1.4'
-        });
         $(state.controls.status.$input).css({
             'border': '1px solid #000000',
             'border-radius': '4px',
@@ -180,7 +156,7 @@ function createContentContainers(state) {
     $(state.page.main).append(state.$cards);
 
     // Charts container
-    state.$charts = $('<div class="charts-container" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;"></div>');
+    state.$charts = $('<div class="charts-container" style="display:grid;grid-template-columns:1fr;gap:20px;margin-top:20px;"></div>');
     $(state.page.main).append(state.$charts);
 
     // Data table container (placed AFTER charts per user request)
@@ -275,9 +251,6 @@ function bindEventHandlers(state) {
     // Item Code filter - Link field (auto-refresh)
     bindLinkFieldEvents(state.controls.item_code, () => refreshDashboard(state));
 
-    // Department filter - Select field
-    $(state.controls.department.$input).on('change', () => refreshDashboard(state));
-
     // Status filter - Select field
     $(state.controls.status.$input).on('change', () => refreshDashboard(state));
 
@@ -314,7 +287,6 @@ function getFilters(state) {
     return {
         production_plan: state.controls.production_plan.get_value(),
         item_code: state.controls.item_code.get_value(),
-        department: state.controls.department.get_value(),
         status: state.controls.status.get_value()
     };
 }
@@ -419,10 +391,6 @@ function calculateSummaryStats(data, extras) {
     const shortageItems = data.filter(row => (row.actual_qty || 0) < (row.required_bom_qty || 0));
     const shortageCount = shortageItems.length;
 
-    // Calculate departments
-    const departments = [...new Set(data.map(row => row.custom_department).filter(dept => dept))];
-    const departmentCount = departments.length;
-
     const cards = [
         {
             value: totalItems,
@@ -477,13 +445,6 @@ function calculateSummaryStats(data, extras) {
             indicator: 'Black',
             description: 'Total available stock (actual + open indent + open PO)',
             precision: 2
-        },
-        {
-            value: departmentCount,
-            label: 'Departments',
-            datatype: 'Int',
-            indicator: 'Brown',
-            description: 'Number of departments involved'
         },
         {
             value: totalCost,
@@ -628,7 +589,6 @@ function renderDataTable(state, data, columns) {
                         <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Quantity Requirement</th>
                         <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Quantity in Stock</th>
                         <th style="padding:12px;text-align:center;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Status</th>
-                        <th style="padding:12px;text-align:left;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Department</th>
                         <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Indented but not Ordered</th>
                         <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Ordered but not Received</th>
                         <th style="padding:12px;text-align:right;font-weight:600;color:#495057;border-bottom:2px solid #dee2e6;">Combined Stock</th>
@@ -679,9 +639,6 @@ function renderTableRow(row) {
             <td style="padding:12px;border-bottom:1px solid #e9ecef;text-align:center;">
                 ${statusBadge}
             </td>
-            <td style="padding:12px;border-bottom:1px solid #e9ecef;">
-                ${row.custom_department || '-'}
-            </td>
             <td style="padding:12px;border-bottom:1px solid #e9ecef;text-align:right;font-family:monospace;font-weight:500;">
                 ${format_number(row.open_indent || 0, null, 2)}
             </td>
@@ -717,17 +674,6 @@ function renderCharts(state, data) {
         return;
     }
 
-    // Department distribution chart
-    const departmentData = calculateDepartmentData(data);
-    const departmentChartHtml = `
-        <div class="chart-container" style="background:white;padding:20px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-            <h4 style="margin-bottom:20px;color:#2c3e50;">Department Distribution</h4>
-            <div style="position:relative;height:250px;width:100%;">
-                <canvas id="departmentChart"></canvas>
-            </div>
-        </div>
-    `;
-
     // Stock status chart - make it compact
     const stockData = calculateStockStatusData(data);
     const stockChartHtml = `
@@ -739,14 +685,14 @@ function renderCharts(state, data) {
         </div>
     `;
 
-    state.$charts.html(departmentChartHtml + stockChartHtml);
+    state.$charts.html(stockChartHtml);
 
     // Initialize charts after DOM is updated
     setTimeout(() => {
         loadChartJS().then(() => {
             // Add a small delay to ensure DOM is ready
             setTimeout(() => {
-                initializeCharts(departmentData, stockData);
+                initializeCharts(stockData);
             }, 50);
         }).catch((error) => {
             console.warn('Chart.js could not be loaded:', error);
@@ -759,20 +705,6 @@ function renderCharts(state, data) {
             `);
         });
     }, 200);
-}
-
-function calculateDepartmentData(data) {
-    const departmentCounts = {};
-    data.forEach(row => {
-        const dept = row.custom_department || 'Unknown';
-        departmentCounts[dept] = (departmentCounts[dept] || 0) + 1;
-    });
-
-    return {
-        labels: Object.keys(departmentCounts),
-        data: Object.values(departmentCounts),
-        colors: ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#34495e', '#e67e22']
-    };
 }
 
 function calculateStockStatusData(data) {
@@ -801,85 +733,14 @@ function calculateStockStatusData(data) {
     };
 }
 
-function initializeCharts(departmentData, stockData) {
+function initializeCharts(stockData) {
     // Check if Chart.js is available
     if (!window.Chart) {
         console.warn('Chart.js is not available');
         return;
     }
 
-    console.log('Initializing charts with data:', { departmentData, stockData });
-
-    // Department Chart
-    const deptCtx = document.getElementById('departmentChart');
-    if (deptCtx && departmentData && departmentData.labels.length > 0) {
-        try {
-            // Destroy existing chart if it exists
-            if (deptCtx.chart) {
-                deptCtx.chart.destroy();
-            }
-
-            deptCtx.chart = new Chart(deptCtx, {
-                type: 'bar',
-                data: {
-                    labels: departmentData.labels,
-                    datasets: [{
-                        label: 'Items',
-                        data: departmentData.data,
-                        backgroundColor: departmentData.colors,
-                        borderWidth: 2,
-                        borderColor: '#fff',
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 1000,
-                        easing: 'easeInOutQuart'
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed.y;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                    return `${label}: ${value} (${percentage}%)`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-            console.log('Department chart created successfully');
-        } catch (error) {
-            console.error('Error creating department chart:', error);
-        }
-    } else {
-        console.warn('Department chart not created - missing data or element');
-    }
+    console.log('Initializing charts with data:', { stockData });
 
     // Stock Status Chart - make it more compact
     const stockCtx = document.getElementById('stockChart');
@@ -1146,7 +1007,6 @@ function exportAsPDF(state) {
         const filterParts = [];
         if (filters.production_plan) filterParts.push(`Production Plan: ${filters.production_plan}`);
         if (filters.item_code) filterParts.push(`Item: ${filters.item_code}`);
-        if (filters.department) filterParts.push(`Department: ${filters.department}`);
         if (filters.status) filterParts.push(`Status: ${filters.status}`);
         filterBarSummary.textContent = `Filters — ${filterParts.join(' | ') || 'None'}`;
         tempSummary.appendChild(filterBarSummary);
@@ -1374,37 +1234,6 @@ window.viewItemDetails = function (itemCode) {
     // This will be called from HTML
     frappe.set_route('Form', 'Item', itemCode);
 };
-
-// Load department options
-function loadDepartmentOptions(state) {
-    frappe.call({
-        method: 'frappe.client.get_list',
-        args: {
-            doctype: 'Item',
-            filters: [
-                ['custom_department', 'is', 'set']
-            ],
-            fields: ['custom_department'],
-            group_by: 'custom_department',
-            limit_page_length: 0
-        },
-        callback: function (r) {
-            if (r.message) {
-                const departments = r.message.map(item => item.custom_department).filter(dept => dept);
-                const options = ['', ...departments.sort()];
-
-                // Update the department control options
-                state.controls.department.df.options = options.join('\n');
-                state.controls.department.refresh();
-
-                console.log('Department options loaded:', departments);
-            }
-        },
-        error: function (err) {
-            console.error('Error loading department options:', err);
-        }
-    });
-}
 
 // Chart.js loading function
 function loadChartJS() {
