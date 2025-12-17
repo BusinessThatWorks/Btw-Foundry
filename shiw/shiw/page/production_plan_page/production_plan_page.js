@@ -532,14 +532,15 @@ function createCard(card) {
         value = format_number(card.value || 0);
     }
 
-    const prefixedValue = card.prefix ? `${card.prefix} ${value}` : value;
+    // Use non-breaking space so currency and amount stay on the same line
+    const prefixedValue = card.prefix ? `${card.prefix}&nbsp;${value}` : value;
     const description = card.description ? `<div class="card-description" style="font-size:0.85rem;color:#95a5a6;margin-top:4px;">${frappe.utils.escape_html(card.description)}</div>` : '';
 
     return $(`
         <div class="number-card" style="background:#fff;border-radius:12px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.1);position:relative;overflow:hidden;transition:transform 0.2s ease,box-shadow 0.2s ease;">
             <div class="card-indicator" style="position:absolute;top:0;left:0;right:0;height:4px;background:${getIndicatorColor(indicator)}"></div>
             <div class="card-content" style="text-align:center;">
-                <div class="card-value" style="font-size:2.4rem;font-weight:700;color:#2c3e50;margin-bottom:8px;">${prefixedValue}</div>
+                <div class="card-value" style="font-size:2rem;font-weight:700;color:#2c3e50;margin-bottom:8px;white-space:nowrap;">${prefixedValue}</div>
                 <div class="card-label" style="font-size:1rem;color:#7f8c8d;font-weight:500;">${frappe.utils.escape_html(card.label || '')}</div>
                 ${description}
             </div>

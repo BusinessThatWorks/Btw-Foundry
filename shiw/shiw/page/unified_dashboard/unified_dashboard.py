@@ -80,41 +80,6 @@ def get_mould_dashboard_data(filters=None):
 		return {"success": False, "message": str(e), "data": {"summary": [], "raw_data": []}}
 
 
-@frappe.whitelist()
-def get_heat_loss_reasons(filters=None):
-	"""Return flattened reason rows for Daily Heat Loss within date range."""
-	try:
-		filters = frappe.parse_json(filters) if isinstance(filters, str) else filters or {}
-		if not filters.get("from_date") or not filters.get("to_date"):
-			return []
-
-		rows = frappe.db.sql(
-			"""
-			SELECT
-				p.name as parent_name,
-				p.date as date,
-				p.shift_type as shift_type,
-				c.reason_for_heat_loss as reason_for_heat_loss,
-				ifnull(c.weight_in_kg, 0) as weight_in_kg
-			FROM `tabDaily Heat Loss` p
-			JOIN `tabReason For Heat Loss Table` c ON c.parent = p.name and c.parenttype = 'Daily Heat Loss'
-			WHERE p.docstatus = 1 AND p.date BETWEEN %(from_date)s AND %(to_date)s
-			ORDER BY p.date DESC, p.name DESC, c.idx ASC
-			""",
-			{
-				"from_date": filters.get("from_date"),
-				"to_date": filters.get("to_date"),
-			},
-			as_dict=True,
-		)
-		# Debug logging
-		frappe.logger().info(f"Heat Loss Reasons Query Result: {rows[:3] if rows else 'No data'}")
-		return rows
-	except Exception as e:
-		frappe.log_error(f"Heat Loss Reasons Error: {str(e)}", "Unified Dashboard")
-		return []
-
-
 def get_overview_data(filters, heat_data, mould_data):
 	"""Generate combined overview metrics."""
 	try:
