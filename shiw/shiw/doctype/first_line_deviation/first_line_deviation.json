@@ -102,10 +102,11 @@
   }
  ],
  "grid_page_length": 50,
+ "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-08-11 14:33:03.342051",
+ "modified": "2025-12-17 14:00:06.368094",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "First Line Deviation",

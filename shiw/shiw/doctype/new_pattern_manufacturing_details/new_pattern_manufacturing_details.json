@@ -1,150 +1,151 @@
 {
-   "actions": [],
-   "allow_import": 1,
-   "allow_rename": 1,
-   "autoname": "format:{PTRN} - {item_name} - {#####}",
-   "creation": "2025-04-03 14:23:12.945661",
-   "doctype": "DocType",
-   "engine": "InnoDB",
-   "field_order": [
-      "pattern_details_tab",
-      "item_name",
-      "drawing_no",
-      "cast_weight",
-      "bunch_weight",
-      "column_break_ggdp",
-      "consignee_name",
-      "customer",
-      "pattern_image",
-      "section_break_wibc",
-      "pattern_details",
-      "core_box_tab",
-      "core_details",
-      "amended_from"
-   ],
-   "fields": [
-      {
-         "fieldname": "pattern_details_tab",
-         "fieldtype": "Tab Break",
-         "label": "Pattern Details"
-      },
-      {
-         "fieldname": "item_name",
-         "fieldtype": "Link",
-         "in_list_view": 1,
-         "label": "Item Name",
-         "link_filters": "[[\"Item\",\"item_group\",\"=\",\"Finished Goods\"]]",
-         "options": "Item",
-         "reqd": 1
-      },
-      {
-         "fieldname": "drawing_no",
-         "fieldtype": "Data",
-         "label": "Drawing No"
-      },
-      {
-         "fieldname": "column_break_ggdp",
-         "fieldtype": "Column Break"
-      },
-      {
-         "fieldname": "consignee_name",
-         "fieldtype": "Link",
-         "in_list_view": 1,
-         "label": "Consignee Name",
-         "options": "Customer",
-         "reqd": 1
-      },
-      {
-         "fieldname": "customer",
-         "fieldtype": "Link",
-         "in_list_view": 1,
-         "label": "Customer",
-         "options": "Customer",
-         "reqd": 1
-      },
-      {
-         "allow_on_submit": 1,
-         "fieldname": "pattern_image",
-         "fieldtype": "Attach Image",
-         "label": "Pattern Image",
-         "reqd": 1
-      },
-      {
-         "fieldname": "section_break_wibc",
-         "fieldtype": "Section Break"
-      },
-      {
-         "fieldname": "pattern_details",
-         "fieldtype": "Table",
-         "label": "Pattern Details",
-         "options": "Pattern Manufacturing Pattern Table",
-         "reqd": 1
-      },
-      {
-         "fieldname": "core_box_tab",
-         "fieldtype": "Tab Break",
-         "label": "Core Box"
-      },
-      {
-         "fieldname": "core_details",
-         "fieldtype": "Table",
-         "label": "Core Details",
-         "options": "Core Bom Table"
-      },
-      {
-         "fieldname": "amended_from",
-         "fieldtype": "Link",
-         "label": "Amended From",
-         "no_copy": 1,
-         "options": "New Pattern Manufacturing Details",
-         "print_hide": 1,
-         "read_only": 1,
-         "search_index": 1
-      },
-      {
-         "fetch_from": "item_name.custom_cast_weight_per_pc",
-         "fieldname": "cast_weight",
-         "fieldtype": "Float",
-         "label": "Cast Weight",
-         "precision": "2"
-      },
-      {
-         "fetch_from": "item_name.custom_bunch_weight_per_mould",
-         "fieldname": "bunch_weight",
-         "fieldtype": "Float",
-         "label": "Bunch Weight",
-         "precision": "2"
-      }
-   ],
-   "grid_page_length": 50,
-   "image_field": "pattern_image",
-   "index_web_pages_for_search": 1,
-   "is_submittable": 1,
-   "links": [],
-   "make_attachments_public": 1,
-   "modified": "2025-09-09 10:34:25.059229",
-   "modified_by": "Administrator",
-   "module": "shiw",
-   "name": "New Pattern Manufacturing Details",
-   "naming_rule": "Expression",
-   "owner": "subhangee@clapgrow.com",
-   "permissions": [
-      {
-         "create": 1,
-         "delete": 1,
-         "email": 1,
-         "export": 1,
-         "print": 1,
-         "read": 1,
-         "report": 1,
-         "role": "System Manager",
-         "share": 1,
-         "write": 1
-      }
-   ],
-   "row_format": "Dynamic",
-   "sort_field": "modified",
-   "sort_order": "DESC",
-   "states": [],
-   "track_changes": 1
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:{PTRN} - {item_name} - {#####}",
+ "creation": "2025-04-03 14:23:12.945661",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "pattern_details_tab",
+  "item_name",
+  "drawing_no",
+  "cast_weight",
+  "bunch_weight",
+  "column_break_ggdp",
+  "consignee_name",
+  "customer",
+  "pattern_image",
+  "section_break_wibc",
+  "pattern_details",
+  "core_box_tab",
+  "core_details",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "pattern_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Pattern Details"
+  },
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Name",
+   "link_filters": "[[\"Item\",\"item_group\",\"=\",\"Finished Goods\"]]",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "drawing_no",
+   "fieldtype": "Data",
+   "label": "Drawing No"
+  },
+  {
+   "fieldname": "column_break_ggdp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "consignee_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Consignee Name",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "pattern_image",
+   "fieldtype": "Attach Image",
+   "label": "Pattern Image",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_wibc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "pattern_details",
+   "fieldtype": "Table",
+   "label": "Pattern Details",
+   "options": "Pattern Manufacturing Pattern Table",
+   "reqd": 1
+  },
+  {
+   "fieldname": "core_box_tab",
+   "fieldtype": "Tab Break",
+   "label": "Core Box"
+  },
+  {
+   "fieldname": "core_details",
+   "fieldtype": "Table",
+   "label": "Core Details",
+   "options": "Core Bom Table"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "New Pattern Manufacturing Details",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "item_name.custom_cast_weight_per_pc",
+   "fieldname": "cast_weight",
+   "fieldtype": "Float",
+   "label": "Cast Weight",
+   "precision": "2"
+  },
+  {
+   "fetch_from": "item_name.custom_bunch_weight_per_mould",
+   "fieldname": "bunch_weight",
+   "fieldtype": "Float",
+   "label": "Bunch Weight",
+   "precision": "2"
+  }
+ ],
+ "grid_page_length": 50,
+ "hide_toolbar": 1,
+ "image_field": "pattern_image",
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "make_attachments_public": 1,
+ "modified": "2025-12-17 13:59:55.143840",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "New Pattern Manufacturing Details",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
 }

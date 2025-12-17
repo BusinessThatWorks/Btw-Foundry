@@ -1,346 +1,347 @@
 {
-  "actions": [],
-  "allow_import": 1,
-  "allow_rename": 1,
-  "autoname": "format:{TLNG} - {date} - {tooling_name}",
-  "creation": "2025-04-03 14:49:55.887080",
-  "default_view": "List",
-  "doctype": "DocType",
-  "engine": "InnoDB",
-  "field_order": [
-    "tooling_name",
-    "column_break_gqru",
-    "match_plate_number",
-    "column_break_jlvf",
-    "moulding_system",
-    "pattern_details_section",
-    "details_table",
-    "section_break_gdbu",
-    "column_break_khbd",
-    "total_casting_weight",
-    "column_break_eooi",
-    "bunch_weight",
-    "column_break_njqv",
-    "runner_riser_weight",
-    "column_break_zymb",
-    "yield",
-    "section_break_asoi",
-    "date",
-    "nozzlepouring_type",
-    "riser_cutting",
-    "paint_type",
-    "core_sand_type",
-    "sand_type",
-    "sand_riser_size",
-    "column_break_qwlv",
-    "grade",
-    "box_size",
-    "mounting",
-    "paint_quantity_in_litre",
-    "core_sand_quantity_in_kg",
-    "total_sand_required_for_mould_in_kg",
-    "pouring_time",
-    "column_break_gdwx",
-    "sleeve_size",
-    "ingate_size",
-    "runner_size",
-    "sprue_size",
-    "chill_size",
-    "pouring_temp",
-    "shakeout_time",
-    "section_break_omnm",
-    "special_instruction",
-    "amended_from"
-  ],
-  "fields": [
-    {
-      "fieldname": "tooling_name",
-      "fieldtype": "Data",
-      "in_filter": 1,
-      "in_list_view": 1,
-      "in_preview": 1,
-      "in_standard_filter": 1,
-      "label": "Tooling Name",
-      "reqd": 1
-    },
-    {
-      "fieldname": "column_break_gqru",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "match_plate_number",
-      "fieldtype": "Data",
-      "label": "Match Plate Number",
-      "reqd": 1
-    },
-    {
-      "fieldname": "pattern_details_section",
-      "fieldtype": "Section Break",
-      "label": "Pattern Details"
-    },
-    {
-      "fieldname": "details_table",
-      "fieldtype": "Table",
-      "label": "Details",
-      "options": "Tooling Item Details table"
-    },
-    {
-      "fieldname": "section_break_gdbu",
-      "fieldtype": "Section Break"
-    },
-    {
-      "fieldname": "column_break_khbd",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "total_casting_weight",
-      "fieldtype": "Float",
-      "label": "Total Casting Weight (In Kg)",
-      "precision": "2",
-      "read_only": 1
-    },
-    {
-      "fieldname": "column_break_eooi",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "bunch_weight",
-      "fieldtype": "Float",
-      "label": "Bunch Weight (In Kg)",
-      "precision": "2"
-    },
-    {
-      "fieldname": "column_break_njqv",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "runner_riser_weight",
-      "fieldtype": "Float",
-      "label": "Runner Riser Weight (in Kg)",
-      "precision": "2",
-      "read_only": 1
-    },
-    {
-      "fieldname": "column_break_zymb",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "yield",
-      "fieldtype": "Float",
-      "label": "Yield %",
-      "precision": "2",
-      "read_only": 1
-    },
-    {
-      "fieldname": "section_break_asoi",
-      "fieldtype": "Section Break",
-      "label": "Details"
-    },
-    {
-      "fieldname": "date",
-      "fieldtype": "Date",
-      "label": "Date",
-      "reqd": 1
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "nozzlepouring_type",
-      "fieldtype": "Select",
-      "label": "Pouring Type ",
-      "options": "\nBottom Pouring\nLip Pouring"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "riser_cutting",
-      "fieldtype": "Select",
-      "label": "Riser Cutting",
-      "options": "\nGas Cutting\nGrinding Cutting"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "paint_type",
-      "fieldtype": "Link",
-      "label": "Paint Type",
-      "link_filters": "[[\"Item\",\"item_group\",\"=\",\"Paint\"]]",
-      "options": "Item"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "core_sand_type",
-      "fieldtype": "Select",
-      "label": "Core Sand Type",
-      "options": "\nNo-Bake\nCo2\nCold Box\nHot Box"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "sand_type",
-      "fieldtype": "Select",
-      "label": "Sand Type",
-      "options": "\nNo-Bake\nCo2\nGreen Sand"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "sand_riser_size",
-      "fieldtype": "Data",
-      "label": "Sand Riser Size"
-    },
-    {
-      "fieldname": "column_break_qwlv",
-      "fieldtype": "Column Break"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "grade",
-      "fieldtype": "Link",
-      "label": "Grade",
-      "options": "Grade Master"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "box_size",
-      "fieldtype": "Data",
-      "label": "Box Size"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "mounting",
-      "fieldtype": "Select",
-      "label": "Mounting",
-      "options": "\nMounted Pattern\nLoose Pattern"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "paint_quantity_in_litre",
-      "fieldtype": "Float",
-      "label": "Paint Quantity (in Litre)",
-      "precision": "2"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "core_sand_quantity_in_kg",
-      "fieldtype": "Float",
-      "label": "Core Sand Quantity (in Kg)",
-      "precision": "2"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "total_sand_required_for_mould_in_kg",
-      "fieldtype": "Float",
-      "label": "Sand Quantity (In Kg)",
-      "precision": "2"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "pouring_time",
-      "fieldtype": "Time",
-      "label": "Filling Time"
-    },
-    {
-      "fieldname": "column_break_gdwx",
-      "fieldtype": "Column Break"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "sleeve_size",
-      "fieldtype": "Data",
-      "label": "Sleeve Size & Quantity"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "ingate_size",
-      "fieldtype": "Data",
-      "label": "Ingate Size & Quantity"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "runner_size",
-      "fieldtype": "Data",
-      "label": "Runner Size & Quantity"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "sprue_size",
-      "fieldtype": "Data",
-      "label": "Sprue Size & Quantity"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "chill_size",
-      "fieldtype": "Data",
-      "label": "Chill Size & Quantity"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "pouring_temp",
-      "fieldtype": "Data",
-      "label": "Pouring Temp (\u00b0C)"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "shakeout_time",
-      "fieldtype": "Time",
-      "label": "Shakeout Time"
-    },
-    {
-      "fieldname": "section_break_omnm",
-      "fieldtype": "Section Break"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "special_instruction",
-      "fieldtype": "Small Text",
-      "label": "Special Instruction"
-    },
-    {
-      "fieldname": "amended_from",
-      "fieldtype": "Link",
-      "label": "Amended From",
-      "no_copy": 1,
-      "options": "New Tooling",
-      "print_hide": 1,
-      "read_only": 1,
-      "search_index": 1
-    },
-    {
-      "fieldname": "column_break_jlvf",
-      "fieldtype": "Column Break"
-    },
-    {
-      "allow_on_submit": 1,
-      "fieldname": "moulding_system",
-      "fieldtype": "Link",
-      "label": "Moulding System",
-      "options": "Mould Master"
-    }
-  ],
-  "grid_page_length": 50,
-  "index_web_pages_for_search": 1,
-  "is_submittable": 1,
-  "links": [],
-  "modified": "2025-11-21 18:00:30.824075",
-  "modified_by": "Administrator",
-  "module": "shiw",
-  "name": "New Tooling",
-  "naming_rule": "Expression",
-  "owner": "subhangee@clapgrow.com",
-  "permissions": [
-    {
-      "create": 1,
-      "delete": 1,
-      "email": 1,
-      "export": 1,
-      "print": 1,
-      "read": 1,
-      "report": 1,
-      "role": "System Manager",
-      "share": 1,
-      "write": 1
-    }
-  ],
-  "row_format": "Dynamic",
-  "search_fields": "tooling_name",
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "states": [],
-  "track_changes": 1
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:{TLNG} - {date} - {tooling_name}",
+ "creation": "2025-04-03 14:49:55.887080",
+ "default_view": "List",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tooling_name",
+  "column_break_gqru",
+  "match_plate_number",
+  "column_break_jlvf",
+  "moulding_system",
+  "pattern_details_section",
+  "details_table",
+  "section_break_gdbu",
+  "column_break_khbd",
+  "total_casting_weight",
+  "column_break_eooi",
+  "bunch_weight",
+  "column_break_njqv",
+  "runner_riser_weight",
+  "column_break_zymb",
+  "yield",
+  "section_break_asoi",
+  "date",
+  "nozzlepouring_type",
+  "riser_cutting",
+  "paint_type",
+  "core_sand_type",
+  "sand_type",
+  "sand_riser_size",
+  "column_break_qwlv",
+  "grade",
+  "box_size",
+  "mounting",
+  "paint_quantity_in_litre",
+  "core_sand_quantity_in_kg",
+  "total_sand_required_for_mould_in_kg",
+  "pouring_time",
+  "column_break_gdwx",
+  "sleeve_size",
+  "ingate_size",
+  "runner_size",
+  "sprue_size",
+  "chill_size",
+  "pouring_temp",
+  "shakeout_time",
+  "section_break_omnm",
+  "special_instruction",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "tooling_name",
+   "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Tooling Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_gqru",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "match_plate_number",
+   "fieldtype": "Data",
+   "label": "Match Plate Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "pattern_details_section",
+   "fieldtype": "Section Break",
+   "label": "Pattern Details"
+  },
+  {
+   "fieldname": "details_table",
+   "fieldtype": "Table",
+   "label": "Details",
+   "options": "Tooling Item Details table"
+  },
+  {
+   "fieldname": "section_break_gdbu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_khbd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_casting_weight",
+   "fieldtype": "Float",
+   "label": "Total Casting Weight (In Kg)",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_eooi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bunch_weight",
+   "fieldtype": "Float",
+   "label": "Bunch Weight (In Kg)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_njqv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "runner_riser_weight",
+   "fieldtype": "Float",
+   "label": "Runner Riser Weight (in Kg)",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_zymb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "yield",
+   "fieldtype": "Float",
+   "label": "Yield %",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_asoi",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "nozzlepouring_type",
+   "fieldtype": "Select",
+   "label": "Pouring Type ",
+   "options": "\nBottom Pouring\nLip Pouring"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "riser_cutting",
+   "fieldtype": "Select",
+   "label": "Riser Cutting",
+   "options": "\nGas Cutting\nGrinding Cutting"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "paint_type",
+   "fieldtype": "Link",
+   "label": "Paint Type",
+   "link_filters": "[[\"Item\",\"item_group\",\"=\",\"Paint\"]]",
+   "options": "Item"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "core_sand_type",
+   "fieldtype": "Select",
+   "label": "Core Sand Type",
+   "options": "\nNo-Bake\nCo2\nCold Box\nHot Box"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "sand_type",
+   "fieldtype": "Select",
+   "label": "Sand Type",
+   "options": "\nNo-Bake\nCo2\nGreen Sand"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "sand_riser_size",
+   "fieldtype": "Data",
+   "label": "Sand Riser Size"
+  },
+  {
+   "fieldname": "column_break_qwlv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "grade",
+   "fieldtype": "Link",
+   "label": "Grade",
+   "options": "Grade Master"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "box_size",
+   "fieldtype": "Data",
+   "label": "Box Size"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "mounting",
+   "fieldtype": "Select",
+   "label": "Mounting",
+   "options": "\nMounted Pattern\nLoose Pattern"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "paint_quantity_in_litre",
+   "fieldtype": "Float",
+   "label": "Paint Quantity (in Litre)",
+   "precision": "2"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "core_sand_quantity_in_kg",
+   "fieldtype": "Float",
+   "label": "Core Sand Quantity (in Kg)",
+   "precision": "2"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_sand_required_for_mould_in_kg",
+   "fieldtype": "Float",
+   "label": "Sand Quantity (In Kg)",
+   "precision": "2"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "pouring_time",
+   "fieldtype": "Time",
+   "label": "Filling Time"
+  },
+  {
+   "fieldname": "column_break_gdwx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "sleeve_size",
+   "fieldtype": "Data",
+   "label": "Sleeve Size & Quantity"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "ingate_size",
+   "fieldtype": "Data",
+   "label": "Ingate Size & Quantity"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "runner_size",
+   "fieldtype": "Data",
+   "label": "Runner Size & Quantity"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "sprue_size",
+   "fieldtype": "Data",
+   "label": "Sprue Size & Quantity"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "chill_size",
+   "fieldtype": "Data",
+   "label": "Chill Size & Quantity"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "pouring_temp",
+   "fieldtype": "Data",
+   "label": "Pouring Temp (\u00b0C)"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "shakeout_time",
+   "fieldtype": "Time",
+   "label": "Shakeout Time"
+  },
+  {
+   "fieldname": "section_break_omnm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "special_instruction",
+   "fieldtype": "Small Text",
+   "label": "Special Instruction"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "New Tooling",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_jlvf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "moulding_system",
+   "fieldtype": "Link",
+   "label": "Moulding System",
+   "options": "Mould Master"
+  }
+ ],
+ "grid_page_length": 50,
+ "hide_toolbar": 1,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-12-17 13:59:57.194648",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "New Tooling",
+ "naming_rule": "Expression",
+ "owner": "subhangee@clapgrow.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "tooling_name",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
 }

@@ -151,10 +151,11 @@
   }
  ],
  "grid_page_length": 50,
+ "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-08-12 10:37:30.955163",
+ "modified": "2025-12-17 14:00:04.802111",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Shake Out",

@@ -57,9 +57,10 @@
   }
  ],
  "grid_page_length": 50,
+ "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-11-21 17:54:35.661813",
+ "modified": "2025-12-17 13:59:59.190843",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Mould Master",

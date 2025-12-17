@@ -137,10 +137,11 @@
   }
  ],
  "grid_page_length": 50,
+ "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-08-12 14:56:53.164523",
+ "modified": "2025-12-17 14:00:03.720887",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Factory Daily Report Table",

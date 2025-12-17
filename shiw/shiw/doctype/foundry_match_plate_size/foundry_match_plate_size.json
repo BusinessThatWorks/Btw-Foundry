@@ -26,9 +26,10 @@
   }
  ],
  "grid_page_length": 50,
+ "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-19 17:20:46.984141",
+ "modified": "2025-12-17 14:00:10.828223",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Foundry Match Plate Size",

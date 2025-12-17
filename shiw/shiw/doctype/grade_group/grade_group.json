@@ -16,9 +16,10 @@
   }
  ],
  "grid_page_length": 50,
+ "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-08 12:50:21.141882",
+ "modified": "2025-12-17 14:00:01.469102",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Grade Group",

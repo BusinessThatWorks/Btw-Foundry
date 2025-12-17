@@ -122,9 +122,10 @@
   }
  ],
  "grid_page_length": 50,
+ "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-11 21:43:48.544917",
+ "modified": "2025-12-17 14:00:05.940836",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Jolt Squeeze Mould Batch",

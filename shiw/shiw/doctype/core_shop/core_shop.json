@@ -84,10 +84,11 @@
   }
  ],
  "grid_page_length": 50,
+ "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-11-06 10:54:44.895039",
+ "modified": "2025-12-17 14:00:00.042602",
  "modified_by": "Administrator",
  "module": "shiw",
  "name": "Core Shop",

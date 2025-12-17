@@ -1,222 +1,223 @@
 {
-  "actions": [],
-  "allow_import": 1,
-  "allow_rename": 1,
-  "creation": "2025-03-03 16:52:38.387904",
-  "doctype": "DocType",
-  "engine": "InnoDB",
-  "field_order": [
-    "grade_type",
-    "column_break_vcet",
-    "catergory",
-    "column_break_bzij",
-    "subgrade",
-    "column_break_jxtn",
-    "foundry_return",
-    "column_break_nwqg",
-    "grade_group",
-    "section_break_xhze",
-    "min__c",
-    "min__si",
-    "min__mn",
-    "max__p",
-    "min__cr",
-    "min__mo",
-    "min__ni",
-    "min__cu",
-    "min__v",
-    "min__nb",
-    "column_break_vzmp",
-    "max__c",
-    "max__si",
-    "max__mn",
-    "max__s",
-    "max__cr",
-    "max__mo",
-    "max__ni",
-    "max__cu",
-    "max__v",
-    "max__nb"
-  ],
-  "fields": [
-    {
-      "fieldname": "grade_type",
-      "fieldtype": "Data",
-      "label": "Grade Type",
-      "unique": 1
-    },
-    {
-      "fieldname": "column_break_vcet",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "catergory",
-      "fieldtype": "Data",
-      "label": "Catergory"
-    },
-    {
-      "fieldname": "column_break_bzij",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "subgrade",
-      "fieldtype": "Data",
-      "label": "Subgrade"
-    },
-    {
-      "fieldname": "section_break_xhze",
-      "fieldtype": "Section Break"
-    },
-    {
-      "fieldname": "min__c",
-      "fieldtype": "Percent",
-      "label": "Min % C"
-    },
-    {
-      "fieldname": "min__si",
-      "fieldtype": "Percent",
-      "label": "Min % SI"
-    },
-    {
-      "fieldname": "min__mn",
-      "fieldtype": "Percent",
-      "label": "Min % MN"
-    },
-    {
-      "fieldname": "max__p",
-      "fieldtype": "Percent",
-      "label": "Max % P"
-    },
-    {
-      "fieldname": "min__cr",
-      "fieldtype": "Percent",
-      "label": "Min % CR"
-    },
-    {
-      "fieldname": "min__mo",
-      "fieldtype": "Percent",
-      "label": "Min % MO"
-    },
-    {
-      "fieldname": "min__ni",
-      "fieldtype": "Percent",
-      "label": "Min % NI"
-    },
-    {
-      "fieldname": "min__cu",
-      "fieldtype": "Percent",
-      "label": "Min % CU"
-    },
-    {
-      "fieldname": "min__v",
-      "fieldtype": "Percent",
-      "label": "Min % V"
-    },
-    {
-      "fieldname": "min__nb",
-      "fieldtype": "Percent",
-      "label": "MIn % Nb"
-    },
-    {
-      "fieldname": "column_break_vzmp",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "max__c",
-      "fieldtype": "Percent",
-      "label": "Max % C"
-    },
-    {
-      "fieldname": "max__si",
-      "fieldtype": "Percent",
-      "label": "Max % SI"
-    },
-    {
-      "fieldname": "max__mn",
-      "fieldtype": "Percent",
-      "label": "Max % MN"
-    },
-    {
-      "fieldname": "max__s",
-      "fieldtype": "Percent",
-      "label": "Max % S"
-    },
-    {
-      "fieldname": "max__cr",
-      "fieldtype": "Percent",
-      "label": "Max % CR"
-    },
-    {
-      "fieldname": "max__mo",
-      "fieldtype": "Percent",
-      "label": "Max % MO"
-    },
-    {
-      "fieldname": "max__ni",
-      "fieldtype": "Percent",
-      "label": "Max % NI"
-    },
-    {
-      "fieldname": "max__cu",
-      "fieldtype": "Percent",
-      "label": "Max % CU"
-    },
-    {
-      "fieldname": "max__v",
-      "fieldtype": "Percent",
-      "label": "Max % V"
-    },
-    {
-      "fieldname": "max__nb",
-      "fieldtype": "Percent",
-      "label": "Max % Nb"
-    },
-    {
-      "fieldname": "column_break_jxtn",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "foundry_return",
-      "fieldtype": "Link",
-      "label": "Foundry Return",
-      "options": "Item"
-    },
-    {
-      "fieldname": "column_break_nwqg",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "grade_group",
-      "fieldtype": "Link",
-      "label": "Grade Group",
-      "options": "Grade Group"
-    }
-  ],
-  "grid_page_length": 50,
-  "index_web_pages_for_search": 1,
-  "links": [],
-  "modified": "2025-10-08 12:51:45.878894",
-  "modified_by": "Administrator",
-  "module": "shiw",
-  "name": "Grade Master",
-  "owner": "Administrator",
-  "permissions": [
-    {
-      "create": 1,
-      "delete": 1,
-      "email": 1,
-      "export": 1,
-      "print": 1,
-      "read": 1,
-      "report": 1,
-      "role": "System Manager",
-      "share": 1,
-      "write": 1
-    }
-  ],
-  "row_format": "Dynamic",
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "states": [],
-  "track_changes": 1
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "creation": "2025-03-03 16:52:38.387904",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "grade_type",
+  "column_break_vcet",
+  "catergory",
+  "column_break_bzij",
+  "subgrade",
+  "column_break_jxtn",
+  "foundry_return",
+  "column_break_nwqg",
+  "grade_group",
+  "section_break_xhze",
+  "min__c",
+  "min__si",
+  "min__mn",
+  "max__p",
+  "min__cr",
+  "min__mo",
+  "min__ni",
+  "min__cu",
+  "min__v",
+  "min__nb",
+  "column_break_vzmp",
+  "max__c",
+  "max__si",
+  "max__mn",
+  "max__s",
+  "max__cr",
+  "max__mo",
+  "max__ni",
+  "max__cu",
+  "max__v",
+  "max__nb"
+ ],
+ "fields": [
+  {
+   "fieldname": "grade_type",
+   "fieldtype": "Data",
+   "label": "Grade Type",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_vcet",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "catergory",
+   "fieldtype": "Data",
+   "label": "Catergory"
+  },
+  {
+   "fieldname": "column_break_bzij",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "subgrade",
+   "fieldtype": "Data",
+   "label": "Subgrade"
+  },
+  {
+   "fieldname": "section_break_xhze",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "min__c",
+   "fieldtype": "Percent",
+   "label": "Min % C"
+  },
+  {
+   "fieldname": "min__si",
+   "fieldtype": "Percent",
+   "label": "Min % SI"
+  },
+  {
+   "fieldname": "min__mn",
+   "fieldtype": "Percent",
+   "label": "Min % MN"
+  },
+  {
+   "fieldname": "max__p",
+   "fieldtype": "Percent",
+   "label": "Max % P"
+  },
+  {
+   "fieldname": "min__cr",
+   "fieldtype": "Percent",
+   "label": "Min % CR"
+  },
+  {
+   "fieldname": "min__mo",
+   "fieldtype": "Percent",
+   "label": "Min % MO"
+  },
+  {
+   "fieldname": "min__ni",
+   "fieldtype": "Percent",
+   "label": "Min % NI"
+  },
+  {
+   "fieldname": "min__cu",
+   "fieldtype": "Percent",
+   "label": "Min % CU"
+  },
+  {
+   "fieldname": "min__v",
+   "fieldtype": "Percent",
+   "label": "Min % V"
+  },
+  {
+   "fieldname": "min__nb",
+   "fieldtype": "Percent",
+   "label": "MIn % Nb"
+  },
+  {
+   "fieldname": "column_break_vzmp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "max__c",
+   "fieldtype": "Percent",
+   "label": "Max % C"
+  },
+  {
+   "fieldname": "max__si",
+   "fieldtype": "Percent",
+   "label": "Max % SI"
+  },
+  {
+   "fieldname": "max__mn",
+   "fieldtype": "Percent",
+   "label": "Max % MN"
+  },
+  {
+   "fieldname": "max__s",
+   "fieldtype": "Percent",
+   "label": "Max % S"
+  },
+  {
+   "fieldname": "max__cr",
+   "fieldtype": "Percent",
+   "label": "Max % CR"
+  },
+  {
+   "fieldname": "max__mo",
+   "fieldtype": "Percent",
+   "label": "Max % MO"
+  },
+  {
+   "fieldname": "max__ni",
+   "fieldtype": "Percent",
+   "label": "Max % NI"
+  },
+  {
+   "fieldname": "max__cu",
+   "fieldtype": "Percent",
+   "label": "Max % CU"
+  },
+  {
+   "fieldname": "max__v",
+   "fieldtype": "Percent",
+   "label": "Max % V"
+  },
+  {
+   "fieldname": "max__nb",
+   "fieldtype": "Percent",
+   "label": "Max % Nb"
+  },
+  {
+   "fieldname": "column_break_jxtn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "foundry_return",
+   "fieldtype": "Link",
+   "label": "Foundry Return",
+   "options": "Item"
+  },
+  {
+   "fieldname": "column_break_nwqg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "grade_group",
+   "fieldtype": "Link",
+   "label": "Grade Group",
+   "options": "Grade Group"
+  }
+ ],
+ "grid_page_length": 50,
+ "hide_toolbar": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-17 13:59:56.348371",
+ "modified_by": "Administrator",
+ "module": "shiw",
+ "name": "Grade Master",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
 }
